@@ -112,7 +112,7 @@ export class WinMotion {
       const angle = -Math.PI / 2 + (Math.random() - .5) * 2.9, speed = (260 + Math.random() * 400) * (this.reduced ? .4 : 1);
       this.particles.push({ x: origin.x + side * Math.min(width * .22, 125), y: origin.y + (side < 0 ? -innerHeight * .24 : side > 0 ? innerHeight * .22 : 0),
         vx: Math.cos(angle) * speed + side * 70, vy: Math.sin(angle) * speed, age: 0, life: 2.7 + Math.random() * 1.3,
-        angle: Math.random() * 6, spin: (Math.random() - .5) * 12, size: 4 + Math.random() * 6, kind: i % 12 === 11 ? 3 : i % 3, color: colors[i % colors.length]! });
+        angle: Math.random() * 6, spin: (Math.random() - .5) * 12, size: 4 + Math.random() * 6, kind: i % 12 === 11 ? 3 : i % 3, color: colors[(i + Math.floor(i / 12)) % colors.length]! });
     }
     if (!this.raf) { this.lastFrame = performance.now(); this.raf = requestAnimationFrame(now => this.draw(now)); }
   }
