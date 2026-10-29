@@ -21,3 +21,13 @@
 
 ## Проверить руками в первой сборке
 Быстрый маршрут и откат; последние клетки; три тактильных удара победы; звёзды/монеты/звук; раннее продолжение; mute/vibration toggle; фон/возврат; несколько уровней подряд. Не называть всё это подтверждённым по зелёному CI.
+
+## Remote CI / итог
+Source commit 2dc955d8b9fd0d11c161a62469fabf7005ee02b8:
+- App and kit checks success: https://github.com/DanilaH/road-lines/actions/runs/40942705631
+- Android debug build success: https://github.com/DanilaH/road-lines/actions/runs/40942705635
+- Artifact: https://github.com/DanilaH/road-lines/actions/runs/40942705635/artifacts/12926744772
+- ZIP sha256:d291de119144d3bb8cdee0954e32b9c261c6d68c9ce7b41af0f668ba4ffcb06c; 4218374 bytes. Это хеш GitHub ZIP, не извлечённого APK.
+Подтверждены clean install, typecheck/114 tests, content audit, inspection+production browser flows, Gradle assembleDebug с RoadFeedbackPlugin. Physical device acceptance по-прежнему отсутствует.
+
+Повторно просмотрен сохранённый contact sheet finish_detail.jpg: увеличение→сжатие фигуры, CLEAR/звёзды, многоочаговое конфетти и flight coins. Длинные ленты сделаны извивающимися, дополнительных два очага разнесены по высоте. Исходное видео заново целиком не просматривалось; звук конкурента не прослушивался.
