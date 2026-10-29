@@ -31,10 +31,10 @@ export class BoardScene extends Phaser.Scene {
   win(from: BoardLayout): void { this.opening = 0; this.pulse = null; this.winning = { from, at: performance.now() }; this.redraw(); }
   settle(): void { this.opening = 0; this.pulse = null; this.winning = null; this.redraw(); }
   update(): void {
-    const now = performance.now();
+    const now = performance.now(), wasAnimating = Boolean(this.opening || this.pulse || this.winning);
     if (this.opening && now - this.opening > 520) this.opening = 0;
     if (this.pulse && now - this.pulse.at > 160) this.pulse = null;
-    if (this.opening || this.pulse || this.winning) this.redraw();
+    if (wasAnimating) this.redraw();
   }
   setRenderRatio(value: number): void { this.renderRatio = value; this.redraw(); }
   private redraw(): void {
