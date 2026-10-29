@@ -12,6 +12,8 @@ import { GameStore, SAVE_KEY } from './services/save';
 import { HintService } from './services/hints';
 import { installRouteInput } from './services/input';
 import { acquireSaveOwnership, SaveOwnershipError } from './services/ownership';
+import { Feedback } from './presentation/feedback';
+import { WinMotion } from './presentation/motion';
 import './style.css';
 let releaseWriter = (): void => {}; 
 
@@ -29,6 +31,8 @@ async function boot(): Promise<void> {
   if (fixture) { level = levels[2]!; path = [...level.witness]; }
   let result = fixture || complete(level, path), reward = 0;
   if (result && !fixture) reward = store.finish(level, path);
+  const feedback = new Feedback();
+  let shownBalance = store.state.coins, collecting = false;
   let paused = false, disposed = false, saveFailed = false, conflict = false, busy = false, revision = 0;
   let hint: number[] = [], rollback: number | null = null, saveTimer: ReturnType<typeof setTimeout> | undefined;
   let disposeRuntime = (): void => {};
@@ -42,16 +46,16 @@ async function boot(): Promise<void> {
         <button class="tool hint" data-action="hint" aria-label="Подсказка">${icon('hint')}<small class="hint-count"></small></button>
         <button class="tool" data-action="pause" aria-label="Пауза">${icon('pause')}</button>
       </div></header>
-      <div class="result-heading" hidden><h1>ГОТОВО!</h1><div class="stars" aria-label="Три звезды">${[0, 1, 2].map(star).join('')}</div></div>
+      <div class="result-heading" hidden><h1><span style="--letter:0">Г</span><span style="--letter:1">О</span><span style="--letter:2">Т</span><span style="--letter:3">О</span><span style="--letter:4">В</span><span style="--letter:5">О</span><span style="--letter:6">!</span></h1><div class="stars" aria-label="Три звезды">${[0, 1, 2].map(star).join('')}</div></div>
       <div id="board" tabindex="0" role="group" aria-label="Поле"></div>
       <p class="instruction"></p>
       <div class="rewards" hidden>
         <div class="reward-row"><span class="earned"></span><div class="gift-progress"><div class="track"><span></span></div>${icon('gift')}<span class="fraction"></span></div></div>
         <button class="multiply" disabled>${icon('play')} ЗАБРАТЬ ×5</button>
-        <button class="next" data-action="next">ДАЛЬШЕ</button>
+        <button class="next" data-action="next"><span>ДАЛЬШЕ</span></button>
       </div>
       <div id="banner-slot" aria-hidden="true"></div>
-      <section class="pause-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="pause-title"><div class="pause-card"><h2 id="pause-title">Пауза</h2><button data-action="resume" class="resume">ПРОДОЛЖИТЬ</button></div></section>
+      <section class="pause-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="pause-title"><div class="pause-card"><h2 id="pause-title">Пауза</h2><button data-action="resume" class="resume">ПРОДОЛЖИТЬ</button><div class="settings"><button data-action="sound" aria-pressed="true"></button><button data-action="vibration" aria-pressed="true"></button></div></div></section>
       <div class="notice" hidden role="status"><span></span><button data-action="notice"></button></div>
     </section><div id="startup" role="status">Загрузка…</div>`;
   const $ = <T extends HTMLElement = HTMLElement>(selector: string): T => root.querySelector<T>(selector)!;
@@ -61,6 +65,9 @@ async function boot(): Promise<void> {
   const initialSize = getBackingStoreSize(host.clientWidth, host.clientHeight, renderRatio);
   const game = new Phaser.Game({ type: Phaser.AUTO, parent: host, width: initialSize.width, height: initialSize.height,
     transparent: true, antialias: true, banner: false, scale: { mode: Phaser.Scale.NONE }, audio: { noAudio: true }, scene, fps: { target: 60 } });
+  const showBalance = (value: number): void => { shownBalance = value; $('.balance').textContent = String(value); $('.wallet').setAttribute('aria-label', `${value} монет`); };
+  const motion = new WinMotion(root, feedback, showBalance);
+  root.dataset.winPhase = 'idle';
   const layout = () => boardLayout(host.clientWidth, host.clientHeight, result, level);
   function notice(text: string, action = ''): void {
     $('.notice').hidden = !text; $('.notice span').textContent = text;
@@ -71,8 +78,11 @@ async function boot(): Promise<void> {
     const index = levels.indexOf(level);
     $('.surface').className = `surface ${result ? 'result' : 'play'}`;
     $('.level').textContent = `1–${index + 1}`;
-    $('.balance').textContent = String(store.state.coins);
-    $('.wallet').setAttribute('aria-label', `${store.state.coins} монет`);
+    showBalance(shownBalance);
+    $('[data-action=sound]').textContent = `Звук: ${feedback.settings.sound ? 'вкл' : 'выкл'}`;
+    $('[data-action=sound]').setAttribute('aria-pressed', String(feedback.settings.sound));
+    $('[data-action=vibration]').textContent = `Вибрация: ${feedback.settings.vibration ? 'вкл' : 'выкл'}`;
+    $('[data-action=vibration]').setAttribute('aria-pressed', String(feedback.settings.vibration));
     $('.hint-count').textContent = String(store.state.hints);
     $<HTMLButtonElement>('[data-action=hint]').disabled = busy || result || complete(level, path);
     $<HTMLButtonElement>('[data-action=restart]').disabled = !result && complete(level, path);
@@ -84,7 +94,7 @@ async function boot(): Promise<void> {
     $('.fraction').textContent = `${store.state.completed.length}/20`;
     $('.track span').style.width = `${Math.min(100, store.state.completed.length * 5)}%`;
     $('.gift-progress').setAttribute('aria-label', `Подарок: ${store.state.completed.length} из 20`);
-    $('.next').textContent = index === levels.length - 1 ? 'ПРОЙТИ СНОВА' : 'ДАЛЬШЕ';
+    $('.next span').textContent = index === levels.length - 1 ? 'ПРОЙТИ СНОВА' : 'ДАЛЬШЕ';
     host.setAttribute('aria-label', `Задача ${index + 1}. Заполнено ${path.length} из ${level.cells.length}. Стрелки — движение и откат.`);
     scene.setState(level, path, hint, result);
     activity.setGameplayDesired(!result);
@@ -110,19 +120,29 @@ async function boot(): Promise<void> {
   }
   function finish(): void {
     clearTimeout(saveTimer);
-    try { reward = store.finish(level, path); saveFailed = false; result = true; invalidate(); input.cancel(); notice(''); redraw(); }
+    try {
+      const from = layout(), oldHost = host.getBoundingClientRect();
+      reward = store.finish(level, path); saveFailed = false; result = true; invalidate(); input.cancel(); notice('');
+      motion.start(reward, store.state.coins, store.state.completed.length, () => { scene.settle(); syncSize(); });
+      redraw();
+      const newHost = host.getBoundingClientRect();
+      scene.win({ ...from, x: from.x + oldHost.x - newHost.x, y: from.y + oldHost.y - newHost.y });
+    }
     catch { saveError(); }
   }
   function change(next: number[]): void {
     if (result || activity.isBlocked() || conflict) return;
-    invalidate(); path = next; notice(''); redraw();
+    const reverse = next.length < path.length;
+    invalidate(); path = next; notice(''); redraw(); scene.react(path[path.length - 1]!);
+    feedback.play(reverse ? 'undo' : 'cell', path.length / level.cells.length);
     if (complete(level, path)) finish();
     else { clearTimeout(saveTimer); saveTimer = setTimeout(flush, 80); }
   }
   const input = installRouteInput(host, () => ({ level, path, layout: layout(), blocked: result || activity.isBlocked() || conflict || complete(level, path) }), change, () => { if (!complete(level, path)) flush(); });
   const unsubscribe = activity.onBlockedChange(blocked => {
     root.dataset.blocked = String(blocked);
-    if (blocked) { invalidate(); input.cancel(); flush(); }
+    feedback.setBlocked(blocked);
+    if (blocked) { invalidate(); input.cancel(); flush(); motion.stop(); scene.settle(); showBalance(store.state.coins); }
     redraw();
     if (game.isBooted) { if (blocked) game.loop.sleep(); else game.loop.wake(); }
   });
@@ -152,7 +172,8 @@ async function boot(): Promise<void> {
   }
   function click(event: MouseEvent): void {
     const target = (event.target as Element).closest<HTMLButtonElement>('button[data-action]');
-    if (!target || target.disabled || (activity.isBlocked() && target.dataset.action !== 'resume' && target.dataset.action !== 'notice')) return;
+    if (!target || target.disabled || (activity.isBlocked() && target.dataset.action !== 'resume' && target.dataset.action !== 'notice' && target.dataset.action !== 'sound' && target.dataset.action !== 'vibration')) return;
+    feedback.play('button');
     switch (target.dataset.action) {
       case 'pause': setPause(true); break;
       case 'resume': setPause(false); break;
@@ -163,18 +184,33 @@ async function boot(): Promise<void> {
         else if (saveFailed) { if (complete(level, path)) finish(); else if (flush()) notice(''); }
         else if (rollback !== null) { const p = path.slice(0, rollback); change(p); flush(); }
         break;
-      case 'next': {
-        if (!result) break;
-        if (fixture) { location.assign(location.pathname); break; }
-        const next = levels[(levels.indexOf(level) + 1) % levels.length]!;
-        try { store.path(next, [next.start]); } catch { saveError(); break; }
-        invalidate(); input.cancel(); level = next; path = [next.start]; result = false; reward = 0; notice(''); redraw(); break;
-      }
+      case 'sound': feedback.setSetting('sound', !feedback.settings.sound); redraw(); break;
+      case 'vibration': feedback.setSetting('vibration', !feedback.settings.vibration); redraw(); break;
+      case 'next': void goNext(); break;
     }
   }
+  async function goNext(): Promise<void> {
+    if (!result || collecting) return;
+    if (fixture) { location.assign(location.pathname); return; }
+    collecting = true; $<HTMLButtonElement>('.next').disabled = true;
+    const token = revision, done = await motion.collect();
+    collecting = false;
+    if (!done || disposed || activity.isBlocked() || token !== revision) return;
+    const next = levels[(levels.indexOf(level) + 1) % levels.length]!;
+    try { store.path(next, [next.start]); } catch { $<HTMLButtonElement>('.next').disabled = false; saveError(); return; }
+    motion.stop(); scene.settle(); showBalance(store.state.coins);
+    invalidate(); input.cancel(); level = next; path = [next.start]; result = false; reward = 0;
+    notice(''); redraw(); scene.open();
+  }
+  const prime = (): void => feedback.prime();
+  root.addEventListener('pointerdown', prime, true); root.addEventListener('keydown', prime, true);
   root.addEventListener('click', click);
   const trapFocus = (event: KeyboardEvent): void => {
-    if (event.key === 'Tab' && paused) { event.preventDefault(); $('[data-action=resume]').focus(); }
+    if (event.key === 'Tab' && paused) {
+      event.preventDefault(); const buttons = [...root.querySelectorAll<HTMLButtonElement>('.pause-card button')];
+      const index = buttons.indexOf(document.activeElement as HTMLButtonElement);
+      buttons[(index + (event.shiftKey ? -1 : 1) + buttons.length) % buttons.length]!.focus();
+    }
   };
   $('.pause-overlay').addEventListener('keydown', trapFocus);
   const resize = new ResizeObserver(() => { input.cancel(); syncSize(); }); resize.observe(host);
@@ -184,6 +220,12 @@ async function boot(): Promise<void> {
     notice('Прогресс изменён в другой вкладке. Открой его заново.', 'Перезагрузить');
   };
   window.addEventListener('storage', onStorage);
+  const onViewportResize = (): void => {
+    motion.stop(); scene.settle(); showBalance(store.state.coins);
+    feedback.setBlocked(true); feedback.setBlocked(activity.isBlocked()); redraw();
+  };
+  window.addEventListener('resize', onViewportResize);
+
   let rendererReady = false, platformReady = false;
   const deadline = setTimeout(() => { const startup = root.querySelector('#startup'); if (startup) startup.textContent = 'Запуск занимает слишком много времени. Перезапусти приложение.'; }, 15_000);
   function presentable(): void {
@@ -195,15 +237,16 @@ async function boot(): Promise<void> {
       if (activity.isBlocked()) game.loop.sleep();
     }); });
   }
-  game.events.once('postrender', () => { rendererReady = true; timeline.mark('renderer'); presentable(); });
+  game.events.once('postrender', () => { if (!result) scene.open(); rendererReady = true; timeline.mark('renderer'); presentable(); });
   redraw();
 
   function dispose(): void {
     if (disposed) return;
     input.dispose(); flush(); disposed = true; invalidate(); clearTimeout(saveTimer); clearTimeout(deadline);
     cancelAnimationFrame(frame); cancelAnimationFrame(secondFrame); cancelAnimationFrame(resizeFrame);
-    resize.disconnect(); disposeRuntime(); unsubscribe(); root.removeEventListener('click', click);
-    window.removeEventListener('storage', onStorage); window.removeEventListener('pagehide', pagehide);
+    resize.disconnect(); disposeRuntime(); unsubscribe(); motion.dispose(); feedback.dispose(); root.removeEventListener('click', click);
+    root.removeEventListener('pointerdown', prime, true); root.removeEventListener('keydown', prime, true);
+    window.removeEventListener('resize', onViewportResize); window.removeEventListener('storage', onStorage); window.removeEventListener('pagehide', pagehide);
     $('.pause-overlay').removeEventListener('keydown', trapFocus); game.destroy(true); releaseWriter();
   }
   const pagehide = (event: PageTransitionEvent): void => { flush(); if (!event.persisted) dispose(); };

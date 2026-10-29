@@ -27,6 +27,7 @@ const app = resolve(root, 'android/app/src/main');
 const javaDir = resolve(app, 'java/com/danilah/roadlines');
 mkdirSync(javaDir, { recursive: true });
 copyFileSync(resolve(root, 'native/android/MainActivity.java'), resolve(javaDir, 'MainActivity.java'));
+copyFileSync(resolve(root, 'native/android/RoadFeedbackPlugin.java'), resolve(javaDir, 'RoadFeedbackPlugin.java'));
 copyFileSync(resolve(root, 'native/android/road_lines_icon.xml'), resolve(app, 'res/drawable/road_lines_icon.xml'));
 copyFileSync(resolve(root, 'native/android/styles.xml'), resolve(app, 'res/values/styles.xml'));
 const manifestPath = resolve(app, 'AndroidManifest.xml');
@@ -36,6 +37,7 @@ manifest = manifest.replace(/android:icon="[^"]+"/, 'android:icon="@drawable/roa
 manifest = manifest.replace(/android:roundIcon="[^"]+"/, 'android:roundIcon="@drawable/road_lines_icon"');
 if (!manifest.includes('android:screenOrientation="portrait"'))
   manifest = manifest.replace('<activity', '<activity android:screenOrientation="portrait"');
+if (!manifest.includes('android.permission.VIBRATE')) manifest = manifest.replace('</manifest>', '    <uses-permission android:name="android.permission.VIBRATE" />\n</manifest>');
 writeFileSync(manifestPath, manifest);
 run(process.execPath, [...cap, 'sync', 'android']);
 if (build) run(process.platform === 'win32' ? 'gradlew.bat' : './gradlew', ['--no-daemon', 'assembleDebug'], resolve(root, 'android'));

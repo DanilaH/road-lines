@@ -23,3 +23,6 @@ App plugin передаёт appStateChange и Back в общий lifecycle coord
 - https://docs.phaser.io/phaser/concepts/scale-manager
 
 Также проверены исходники закреплённого @capacitor/android: JavaVersion.VERSION_21, compileSdk 36. Yandex Games web SDK не является нативной рекламой.
+
+## Нативная тактильная обратная связь
+RoadFeedbackPlugin.java и его регистрация в MainActivity хранятся в overlays, VIBRATE добавляется генератором. Callback pulse принимает cue/issuedAt, cancel останавливает мотор. Это отдельный небольшой плагин без рекламного SDK. Шаблон API проверен по https://capacitorjs.com/docs/plugins/android и https://developer.android.com/develop/ui/views/haptics/haptics-apis ; исходники закреплённой Capacitor проверены перед интеграцией.

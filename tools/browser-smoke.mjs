@@ -29,7 +29,7 @@ try {
     page.on('pageerror', error => errors.push(error.message));
     await page.goto(url);
     await page.locator('#app[data-ready=true]').waitFor();
-    assert.equal(await page.locator('canvas').count(), 1);
+    assert.equal(await page.locator('#board canvas').count(), 1);
     await page.getByRole('button', { name: 'Пауза', exact: true }).click();
     await page.getByRole('dialog').waitFor();
     assert.equal(await page.locator('#app').getAttribute('data-blocked'), 'true');
@@ -71,12 +71,24 @@ try {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await page.goto(url); await page.locator('#app[data-ready=true]').waitFor();
   await page.setViewportSize({ width: 320, height: 568 });
-  await page.waitForFunction(() => document.querySelector('canvas')?.width === Math.round(document.querySelector('#board')?.clientWidth * Math.min(devicePixelRatio, 2)));
-  assert.equal(await page.locator('canvas').count(), 1);
+  await page.waitForFunction(() => document.querySelector('#board canvas')?.width === Math.round(document.querySelector('#board')?.clientWidth * Math.min(devicePixelRatio, 2)));
+  assert.equal(await page.locator('#board canvas').count(), 1);
   await page.close();
   // Exercise the production input pipeline with a real mouse, not a debug route setter.
   const gameplayContext = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const gameplay = await gameplayContext.newPage();
+  await gameplay.addInitScript(() => {
+    const Base = window.AudioContext;
+    window.__audioProbe = { oscillators: 0, active: 0, contexts: [] };
+    window.AudioContext = class extends Base {
+      constructor(...args) { super(...args); window.__audioProbe.contexts.push(this); }
+      createOscillator() {
+        const node = super.createOscillator(); window.__audioProbe.oscillators++; window.__audioProbe.active++;
+        node.addEventListener('ended', () => window.__audioProbe.active--, { once: true }); return node;
+      }
+    };
+  });
+
   const catalogText = readFileSync(resolve(root, 'src/content/levels.ts'), 'utf8');
   const catalog = JSON.parse(catalogText.slice(catalogText.indexOf('= ') + 2).trim().replace(/;$/, ''));
   const saveKey = 'road-lines.save.v1';
@@ -107,11 +119,28 @@ try {
   await move(await center(first, 0)); await gameplay.mouse.down(); await move(await center(first, 2)); await gameplay.mouse.up();
   await gameplay.locator('.result').waitFor();
   assert.equal((await readSave()).coins, 20);
+  assert.equal(await gameplay.locator('.balance').textContent(), '0', 'Owned value is not animated into the counter before collection');
+  await gameplay.waitForTimeout(1450);
+  assert.equal(await gameplay.locator('.flying-coin').count(), 16);
+  const painted = await gameplay.locator('.celebration-layer').evaluate(canvas => {
+    const data = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
+    let count = 0; for (let i = 3; i < data.length; i += 16) if (data[i]) count++;
+    return { count, width: canvas.getBoundingClientRect().width, height: canvas.getBoundingClientRect().height };
+  });
+  assert(painted.count > 20 && painted.width === 390 && painted.height === 844);
+  assert(await gameplay.evaluate(() => window.__audioProbe.oscillators > 8 && window.__audioProbe.contexts.length === 1));
+  await gameplay.screenshot({ path: resolve(output, 'win-celebration.png') });
   await gameplay.reload(); await gameplay.locator('#app[data-ready=true]').waitFor();
   assert.equal((await readSave()).coins, 20);
   await gameplay.getByRole('button', { name: 'ДАЛЬШЕ', exact: true }).click();
   await gameplay.locator('.play').waitFor();
   assert.equal((await readSave()).levelId, catalog[1].id);
+  await gameplay.getByRole('button', { name: 'Пауза', exact: true }).click();
+  await gameplay.getByRole('button', { name: 'Звук: вкл', exact: true }).click();
+  await gameplay.getByRole('button', { name: 'Вибрация: вкл', exact: true }).click();
+  await gameplay.getByRole('button', { name: 'ПРОДОЛЖИТЬ', exact: true }).click();
+  const mutedCount = await gameplay.evaluate(() => window.__audioProbe.oscillators);
+
   // All actual witnesses through the production input; reject no legal authored turn.
   for (let index = 1; index < catalog.length; index++) {
     const level = catalog[index];
@@ -122,7 +151,35 @@ try {
     }
     await gameplay.mouse.up(); await gameplay.locator('.result').waitFor();
     assert.equal((await readSave()).completed.length, index + 1);
-    if (index < catalog.length - 1) { await gameplay.getByRole('button', { name: 'ДАЛЬШЕ', exact: true }).click(); await gameplay.locator('.play').waitFor(); }
+    if (index === 1) {
+      assert.equal(await gameplay.evaluate(() => window.__audioProbe.oscillators), mutedCount, 'Mute creates no new voices');
+      await gameplay.evaluate(() => { Object.defineProperty(document, 'hidden', { configurable: true, value: true }); document.dispatchEvent(new Event('visibilitychange')); });
+      assert.equal(await gameplay.locator('.flying-coin').count(), 0);
+      assert.equal(await gameplay.locator('.balance').textContent(), '40');
+      await gameplay.evaluate(() => { Object.defineProperty(document, 'hidden', { configurable: true, value: false }); document.dispatchEvent(new Event('visibilitychange')); });
+      await gameplay.waitForTimeout(900);
+      assert.equal(await gameplay.locator('.flying-coin').count(), 0, 'Background cancels delayed scatter instead of replaying it');
+      assert.equal((await readSave()).coins, 40);
+    }
+    if (index < catalog.length - 1) {
+      await gameplay.getByRole('button', { name: 'ДАЛЬШЕ', exact: true }).click({ clickCount: index === 2 ? 2 : 1 });
+      if (index === 3) {
+        await gameplay.evaluate(() => { Object.defineProperty(document, 'hidden', { configurable: true, value: true }); document.dispatchEvent(new Event('visibilitychange')); });
+        await gameplay.waitForTimeout(700);
+        assert.equal((await readSave()).levelId, level.id, 'Cancelled collection must not navigate in the background');
+        assert.equal((await readSave()).coins, 80);
+        assert.equal(await gameplay.locator('.flying-coin').count(), 0);
+        await gameplay.evaluate(() => { Object.defineProperty(document, 'hidden', { configurable: true, value: false }); document.dispatchEvent(new Event('visibilitychange')); });
+        await gameplay.getByRole('button', { name: 'ДАЛЬШЕ', exact: true }).click();
+      }
+      await gameplay.locator('.play').waitFor(); assert.equal((await readSave()).levelId, catalog[index + 1].id);
+    }
+    if (index === 1) {
+      await gameplay.getByRole('button', { name: 'Пауза', exact: true }).click();
+      await gameplay.getByRole('button', { name: 'Звук: выкл', exact: true }).click();
+      await gameplay.getByRole('button', { name: 'Вибрация: выкл', exact: true }).click();
+      await gameplay.getByRole('button', { name: 'ПРОДОЛЖИТЬ', exact: true }).click();
+    }
   }
   assert.equal((await readSave()).coins, 300);
   await gameplay.getByRole('button', { name: 'ПРОЙТИ СНОВА', exact: true }).click();
