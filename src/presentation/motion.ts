@@ -2,7 +2,7 @@ import { createValueTransferPlan, valueAfterVisualArrival, valueTransferEmission
 import type { Feedback } from './feedback';
 
 interface Particle { x: number; y: number; vx: number; vy: number; age: number; life: number; angle: number; spin: number; size: number; kind: number; color: string; }
-const colors = ['#8b6bdd', '#ffc94c', '#4bc5c8', '#ef789a', '#70bd83', '#ff9864'];
+const colors = ['#a855ed', '#ffcc24', '#24ccd4', '#f75da3', '#9bdc36', '#ff8e48'];
 export class WinMotion {
   private timers = new Set<ReturnType<typeof setTimeout>>();
   private animations = new Set<Animation>();
@@ -110,9 +110,9 @@ export class WinMotion {
     const actualCount = this.reduced ? 18 : count;
     for (let i = 0; i < actualCount && this.particles.length < 360; i++) {
       const angle = -Math.PI / 2 + (Math.random() - .5) * 2.9, speed = (260 + Math.random() * 400) * (this.reduced ? .4 : 1);
-      this.particles.push({ x: origin.x + side * Math.min(width * .22, 125), y: origin.y,
+      this.particles.push({ x: origin.x + side * Math.min(width * .22, 125), y: origin.y + (side < 0 ? -innerHeight * .24 : side > 0 ? innerHeight * .22 : 0),
         vx: Math.cos(angle) * speed + side * 70, vy: Math.sin(angle) * speed, age: 0, life: 2.7 + Math.random() * 1.3,
-        angle: Math.random() * 6, spin: (Math.random() - .5) * 12, size: 4 + Math.random() * 6, kind: i % 4, color: colors[i % colors.length]! });
+        angle: Math.random() * 6, spin: (Math.random() - .5) * 12, size: 4 + Math.random() * 6, kind: i % 12 === 11 ? 3 : i % 3, color: colors[i % colors.length]! });
     }
     if (!this.raf) { this.lastFrame = performance.now(); this.raf = requestAnimationFrame(now => this.draw(now)); }
   }
@@ -133,7 +133,15 @@ export class WinMotion {
       if (p.kind === 0) ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * .65);
       else if (p.kind === 1) { ctx.beginPath(); ctx.moveTo(0, -p.size); ctx.lineTo(p.size, p.size); ctx.lineTo(-p.size, p.size); ctx.fill(); }
       else if (p.kind === 2) { ctx.beginPath(); for (let j = 0; j < 10; j++) { const r = j % 2 ? p.size * .4 : p.size; const a = j * Math.PI / 5; ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r); } ctx.closePath(); ctx.fill(); }
-      else { ctx.scale(Math.cos(p.age * 8) * .5 + .7, 1); ctx.fillRect(-2, -p.size * 2.5, 4, p.size * 5); }
+      else {
+        const length = p.size * 14;
+        ctx.scale(Math.cos(p.age * 8) * .5 + .7, 1); ctx.beginPath();
+        for (let j = 0; j <= 10; j++) {
+          const x = Math.sin(j * .8 + p.age * 9) * p.size * .75, y = -length / 2 + j * length / 10;
+          if (j === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = p.color; ctx.lineWidth = 3; ctx.stroke();
+      }
       ctx.restore();
     }
     if (this.particles.length) this.raf = requestAnimationFrame(time => this.draw(time));
