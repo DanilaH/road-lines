@@ -5,7 +5,7 @@
 ## Готово
 Подготовка, kit snapshot, AGENTS.md, stage-0 Phaser/Vite/Capacitor shell, Android generation/CI.
 Этап 1 реализован: 15 задач, лента/пунктир/head, сегментный ввод, откат/продолжение, worker hints, сохранения, first-clear и базовая награда.
-Локально: 110 tests, content validator, inspection/production browser smoke и все 15 реальных pointer-решений. Remote CI текущего этапа проверяется; см. STAGE1_VALIDATION.md.
+Локально: 110 tests, content validator, inspection/production browser smoke и все 15 реальных pointer-решений. Remote App and kit checks и Android debug build прошли на 6f41ebae01095679a460a2e0299062945477956f. См. STAGE1_VALIDATION.md.
 
 ## Следующий этап: 2
 Полный праздничный цикл: раскрытие клеток; импульс готовой фигуры и превращение в миниатюру; последовательные звёзды; многоэтапное полноэкранное конфетти; сбор монет; подарок и переход. Сочный звук и ощутимые native haptics. Затем первая сборка для плейтеста.

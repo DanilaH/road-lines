@@ -21,3 +21,11 @@
 Состояние жеста сохраняется с debounce 80 мс и обязательным flush на lifecycle/конце жеста; abrupt kill до flush не доказывается браузерным reload-тестом. Победа/монеты пишутся сразу одной заменой.
 Без Web Locks fallback имеет конфликт-детектор, а не полную межпроцессную блокировку. Нативные внешние receipts ещё не подключены — для них потребуется отдельный durable journal/ack поверх общего writer.
 Remote CI и Android compilation текущего коммита фиксируются после завершения прогона.
+
+## Remote CI
+Source commit 6f41ebae01095679a460a2e0299062945477956f:
+- App and kit checks success: https://github.com/DanilaH/road-lines/actions/runs/40937086291
+- Android debug build success: https://github.com/DanilaH/road-lines/actions/runs/40937086361
+- Artifact: https://github.com/DanilaH/road-lines/actions/runs/40937086361/artifacts/12925068229
+- Artifact ZIP sha256:2a05895fa1a6d6940c600bad55fd66628851733df6fbb126014522e4e6627fed, 4210208 bytes. Это хеш архива GitHub, не извлечённого APK.
+Clean npm ci, типы/110 tests, content audit, browser flows и Gradle assembleDebug пройдены. Устройство и release-signing не проверены.
