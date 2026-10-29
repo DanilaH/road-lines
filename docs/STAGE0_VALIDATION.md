@@ -29,3 +29,6 @@ dist/assets/web-CYXbfimm.js e44c1b9296e3ffc8839f29b9290feb647ca3e70884baccde4f2d
 dist/assets/web-DDhT1GId.js 87070cd4a015b8a4d1822127ee307344534a065d77254dd89356fdeef1ca1d34
 dist/index.html 5ffc9d1e789147d67f78e30dfb473094e5a0ba396acba08d53b4d0c730a2632e
 ```
+
+## Первый удалённый прогон
+Коммит 4e6ab971: npm ci и npm run check прошли на чистом runner. Browser install упал на Ubuntu 26.04, которую Playwright 1.56.1 не поддерживает. Android setup упал на удалённом из SDK каталога пакете tools. Исправление: runner ubuntu-24.04, setup-android packages=platform-tools; новый прогон проверяется отдельно.
