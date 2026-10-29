@@ -83,11 +83,11 @@ Update docs/IMPLEMENTATION_STATUS.md when a stage changes. Do not call the whole
 Baseline commands:
 - npm ci
 - npm run check (manifest integrity + application/kit TS + copied kit regression tests)
-- npm run test:browser (inspection build: play/pause/result at five viewports)
+- npm run test:browser (inspection build: five viewports plus all 15 puzzles via actual pointer input)
 - node tools/browser-smoke.mjs --production (production build, inspection route excluded)
 - npm run android:sync (production web build + deterministic Android generation/sync)
 - npm run android:build (JDK 21+, SDK 36; debug APK, not release acceptance)
-These currently verify the stage-0 shell and vendored utilities, not a playable puzzle.
+The stage-1 puzzle is playable. Kit tests, game tests, content validation and browser input flows are separate evidence; no physical-device acceptance is implied.
 
 When adding the application, add and run actual app build and relevant model/flow checks. Test meaningful invariants and failure boundaries, not implementation-mirroring trivial tests.
 - Route legality/undo/alternative solutions; independent content validator; worker cancellation/stale hints.

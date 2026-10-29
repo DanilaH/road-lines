@@ -16,15 +16,17 @@ Node 24, затем `npm ci` и `npm run dev`.
 `npm run build` собирает обычное приложение; `npm run preview` открывает сборку локально.
 
 ## Текущий этап
-Готов каркас: Phaser-поле, HUD, пауза, место баннера и отдельный статический результат. Рисование, solver, награды и настоящий рекламный SDK ещё впереди. Стартовая фигура и баланс — presentation fixtures, без сохранения и начислений.
+Работают 15 собственных задач: непрерывная лента и пунктир, быстрый свайп, обратный откат, отпускание/продолжение, пауза, рестарт, подсказка в worker и сохранение. Можно также двигаться стрелками после фокуса на поле.
+Принимается любое законное решение. За первое прохождение сохраняются 20 монет и отметка прохождения; повтор не дублирует награду. Сейчас результат статический: праздничные анимации, звук/вибрация — следующий этап. Каталог, колесо и реальные рекламные SDK ещё не подключены.
+На старте 3 подсказки; доказанный тупик предлагает бесплатный откат. Ошибка/таймаут поиска не тратит подсказку. Рекламное пополнение добавляется на этапе рекламы.
 
-Результат доступен только в inspection-сборке: `npm run build:inspect`, затем `npm run preview` и `?screen=result`. В обычной сборке этот параметр не включает результат.
+Inspection-сборка: `npm run build:inspect`, `npm run preview`, затем `?screen=result` для fixture результата или `?level=15` для заданного поля. В production query не управляет игрой; обычный результат появляется после реального решения.
 
 ## Проверки
-- `npm run check` — целостность переноса, типы приложения и kit, 97 regression tests.
-- `npm run test:browser` — пять viewport, пауза/возврат, результат, живое изменение размеров; screenshots в `.test-output`.
+- `npm run check` — целостность переноса, типы приложения и kit, 110 tests (97 kit + 13 game).
+- `npm run test:browser` — пять viewport, все 15 решений, откат/reload, worker hint, тупик, touch cancel/второй палец, изоляция вкладок, resize; screenshots в `.test-output`.
 - `node tools/browser-smoke.mjs --production` — тот же shell без inspection route.
 - `npm run android:sync` — production web build, создание/обновление Android с native overlays.
 - `npm run android:build` — debug APK при JDK 21+ и SDK 36. В CI есть отдельный Android workflow.
 
-[Android и воспроизводимость](docs/ANDROID_SETUP.md). Android debug APK успешно собран в [CI](https://github.com/DanilaH/road-lines/actions/runs/40930777331). На физическом устройстве ещё не проверен. Подробная проверка — [STAGE0_VALIDATION.md](docs/STAGE0_VALIDATION.md).
+[Android и воспроизводимость](docs/ANDROID_SETUP.md). Текущая Android debug сборка проверяется в [CI](https://github.com/DanilaH/road-lines/actions/workflows/android.yml). На физическом устройстве ещё не проверена. Подробная проверка — [STAGE1_VALIDATION.md](docs/STAGE1_VALIDATION.md).

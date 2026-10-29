@@ -9,10 +9,3 @@ export const presentation = {
   gutter: 20,
 } as const;
 
-// Presentation fixtures only. Stage 1 replaces these with validated level content.
-export const sampleCells: ReadonlyArray<readonly [number, number]> = [
-  [0, 0], [1, 0], [2, 0], [0, 1], [1, 1], [2, 1], [0, 2], [1, 2], [2, 2],
-];
-export const sampleRoute: ReadonlyArray<readonly [number, number]> = [
-  [0, 0], [0, 1], [0, 2], [1, 2], [1, 1], [1, 0], [2, 0], [2, 1], [2, 2],
-];

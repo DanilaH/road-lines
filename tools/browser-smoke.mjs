@@ -1,7 +1,7 @@
 import { chromium } from '@playwright/test';
 import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -74,6 +74,114 @@ try {
   await page.waitForFunction(() => document.querySelector('canvas')?.width === Math.round(document.querySelector('#board')?.clientWidth * Math.min(devicePixelRatio, 2)));
   assert.equal(await page.locator('canvas').count(), 1);
   await page.close();
+  // Exercise the production input pipeline with a real mouse, not a debug route setter.
+  const gameplayContext = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const gameplay = await gameplayContext.newPage();
+  const catalogText = readFileSync(resolve(root, 'src/content/levels.ts'), 'utf8');
+  const catalog = JSON.parse(catalogText.slice(catalogText.indexOf('= ') + 2).trim().replace(/;$/, ''));
+  const saveKey = 'road-lines.save.v1';
+  const errors = [];
+  gameplay.on('pageerror', e => errors.push(e.message));
+  const open = async () => { await gameplay.goto(url); await gameplay.locator('#app[data-ready=true]').waitFor(); };
+  const readSave = () => gameplay.evaluate(key => JSON.parse(localStorage.getItem(key)), saveKey);
+  const center = async (level, cell) => {
+    const b = await gameplay.locator('#board').boundingBox();
+    const xs = level.cells.map(c => c % level.width), ys = level.cells.map(c => Math.floor(c / level.width));
+    const columns = Math.max(...xs) - Math.min(...xs) + 1, rows = Math.max(...ys) - Math.min(...ys) + 1;
+    const size = Math.min(56 * Math.min(b.width / 390, 1.5), (b.width - 40) / (columns + (columns - 1) / 7), (b.height - 64) / (rows + (rows - 1) / 7));
+    const gap = size / 7;
+    return { x: b.x + (b.width - columns * size - (columns - 1) * gap) / 2 + (cell % level.width - Math.min(...xs)) * (size + gap) + size / 2,
+      y: b.y + (b.height - rows * size - (rows - 1) * gap) / 2 + (Math.floor(cell / level.width) - Math.min(...ys)) * (size + gap) + size / 2 };
+  };
+  const move = async p => gameplay.mouse.move(p.x, p.y);
+  await open();
+  const first = catalog[0];
+  await move(await center(first, first.start)); await gameplay.mouse.down();
+  await move(await center(first, 1)); await gameplay.mouse.up();
+  assert.deepEqual((await readSave()).path, [0, 1]);
+  await gameplay.reload(); await gameplay.locator('#app[data-ready=true]').waitFor();
+  assert.deepEqual((await readSave()).path, [0, 1]);
+  await move(await center(first, 1)); await gameplay.mouse.down(); await move(await center(first, 0)); await gameplay.mouse.up();
+  assert.deepEqual((await readSave()).path, [0]);
+  // One pointermove traverses both intermediate/last cells.
+  await move(await center(first, 0)); await gameplay.mouse.down(); await move(await center(first, 2)); await gameplay.mouse.up();
+  await gameplay.locator('.result').waitFor();
+  assert.equal((await readSave()).coins, 20);
+  await gameplay.reload(); await gameplay.locator('#app[data-ready=true]').waitFor();
+  assert.equal((await readSave()).coins, 20);
+  await gameplay.getByRole('button', { name: 'ДАЛЬШЕ', exact: true }).click();
+  await gameplay.locator('.play').waitFor();
+  assert.equal((await readSave()).levelId, catalog[1].id);
+  // All actual witnesses through the production input; reject no legal authored turn.
+  for (let index = 1; index < catalog.length; index++) {
+    const level = catalog[index];
+    await move(await center(level, level.start)); await gameplay.mouse.down();
+    for (const [step, cell] of level.witness.slice(1).entries()) {
+      await move(await center(level, cell));
+      if (index === 14 && step === 10) await gameplay.screenshot({ path: resolve(output, 'active-route.png') });
+    }
+    await gameplay.mouse.up(); await gameplay.locator('.result').waitFor();
+    assert.equal((await readSave()).completed.length, index + 1);
+    if (index < catalog.length - 1) { await gameplay.getByRole('button', { name: 'ДАЛЬШЕ', exact: true }).click(); await gameplay.locator('.play').waitFor(); }
+  }
+  assert.equal((await readSave()).coins, 300);
+  await gameplay.getByRole('button', { name: 'ПРОЙТИ СНОВА', exact: true }).click();
+  await gameplay.locator('.play').waitFor();
+  // A worker hint is spent only after a found continuation is presented.
+  await gameplay.getByRole('button', { name: 'Подсказка, осталось 3', exact: true }).click();
+  await gameplay.getByText('Бледная линия показывает продолжение.', { exact: true }).waitFor();
+  assert.equal((await readSave()).hints, 2);
+  await gameplay.getByRole('button', { name: 'Начать заново', exact: true }).click();
+  await move(await center(first, 0)); await gameplay.mouse.down(); await move(await center(first, 2)); await gameplay.mouse.up();
+  await gameplay.locator('.result').waitFor(); assert.equal((await readSave()).coins, 300);
+  // Restore a deterministic branch puzzle, then prove dead-end help is free.
+  await gameplay.evaluate(({ key, level }) => {
+    const s = JSON.parse(localStorage.getItem(key));
+    localStorage.setItem(key, JSON.stringify({ ...s, levelId: level.id, levelVersion: 1, path: [level.start] }));
+  }, { key: saveKey, level: catalog[2] });
+  await gameplay.reload(); await gameplay.locator('#app[data-ready=true]').waitFor();
+  const branch = catalog[2];
+  // A diagonal misses the central rectangles of the orthogonal neighbours.
+  await move(await center(branch, 0)); await gameplay.mouse.down(); await move(await center(branch, 4)); await gameplay.mouse.up();
+  assert.deepEqual((await readSave()).path, [0]);
+  await move(await center(branch, 0)); await gameplay.mouse.down();
+  await move(await center(branch, 1)); await move(await center(branch, 4)); await gameplay.mouse.up();
+  await gameplay.getByRole('button', { name: 'Подсказка, осталось 2', exact: true }).click();
+  await gameplay.getByRole('button', { name: 'Вернуться', exact: true }).waitFor();
+  assert.equal((await readSave()).hints, 2);
+  await gameplay.getByRole('button', { name: 'Вернуться', exact: true }).click();
+  assert.deepEqual((await readSave()).path, [0, 1]);
+  // Real protocol touch cancellation and a second finger cannot reset/redirect the route.
+  const cdp = await gameplay.context().newCDPSession(gameplay);
+  const touch = async (type, points) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: points });
+  const p1 = await center(branch, 1), p2 = await center(branch, 2), p5 = await center(branch, 5), p0 = await center(branch, 0);
+  await touch('touchStart', [{ ...p1, id: 1 }]);
+  await touch('touchMove', [{ ...p2, id: 1 }]);
+  await touch('touchCancel', []);
+  assert.deepEqual((await readSave()).path, [0, 1, 2]);
+  await touch('touchStart', [{ ...p2, id: 1 }]);
+  await touch('touchStart', [{ ...p2, id: 1 }, { ...p0, id: 2 }]);
+  await touch('touchMove', [{ ...p5, id: 1 }, { ...p0, id: 2 }]);
+  await touch('touchEnd', []);
+  assert.deepEqual((await readSave()).path, [0, 1, 2, 5]);
+  await cdp.detach();
+  // Once the pointer leaves the board, re-entry while still held cannot continue.
+  await move(await center(branch, 5)); await gameplay.mouse.down();
+  const outside = await gameplay.locator('#board').boundingBox();
+  await gameplay.mouse.move(outside.x + outside.width + 20, p5.y);
+  await move(await center(branch, 4)); await gameplay.mouse.up();
+  assert.deepEqual((await readSave()).path, [0, 1, 2, 5]);
+
+  // An unavailable worker search is neither a charged hint nor a claimed dead end.
+  await gameplay.route('**/assets/hint.worker-*.js', route => route.abort());
+  await gameplay.getByRole('button', { name: 'Подсказка, осталось 2', exact: true }).click();
+  await gameplay.getByText('Сейчас не удалось найти продолжение. Подсказка не потрачена.', { exact: true }).waitFor();
+  assert.equal((await readSave()).hints, 2);
+  const other = await gameplay.context().newPage();
+  await other.goto(url);
+  await other.getByText('Игра уже открыта в другой вкладке. Закрой её и попробуй снова.', { exact: true }).waitFor();
+  await other.close();
+  assert.deepEqual(errors, []); await gameplay.close(); await gameplayContext.close();
   writeFileSync(resolve(output, inspect ? 'browser-inspect.json' : 'browser-production.json'), JSON.stringify({ inspect, results }, null, 2));
   console.log(`Browser smoke: ${results.length} viewports passed (${inspect ? 'inspect' : 'production'}), plus live resize.`);
 } finally {

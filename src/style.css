@@ -57,3 +57,14 @@ svg { display: block; width: 24px; height: 24px; flex-shrink: 0; }
   .multiply { min-height: 52px; }
 }
 @media (max-width: 359px) { .hud { padding: 0 10px; } .tools { gap: 3px; } .wallet { padding: 0 5px; } .level { font-size: 21px; } }
+#board { pointer-events: auto; touch-action: none; outline: none; }
+#board canvas { pointer-events: none; }
+#board:focus-visible { outline: 2px dashed #b7a7df; outline-offset: -8px; }
+.result #board { pointer-events: none; }
+.tool.hint { position: relative; }
+.hint-count { position: absolute; right: 4px; bottom: 2px; font-size: 11px; font-weight: bold; }
+.notice { position: absolute; z-index: 12; left: 16px; right: 16px; bottom: calc(76px + env(safe-area-inset-bottom, 0px)); padding: 12px 14px; background: #f0ebf8; border-radius: 10px; font-size: 14px; line-height: 1.4; box-shadow: 0 2px 12px #44365e14; display: flex; align-items: center; gap: 12px; }
+.notice button { color: #654cad; padding: 10px; min-height: 44px; background: transparent; font-weight: bold; }
+.fatal { height: 100%; display: grid; align-content: center; gap: 20px; padding: 32px; text-align: center; }
+.fatal button { padding: 16px; border-radius: 10px; background: #7e67d9; color: white; }
+.earned { font-size: clamp(15px, 4.6vw, 22px); }
