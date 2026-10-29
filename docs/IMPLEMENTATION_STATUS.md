@@ -5,7 +5,7 @@
 ## Подготовка — готово
 План, AGENTS.md, kit snapshot, provenance, 97 regression tests и CI.
 
-## Этап 0 — каркас реализован; Android-компиляция ожидает CI
+## Этап 0 — готов; browser CI и Android debug build прошли
 - Phaser 4.2.1 + Vite + Capacitor 8.5.3, закреплённый lockfile.
 - HUD и статическая фигура; пауза/возврат; место баннера.
 - Статический результат в отдельной inspect-сборке.
@@ -13,10 +13,10 @@
 - Воспроизводимая Android-генерация с versioned portrait/inset/theme/icon overlays.
 - Browser smoke и Android debug workflow.
 - Типы/97 tests, production и inspection browser smoke на пяти viewport пройдены. Capacitor add/sync успешны, повторное применение overlays идемпотентно.
-- APK локально не скомпилирован: нет JDK 21/Android SDK. Remote CI и physical device acceptance не заявлены; см. STAGE0_VALIDATION.md.
+- На коммите e5b6edb43cf88e399fa9ac4060dbf8984d75d49a прошли App and kit checks и Android debug build. APK загружен в artifact road-lines-debug; физический телефон и release acceptance ещё не проверены. См. STAGE0_VALIDATION.md.
 
 ## Следующий этап: 1
-Модель маршрута, сегментный ввод, быстрый свайп, откат/продолжение, solver в worker, первые 15 задач, сохранение. Проверить Android workflow и исправить ошибки компиляции при наличии результата.
+Модель маршрута, сегментный ввод, быстрый свайп, откат/продолжение, solver в worker, первые 15 задач, сохранение.
 
 ## Затем
 2. Полный праздничный цикл — первая плейтест-сборка.

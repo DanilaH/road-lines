@@ -32,3 +32,11 @@ dist/index.html 5ffc9d1e789147d67f78e30dfb473094e5a0ba396acba08d53b4d0c730a2632e
 
 ## Первый удалённый прогон
 Коммит 4e6ab971: npm ci и npm run check прошли на чистом runner. Browser install упал на Ubuntu 26.04, которую Playwright 1.56.1 не поддерживает. Android setup упал на удалённом из SDK каталога пакете tools. Исправление: runner ubuntu-24.04, setup-android packages=platform-tools; новый прогон проверяется отдельно.
+
+## Подтверждённый удалённый результат
+Source commit e5b6edb43cf88e399fa9ac4060dbf8984d75d49a:
+- App and kit checks: success, run 40930777368; clean npm ci, typecheck/97 tests, inspection+production browser smoke.
+- Android debug build: success, run 40930777331; JDK 21, SDK 36, генерация/sync, Gradle assembleDebug — BUILD SUCCESSFUL.
+- Debug artifact: https://github.com/DanilaH/road-lines/actions/runs/40930777331/artifacts/12922741564
+- Artifact ZIP SHA-256: 91c9569d1c89b2ef7ae3d11870a9c56fd92447aeb9558c4393b774d7800f9685; размер ZIP 4 204 683 bytes. Это хеш архива GitHub, не хеш извлечённого APK.
+Предыдущие ограничения локальной среды остаются историей прогона, но нативная компиляция теперь подтверждена CI. Устройство/emulator не запускались; SDK рекламы и release-signing отсутствуют.

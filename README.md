@@ -27,4 +27,4 @@ Node 24, затем `npm ci` и `npm run dev`.
 - `npm run android:sync` — production web build, создание/обновление Android с native overlays.
 - `npm run android:build` — debug APK при JDK 21+ и SDK 36. В CI есть отдельный Android workflow.
 
-[Android и воспроизводимость](docs/ANDROID_SETUP.md). Локально APK не скомпилирован: нет SDK 36/JDK 21. Подробная проверка — [STAGE0_VALIDATION.md](docs/STAGE0_VALIDATION.md).
+[Android и воспроизводимость](docs/ANDROID_SETUP.md). Android debug APK успешно собран в [CI](https://github.com/DanilaH/road-lines/actions/runs/40930777331). На физическом устройстве ещё не проверен. Подробная проверка — [STAGE0_VALIDATION.md](docs/STAGE0_VALIDATION.md).
