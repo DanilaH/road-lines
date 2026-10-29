@@ -11,10 +11,14 @@
     "strict": true,
     "noEmit": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true
   },
   "include": [
     "vendor/mini-games-kit/src/**/*.ts",
-    "vendor/mini-games-kit/tests/**/*.ts"
+    "vendor/mini-games-kit/tests/**/*.ts",
+    "src/**/*.ts",
+    "tests/**/*.ts",
+    "vite.config.ts"
   ]
 }

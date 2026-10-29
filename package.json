@@ -10,10 +10,26 @@
     "verify:kit": "node tools/verify-kit.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "check": "npm run verify:kit && npm run typecheck && npm test"
+    "check": "npm run verify:kit && npm run typecheck && npm test",
+    "dev": "vite",
+    "build": "vite build",
+    "build:inspect": "vite build --mode inspect",
+    "preview": "vite preview --host 127.0.0.1",
+    "test:browser": "node tools/browser-smoke.mjs",
+    "android:sync": "npm run build && node tools/android.mjs",
+    "android:build": "node tools/android.mjs --build"
   },
   "devDependencies": {
     "typescript": "5.9.3",
-    "vitest": "5.0.5"
+    "vitest": "5.0.5",
+    "vite": "8.3.5",
+    "@capacitor/cli": "8.5.3",
+    "@playwright/test": "1.56.1"
+  },
+  "dependencies": {
+    "phaser": "4.2.1",
+    "@capacitor/core": "8.5.3",
+    "@capacitor/android": "8.5.3",
+    "@capacitor/app": "8.1.2"
   }
 }

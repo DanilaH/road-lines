@@ -29,3 +29,13 @@ RevisionSnapshotQueue пригоден только для полных обыч
 docs/reference-reproduction-plan.md определяет внешний результат, контент, цены и предварительные тайминги. Kit даёт механизмы, не баланс, графику и UX.
 В частности: generic Android recipe советует скрывать banner при dialogs; в Road Lines banner остаётся в pause, но скрыт при win/skin offer/wheel/fullscreen ad.
 Восьмисекторное колесо, три звезды за первое решение, цены и частота рекламы — решения v1, не доказанные правила конкурента.
+
+## 2026-10-29: каркас этапа 0
+Phaser 4.2.1, Vite 8.3.5, Capacitor core/cli/android 8.5.3, App plugin 8.1.2; версии закреплены lockfile. Phaser проверен фактической browser-сборкой.
+Поле/лента — Phaser Graphics; HUD, доступные кнопки/диалог и будущий native banner slot — DOM. Так сохраняются доступные кнопки и корректное измерение slot. Модель появится отдельно.
+Canvas backing store использует capped DPR до 2; геометрия фигуры остаётся в CSS-пикселях. Ввод этапа 1 должен учитывать ту же границу координат.
+Каркас портретный; max-width 600 CSS px на большом browser окне. Фигуры масштабируются относительно ширины, короткий viewport ограничивает высоту.
+Android app id: com.danilah.roadlines. Native overlays versioned в native/android; /android генерируется закреплённой CLI и не редактируется вручную. Native root единожды применяет system/cutout insets.
+Inspection result — fixture только в Vite mode inspect; production не переключается по query. Это не заработанная награда и не рабочий полный цикл.
+Lifecycle: document visibility + native App state + pause через kit coordinator; native Back переключает паузу. Startup ready после первого render, двух paint opportunities и platform setup. Есть сообщения ошибки/долгого запуска.
+Рекламный SDK не добавлен. Нативная компиляция локально не подтверждена; workflow подготовлен с JDK 21/SDK 36.

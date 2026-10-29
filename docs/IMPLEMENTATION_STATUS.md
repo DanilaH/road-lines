@@ -2,29 +2,28 @@
 
 Обновлено: 2026-10-29.
 
-## Готово
-- Подробный план воспроизведения референса.
-- Отбор и перенос TS-механизмов, API-документации и исходных regression tests mini-games-kit.
-- Отдельно закреплённый перенос Seeds receipt handoff.
-- Корневой AGENTS.md, карта интеграции, явные отличия от Yandex web bootstrap.
-- Инструменты проверки переноса и CI.
+## Подготовка — готово
+План, AGENTS.md, kit snapshot, provenance, 97 regression tests и CI.
 
-## Следующий этап: 0
-- Создать Phaser/Vite app и Capacitor Android shell.
-- Проверить Phaser version/API совместимость и актуальные native SDK требования.
-- Зафиксировать package id и воспроизводимую нативную структуру.
-- Собрать статические игровой экран и результат, portrait/safe-area/banner slot.
-- Привязать реальный/mock platform lifecycle, startup и диагностику.
-- Добавить команды app build, browser smoke и Android build.
+## Этап 0 — каркас реализован; Android-компиляция ожидает CI
+- Phaser 4.2.1 + Vite + Capacitor 8.5.3, закреплённый lockfile.
+- HUD и статическая фигура; пауза/возврат; место баннера.
+- Статический результат в отдельной inspect-сборке.
+- Resize/DPR, startup ready/ошибка, document/native lifecycle, native Back.
+- Воспроизводимая Android-генерация с versioned portrait/inset/theme/icon overlays.
+- Browser smoke и Android debug workflow.
+- Типы/97 tests, production и inspection browser smoke на пяти viewport пройдены. Capacitor add/sync успешны, повторное применение overlays идемпотентно.
+- APK локально не скомпилирован: нет JDK 21/Android SDK. Remote CI и physical device acceptance не заявлены; см. STAGE0_VALIDATION.md.
 
-## Ещё не реализовано
-Игровое поле/ввод, solver, уровни, экраны игры, награды, звук, вибрация, нативные SDK и приложение.
-Ни browser acceptance, ни device acceptance, ни signed APK сейчас не заявлены.
+## Следующий этап: 1
+Модель маршрута, сегментный ввод, быстрый свайп, откат/продолжение, solver в worker, первые 15 задач, сохранение. Проверить Android workflow и исправить ошибки компиляции при наличии результата.
 
-## Порядок далее
-1. Ввод, solver и 15 задач.
+## Затем
 2. Полный праздничный цикл — первая плейтест-сборка.
 3. Меню, темы, прогресс, колесо.
-4. Реклама и native lifecycle.
+4. Нативная реклама и durable receipts.
 5. 90 задач, RU/EN, release acceptance.
-6. Проверка сходства и только потом добавление нового.
+6. Сверка с референсом, затем новое.
+
+## Ещё не реализовано
+Механика/solver/контент, настоящие награды, звук/вибрация, Yandex Mobile Ads, APK для выпуска. Текущие поле, баланс и результат — статические fixtures для layout-приёмки.

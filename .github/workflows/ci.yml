@@ -1,4 +1,4 @@
-name: Preparation checks
+name: App and kit checks
 on:
   push:
   pull_request:
@@ -15,3 +15,6 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run check
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser
+      - run: node tools/browser-smoke.mjs --production

@@ -1,0 +1,8 @@
+{
+  "appId": "com.danilah.roadlines",
+  "appName": "Road Lines",
+  "webDir": "dist",
+  "backgroundColor": "#fafaf8",
+  "android": { "allowMixedContent": false },
+  "server": { "androidScheme": "https" }
+}
