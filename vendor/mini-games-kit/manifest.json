@@ -1,0 +1,653 @@
+{
+  "schema": 1,
+  "date": "2026-10-29",
+  "mode": "selected-source-snapshot",
+  "upstream": "DanilaH/mini-games-kit",
+  "main": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+  "seeds": "d4dee18c9b466e2b4a68d8d481db6dfc50ec9ee5",
+  "files": [
+    {
+      "path": "src/audio/pitch.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "src/audio/pitch.ts",
+      "upstream_blob_sha": "69fe87db40029dcb772a5935c23739bdb7369491",
+      "changes": [],
+      "local_sha256": "382d015e98c9a1bfedb908b48957a43ddb4054c5c4c58cd29b706ee0459290d0"
+    },
+    {
+      "path": "src/audio/presentation-mixer.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "src/audio/presentation-mixer.ts",
+      "upstream_blob_sha": "1632e2e05b64e5b36572472916ea4ce0c3a129e7",
+      "changes": [],
+      "local_sha256": "c6e05227b99d8a8a67299953f24906f4ceee27d522f35b32000366138f0030c2"
+    },
+    {
+      "path": "src/core/continuous-interaction.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "src/core/continuous-interaction.ts",
+      "upstream_blob_sha": "4cdf8753c3fef04351338afa60120a6a32a72fb3",
+      "changes": [],
+      "local_sha256": "305fea118236e622bc0ae3b0289f105df6ba1b4ed1c4b7722f230750b2c45191"
+    },
+    {
+      "path": "src/core/durable-pending-transaction.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "src/core/durable-pending-transaction.ts",
+      "upstream_blob_sha": "094833bd70dede009645f0ea8aec03b9bc0428ee",
+      "changes": [],
+      "local_sha256": "3706928a85122a92acbebd09aaff01bbfc8699513ec62c0a462998e8998757c1"
+    },
+    {
+      "path": "src/core/presentation-skip.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "src/core/presentation-skip.ts",
+      "upstream_blob_sha": "4f96e2ffb4b32b77b1eec579facb8398f2244623",
+      "changes": [],
+      "local_sha256": "5eafc737f64e74b2d4a2e2ed91bd95002365caac8f2308f9d9ada9d247b56726"
+    },
+    {
+      "path": "src/core/random.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "src/core/random.ts",
+      "upstream_blob_sha": "d4a11d7dec5b0ff930976624e182b69a450e268b",
+      "changes": [],
+      "local_sha256": "9e8252a960799a85c1cad987d0c92f95e0e59d6d6b47de372255339328e74249"
+    },
+    {
+      "path": "src/core/render-density.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "src/core/render-density.ts",
+      "upstream_blob_sha": "904a72a8b491052ccad0c2cc9333015dcb15a625",
+      "changes": [],
+      "local_sha256": "31bd4b12070acd5aa30a268f28c783a8117b64c9580254b36904d08848ccbddc"
+    },
+    {
+      "path": "src/core/value-transfer.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "src/core/value-transfer.ts",
+      "upstream_blob_sha": "1d49812e27265f9b1186b43ffb93abe3c269c53e",
+      "changes": [],
+      "local_sha256": "ba94eda21af4259edc8ce6ee622a3fba3b16d6c674f532dab172c86c9d88b851"
+    },
+    {
+      "path": "src/layout/native-banner-placement.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "src/layout/native-banner-placement.ts",
+      "upstream_blob_sha": "9c1b0b604a6205f8235d44062ca8d588e1a58c19",
+      "changes": [],
+      "local_sha256": "d19f38332bd380af3f2c7591acb467bfae6bd84456ac08dd98c4b967a92577a3"
+    },
+    {
+      "path": "src/layout/viewport-runtime.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "src/layout/viewport-runtime.ts",
+      "upstream_blob_sha": "a823a92460f65d88ec498cfe8c02b2331b0c7514",
+      "changes": [],
+      "local_sha256": "aa36ba5e546925e7544c488d1076c6db21554c092f4161f114796a72b2e6ebea"
+    },
+    {
+      "path": "src/platform/activity.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "src/platform/activity.ts",
+      "upstream_blob_sha": "4fc3f142641cc1164087c5c4506bba5d1574bafa",
+      "changes": [],
+      "local_sha256": "64abf913a4ff46df908cb4838f0490628b9f2951e72501f0bfb0a6155d4d1606"
+    },
+    {
+      "path": "src/platform/analytics.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "src/platform/analytics.ts",
+      "upstream_blob_sha": "4abcbb4f4419cfdde6b4d3eb20d657a01c35bc74",
+      "changes": [],
+      "local_sha256": "457de36af7cfc04e34bab19d6da9601a8ce72847774b5e34266d556cfb2770f2"
+    },
+    {
+      "path": "src/platform/interstitial-gate.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "src/platform/interstitial-gate.ts",
+      "upstream_blob_sha": "0633853b944f6b2fb9f444670e1fdc57adbe8ed5",
+      "changes": [],
+      "local_sha256": "f625f985b0dded85826af4792c1ac4381132e259b006d91835cdd8fcc56cd982"
+    },
+    {
+      "path": "src/platform/json-repository.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "src/platform/json-repository.ts",
+      "upstream_blob_sha": "483a2b00784c896cdf06363255842d04e9ae33a3",
+      "changes": [],
+      "local_sha256": "bcbc9d6174b44273a3c5233413fb4ab7f14c4a44081bb1ab8aeda03d86c125f2"
+    },
+    {
+      "path": "src/platform/revision-snapshot-queue.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "src/platform/revision-snapshot-queue.ts",
+      "upstream_blob_sha": "90997c897afcb2e343bb790e716df2b3f8bdb5be",
+      "changes": [],
+      "local_sha256": "71bf338c48f8883b9132752d8d95b3909aeca11d139865ac179dddfc1a1387f9"
+    },
+    {
+      "path": "src/platform/storage.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "src/platform/storage.ts",
+      "upstream_blob_sha": "d615fd98470d0d3dbaad5a30baf414cac6bdc00b",
+      "changes": [],
+      "local_sha256": "23c63de83fc0aea2dc65154f56777877152a1979d4a8df0be738d4159468d68c"
+    },
+    {
+      "path": "src/startup/diagnostic-export.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "src/startup/diagnostic-export.ts",
+      "upstream_blob_sha": "6e3bd44ca1825457e1ad3817e7fd542c113c3a25",
+      "changes": [],
+      "local_sha256": "2f4a77ed63f2066a792aaa462200b8db9dd8c7a79c970d6f78bbe96d3240ed81"
+    },
+    {
+      "path": "src/startup/preload.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "src/startup/preload.ts",
+      "upstream_blob_sha": "72c3549340ad3bc47dbdd3220c2cb7c28e3cba70",
+      "changes": [],
+      "local_sha256": "174a07203d65b29e12c1d8fde84d8116e27d2228d9efcb2da6f98b7b834232e6"
+    },
+    {
+      "path": "src/startup/resource-diagnostics.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "src/startup/resource-diagnostics.ts",
+      "upstream_blob_sha": "71551829e53e2cb3680f6042ac95c2d8748a27f7",
+      "changes": [],
+      "local_sha256": "5788c2eda55d00c43d15d5e5027b9b5c43444498b558a0af4c682f2dc5b58b49"
+    },
+    {
+      "path": "src/startup/timeline.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "src/startup/timeline.ts",
+      "upstream_blob_sha": "6657d302a0f1745ae1b11a351290a184a7f1a66d",
+      "changes": [],
+      "local_sha256": "69ff6b5efdeb7fcc8b8879bf286b0bf1697af3305801816b270ed005e5f6a928"
+    },
+    {
+      "path": "src/audio/continuous-noise-texture.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "src/audio/continuous-noise-texture.ts",
+      "upstream_blob_sha": "1c4ac44ad27853ee6b3a8e0f054cf67824a033b3",
+      "changes": [],
+      "local_sha256": "a3ba325fb27aefcbd1fad987de713541aadb68e37fc041a6e2f4806f68397054"
+    },
+    {
+      "path": "src/audio/index.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "src/audio/index.ts",
+      "upstream_blob_sha": "7a681fdcbf4a420f8702919106516b3f41f0d693",
+      "changes": [],
+      "local_sha256": "d862d2808a415d4e72df4f2ee477f98b20961820e78d4ee5e64aaca1e9b68a69"
+    },
+    {
+      "path": "src/core/index.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "src/core/index.ts",
+      "upstream_blob_sha": "fef55a145b8bb3dd979f2458877f09c26c6a181a",
+      "changes": [],
+      "local_sha256": "3fd3a959aecbb1d807f85aee48fb7eb80cdd9d1cfe84c27beaa7de38318fac78"
+    },
+    {
+      "path": "src/startup/index.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "src/startup/index.ts",
+      "upstream_blob_sha": "900595f09055f42e5357f16bde6001e382534ad2",
+      "changes": [],
+      "local_sha256": "d1f2722bed5ab02db669ecc04c7c9a309ca5c1b5d4119c7aa48e151b5047d6a6"
+    },
+    {
+      "path": "tests/activity.test.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "tests/activity.test.ts",
+      "upstream_blob_sha": "ec9c60e811144c113912450741d34228667fcfd7",
+      "changes": [],
+      "local_sha256": "0853ffd57dd8951b2f960efaa015b73b2cacccd13ec999b947a49bb2d8c6e1eb"
+    },
+    {
+      "path": "tests/interstitial-gate.test.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "tests/interstitial-gate.test.ts",
+      "upstream_blob_sha": "c27adb30d96c3d11b359f1282bac48e5d8eb8030",
+      "changes": [],
+      "local_sha256": "cba2a06fb263c995d0750c870df01cd55d0f00cb98c77bec6b8f8a61fb2cd055"
+    },
+    {
+      "path": "tests/json-repository.test.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "tests/json-repository.test.ts",
+      "upstream_blob_sha": "b419a051666905b58b45121e73674d1570d91036",
+      "changes": [],
+      "local_sha256": "46a63e6cd544f8fb4d61eb41b871ff8524c62ae6b028f44a03dcf9acc8475622"
+    },
+    {
+      "path": "tests/revision-snapshot-queue.test.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "tests/revision-snapshot-queue.test.ts",
+      "upstream_blob_sha": "4fca92d66b8958c13678b885505744c050f7dc35",
+      "changes": [],
+      "local_sha256": "12e76fd4fddc912e891ae91472215c5467a6064392ca805a915747a30b6c64f0"
+    },
+    {
+      "path": "tests/native-banner-placement.test.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "tests/native-banner-placement.test.ts",
+      "upstream_blob_sha": "75dd431e422111f997a5faac33c13be6959351d0",
+      "changes": [],
+      "local_sha256": "df2ff85196ed548f97149b79ad72801e6c4ae8c44ffd67a924dcc2b7d0c4ffde"
+    },
+    {
+      "path": "tests/viewport-runtime.test.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "tests/viewport-runtime.test.ts",
+      "upstream_blob_sha": "537d83bc5d7b2ca25cf9e671770dcc2d0de9ece3",
+      "changes": [],
+      "local_sha256": "8d05fdd28bc5c353f2110e8feda7c496285f83e9d0f8bd2a754d7e4b4a46d2d2"
+    },
+    {
+      "path": "tests/durable-pending-transaction.test.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "tests/durable-pending-transaction.test.ts",
+      "upstream_blob_sha": "9bfe0fe34cd7f2a2d50b9141a820cc5a20645a4f",
+      "changes": [],
+      "local_sha256": "60287fcba7b5aa0ec7c3de5e9268526ab6b8d9f486df893f393a1096aa17f8ad"
+    },
+    {
+      "path": "tests/presentation-skip.test.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "tests/presentation-skip.test.ts",
+      "upstream_blob_sha": "731eabb2b46f4d84b09cf32bb40fca8afc99c8b5",
+      "changes": [],
+      "local_sha256": "ea49e643077b56ff9cf832f31b11fa5d5f33f744302f6d93f30fd5ee4d33a287"
+    },
+    {
+      "path": "tests/random.test.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "tests/random.test.ts",
+      "upstream_blob_sha": "5da73385f27f6692b2daeaf0537dbd5d6921d688",
+      "changes": [],
+      "local_sha256": "b059809ebfe0f2002e33d8afc6b7c42aebd26eda94fa4f67fcc825eb776460f2"
+    },
+    {
+      "path": "tests/render-density.test.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "tests/render-density.test.ts",
+      "upstream_blob_sha": "f7e1c25e32a17fc9fd1cc2463da7646d3c2936b4",
+      "changes": [],
+      "local_sha256": "0cb8a236bafc0f23f413a87ea19d4504729ff61c59e495dd1ea4993ca7693802"
+    },
+    {
+      "path": "tests/value-transfer.test.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "tests/value-transfer.test.ts",
+      "upstream_blob_sha": "cc0614adae30c0a39adb94cab9000fa3adb36663",
+      "changes": [],
+      "local_sha256": "a12d706246ea192461df75743273e28c711b37357d664b6fcd73356215fee00c"
+    },
+    {
+      "path": "tests/presentation-mixer.test.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "tests/presentation-mixer.test.ts",
+      "upstream_blob_sha": "7cc7b9df98d44e781c48ec8ecc7cceffbc17a3be",
+      "changes": [],
+      "local_sha256": "a8c193de5f4e53f5319195ffe60c7822a538c50e1f9ef3d716d250201e25f6c8"
+    },
+    {
+      "path": "tests/audio-presentation.test.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "tests/audio-presentation.test.ts",
+      "upstream_blob_sha": "83fb56d7da007599fa5b45e60e792b4fef928744",
+      "changes": [],
+      "local_sha256": "15cfcf4c3ec64a7b0b6ddd8ed3c93624ccad10b5d3d82c1b6a2b3acf640b0f30"
+    },
+    {
+      "path": "tests/startup-runtime.test.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "tests/startup-runtime.test.ts",
+      "upstream_blob_sha": "e3e0e8a0ba8857657c9d70e03fb23fe84e959741",
+      "changes": [],
+      "local_sha256": "19084f413e4ed8336275a1202b698b3128b6e4ea15c5f5ad17a12082758ada60"
+    },
+    {
+      "path": "tests/continuous-interaction.test.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "tests/continuous-interaction.test.ts",
+      "upstream_blob_sha": "f901979a23a78cfd14939fd0db5d7d7878fdde62",
+      "changes": [],
+      "local_sha256": "7a87571e1ee219f20e01b99346b987227fcdd051aa13f88d90afe7b8be2ea18c"
+    },
+    {
+      "path": "docs/CORE_PRIMITIVES.md",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "docs/CORE_PRIMITIVES.md",
+      "upstream_blob_sha": "a96ab1e0359ecafcfbff84314c614a7650062c91",
+      "changes": [],
+      "local_sha256": "f32f5736110d216b07e1f7628f01912a378e8f29ebc32b9d490e6252fdc864d8"
+    },
+    {
+      "path": "docs/core/DURABLE_PENDING_TRANSACTION.md",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "docs/core/DURABLE_PENDING_TRANSACTION.md",
+      "upstream_blob_sha": "68a856b81d39227236bf9f42debce87f8d732dee",
+      "changes": [],
+      "local_sha256": "1ae795149d6c10008bc53722221f8406ae901ddc16af28d994b109269f16313e"
+    },
+    {
+      "path": "docs/core/PRESENTATION_SKIP.md",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "docs/core/PRESENTATION_SKIP.md",
+      "upstream_blob_sha": "1dd7f1c7dea33d6ff19796e392ad5166c2bda627",
+      "changes": [],
+      "local_sha256": "0c55190d9bd28472f635b85bd27829aa9b35aa9089e90bd65067e72d24b061a7"
+    },
+    {
+      "path": "docs/core/RANDOM.md",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "docs/core/RANDOM.md",
+      "upstream_blob_sha": "52bf3a2d802400af70f6b91b4acbc5fc746fdb01",
+      "changes": [],
+      "local_sha256": "2d7db3d7123abc1c0e935c5cf994ef2256ef891fd4123e4690d49906d11188d4"
+    },
+    {
+      "path": "docs/core/RENDER_DENSITY.md",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "docs/core/RENDER_DENSITY.md",
+      "upstream_blob_sha": "fa9a2b014f217f24f562d0745abf10b17d6ef637",
+      "changes": [],
+      "local_sha256": "3c617d278c1963b218bc7061007ba7d12ab857b7c4e5aaef7ae5f3d19fded6c8"
+    },
+    {
+      "path": "docs/core/VALUE_TRANSFER.md",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "docs/core/VALUE_TRANSFER.md",
+      "upstream_blob_sha": "3c74ee231adb902e04850a91fc12302675991aa7",
+      "changes": [],
+      "local_sha256": "bd6584e18d6c6dbf6573adfa591a2602ef60db80cd303035c0b1049af6830fe8"
+    },
+    {
+      "path": "docs/core/CONTINUOUS_INTERACTION.md",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "docs/core/CONTINUOUS_INTERACTION.md",
+      "upstream_blob_sha": "619c5914d86063c8b1e2a48aa47a084e63ae7253",
+      "changes": [],
+      "local_sha256": "795537625005015aa84b33289f2dfb8bde8bf2a190ff8519c686403c648b9e81"
+    },
+    {
+      "path": "docs/platform/GAMEPLAY_ACTIVITY.md",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "docs/platform/GAMEPLAY_ACTIVITY.md",
+      "upstream_blob_sha": "3b07182a29e0dcff6a181a6bff548cb74ca1a14e",
+      "changes": [],
+      "local_sha256": "af9bd49440ee5fcb9a0c700e78d42c5d691907117ad3f5c358f14da744015a98"
+    },
+    {
+      "path": "docs/platform/INTERSTITIAL_GATE.md",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "docs/platform/INTERSTITIAL_GATE.md",
+      "upstream_blob_sha": "a89ff3dac32262eadfff0a5fe66f6bbe6128c88f",
+      "changes": [],
+      "local_sha256": "7af73906e67e23e6a75cd3d779136d2217cec0f5115cf1c3a7709b4fb0ec7aa2"
+    },
+    {
+      "path": "docs/platform/JSON_REPOSITORY.md",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "docs/platform/JSON_REPOSITORY.md",
+      "upstream_blob_sha": "a4b90ac8c103d64395ec9c435dc87f10b876ac8f",
+      "changes": [],
+      "local_sha256": "6fb0513ada18104b6b3ec5cc410827da96ebe8412f4de56cb7d8297155663d97"
+    },
+    {
+      "path": "docs/platform/REVISION_SNAPSHOT_QUEUE.md",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "docs/platform/REVISION_SNAPSHOT_QUEUE.md",
+      "upstream_blob_sha": "5ec0f0be364438f8801c5592aca7fad6418b5a4e",
+      "changes": [],
+      "local_sha256": "4695b5c9688321691713eeb6fff89384b2105cf5c974d361e7b63e554362929b"
+    },
+    {
+      "path": "docs/platform/SAVE_REPAIR.md",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "docs/platform/SAVE_REPAIR.md",
+      "upstream_blob_sha": "1b01aba0187341355483351f3932a199f0f7bb97",
+      "changes": [],
+      "local_sha256": "ec4a4a1a4d2be8d099ef055f5c3a80fa475da1adf96b956339439204f6015aae"
+    },
+    {
+      "path": "docs/platform/STORAGE.md",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "docs/platform/STORAGE.md",
+      "upstream_blob_sha": "1314dd6fbcf242eadb472a480d817ce4ac40ce75",
+      "changes": [],
+      "local_sha256": "8548f4d28d1894f13a035e105fe90224ac28a8f41f81edcacab3ab60ff3b1dbd"
+    },
+    {
+      "path": "docs/layout/NATIVE_BANNER_PLACEMENT.md",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "docs/layout/NATIVE_BANNER_PLACEMENT.md",
+      "upstream_blob_sha": "7d9a6507c5038deaeaa2109e5f8d73d8b2e7b202",
+      "changes": [],
+      "local_sha256": "49fb032b656b58ea97ebddf3d88f3b6d567720cc9d90053ec6e8b31ef7a17a68"
+    },
+    {
+      "path": "docs/layout/VIEWPORT_RUNTIME.md",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "docs/layout/VIEWPORT_RUNTIME.md",
+      "upstream_blob_sha": "621e7de6277b773507e3b6b4312eca05c6696639",
+      "changes": [],
+      "local_sha256": "cb77c38054441068db912f67c19c84959f9c4286d700b8b8a563605deb26dc22"
+    },
+    {
+      "path": "docs/audio/PRESENTATION_MIXER.md",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "docs/audio/PRESENTATION_MIXER.md",
+      "upstream_blob_sha": "79a077e5342ed620c2ff984dea54af518f0ff998",
+      "changes": [],
+      "local_sha256": "c7f09a8d13d50844f1c4084c72dd152d7b7e7eb85904e950e826b020dafd2ec4"
+    },
+    {
+      "path": "docs/audio/PITCH.md",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "docs/audio/PITCH.md",
+      "upstream_blob_sha": "1f5303a503bb6d8ac92334f2f8859cb3b7ffda0d",
+      "changes": [],
+      "local_sha256": "c7d472bb5202f7ba716a86c9f315db4b30046e0eed50685fd4f09824b0a26b68"
+    },
+    {
+      "path": "docs/startup/STARTUP_RUNTIME.md",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "docs/startup/STARTUP_RUNTIME.md",
+      "upstream_blob_sha": "d0cbfc0d3704a4a10e7a0c47a8716fab581f2939",
+      "changes": [],
+      "local_sha256": "d9c7a7c9b093aba7dce6b7c566f5300976f44c3e9b91d1ed2feeabd01b9f287e"
+    },
+    {
+      "path": "docs/PERFORMANCE_PLAYBOOK.md",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "docs/PERFORMANCE_PLAYBOOK.md",
+      "upstream_blob_sha": "f0f763b2ba53e20fd077ef0fc6dde34012a3b863",
+      "changes": [],
+      "local_sha256": "a15f753efb9ad4dd00f16ccd6026b7427b755c39e814e08d6df0995a390924b0"
+    },
+    {
+      "path": "docs/ONBOARDING_PLAYBOOK.md",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "docs/ONBOARDING_PLAYBOOK.md",
+      "upstream_blob_sha": "f93ac91d1ab21aef2740ab8b3693d2cc0319450c",
+      "changes": [],
+      "local_sha256": "3929d4ee764a3caba01a52b4c032fb8c10951634dc8f6e72aa6a127b311051b6"
+    },
+    {
+      "path": "docs/LOCALIZATION_AND_STORE_MEDIA.md",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "docs/LOCALIZATION_AND_STORE_MEDIA.md",
+      "upstream_blob_sha": "45c5244b73418ab345d5d034c8d9dc769d728f71",
+      "changes": [
+        "Omitted relative documentation targets link to pinned upstream."
+      ],
+      "local_sha256": "32059c8049329819d2459d647df646772da42cc9d7345f5ec3a951e8636423ea"
+    },
+    {
+      "path": "docs/assets/LOADING_POLICY.md",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "docs/assets/LOADING_POLICY.md",
+      "upstream_blob_sha": "f377c630f54403874a74a4cd205b551a6229951c",
+      "changes": [],
+      "local_sha256": "3c771274ade11555eeaeaa7605503a63ddf38a512c26b6926f65503afe000970"
+    },
+    {
+      "path": "docs/audio/CONTINUOUS_NOISE_TEXTURE.md",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "docs/audio/CONTINUOUS_NOISE_TEXTURE.md",
+      "upstream_blob_sha": "a939a51cd276df3bb54ce48e29e21e6f9e513829",
+      "changes": [],
+      "local_sha256": "59673bf447fceb7efaf9642a0950137bd52d84dc534db11c56b138fdcbd959ba"
+    },
+    {
+      "path": "src/platform/durable-receipt-queue.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "d4dee18c9b466e2b4a68d8d481db6dfc50ec9ee5",
+      "upstream_path": "src/platform/durable-receipt-queue.ts",
+      "upstream_blob_sha": "3523339fa49ab8ec1fb1645dc0d2c3de8b340e5d",
+      "changes": [],
+      "local_sha256": "3ffcf83427cc33a43316e6b647cec60b5b5c5b49e6f65eec08009e31137db154"
+    },
+    {
+      "path": "tests/durable-receipt-queue.test.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "d4dee18c9b466e2b4a68d8d481db6dfc50ec9ee5",
+      "upstream_path": "tests/durable-receipt-queue.test.ts",
+      "upstream_blob_sha": "e6e9db84e1d07e021eee236deb8067a83e5c7ea4",
+      "changes": [],
+      "local_sha256": "49eb928ad0cb8d85639d94062430ac87beb0d76488622bfdeab980aa70bb6cf9"
+    },
+    {
+      "path": "tests/receipt-snapshot-integration.test.ts",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "d4dee18c9b466e2b4a68d8d481db6dfc50ec9ee5",
+      "upstream_path": "tests/receipt-snapshot-integration.test.ts",
+      "upstream_blob_sha": "acabcf34febcc602377233ceb2780194ea026a1b",
+      "changes": [],
+      "local_sha256": "b3b72b89a1e18cb8d2c737877e394940f6b14a4a4a174b8cc4dd20203b7ddd2b"
+    },
+    {
+      "path": "docs/platform/DURABLE_RECEIPT_QUEUE.md",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "d4dee18c9b466e2b4a68d8d481db6dfc50ec9ee5",
+      "upstream_path": "docs/platform/DURABLE_RECEIPT_QUEUE.md",
+      "upstream_blob_sha": "ed8286f60a02a2b0cd67d9ac4a7db2b8f447ef3f",
+      "changes": [],
+      "local_sha256": "cab33af535e0f8d5160f3d8fc89810ea6e18c6be22da1b7a916d3c79264ad569"
+    },
+    {
+      "path": "docs/android/ADS_AND_LIFECYCLE.md",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "d4dee18c9b466e2b4a68d8d481db6dfc50ec9ee5",
+      "upstream_path": "docs/android/ADS_AND_LIFECYCLE.md",
+      "upstream_blob_sha": "78626b106bace9463acac96e6bf0f7a2368b4cfe",
+      "changes": [
+        "Omitted relative documentation targets link to pinned upstream."
+      ],
+      "local_sha256": "ca2da1ddd7d6e7acf92c44fc39e6fdb8ff426e94a5bb7ecde4ffda9a6594f7a5"
+    },
+    {
+      "path": "docs/ANDROID_RELEASE_ACCEPTANCE.md",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "d4dee18c9b466e2b4a68d8d481db6dfc50ec9ee5",
+      "upstream_path": "docs/ANDROID_RELEASE_ACCEPTANCE.md",
+      "upstream_blob_sha": "747ff018297afed61ab3443ce37385f4ba9216b5",
+      "changes": [
+        "Omitted relative documentation targets link to pinned upstream."
+      ],
+      "local_sha256": "684e8088de724fd0c4248d230e68f6bf41cb17d1f4c7c50d53c649e7432eb8f6"
+    },
+    {
+      "path": "LICENSE-NOTICE.md",
+      "origin": "DanilaH/mini-games-kit",
+      "ref": "5450f9db344aacb5acdc103b4199fd8aeb11b10d",
+      "upstream_path": "LICENSE-NOTICE.md",
+      "upstream_blob_sha": "2176fe83177b9fd2cb5304f568e7ff72fc57a51f",
+      "changes": [],
+      "local_sha256": "128ee1c93a6d2161b974a90a4d3c4673cb632cd1ac3ed626c7ec86540bfa9726"
+    },
+    {
+      "path": "src/platform/index.ts",
+      "origin": "local",
+      "changes": [
+        "Subset barrel exports only copied modules."
+      ],
+      "local_sha256": "0e38b888c0e13896f91108d380c1cf7ff0f49152fa32ed27de37407e741da4d8"
+    },
+    {
+      "path": "src/layout/index.ts",
+      "origin": "local",
+      "changes": [
+        "Subset barrel exports only copied modules."
+      ],
+      "local_sha256": "f8792b88b13276fe1ceccedf0b6c79cc75c7cd090322296e10dfb7cfdc5a2c72"
+    }
+  ]
+}

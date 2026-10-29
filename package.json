@@ -1,0 +1,19 @@
+{
+  "name": "road-lines",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "verify:kit": "node tools/verify-kit.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "check": "npm run verify:kit && npm run typecheck && npm test"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "vitest": "5.0.5"
+  }
+}

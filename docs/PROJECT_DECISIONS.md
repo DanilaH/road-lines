@@ -1,0 +1,31 @@
+# Road Lines — решения проекта
+
+## 2026-10-29: Android-first вместо Yandex Games web bootstrap
+Контракт продукта: TypeScript + Phaser + Vite + Capacitor; Android/RuStore, портрет. Нативная реклама Yandex Mobile Ads.
+Шаблон kit bootstrap/yandex-phaser предназначен для Yandex Games web, использует веб-SDK, GameplayAPI/LoadingAPI и landscape/portrait gate. Его обязательная политика относится к новым Yandex Games web-проектам, которым Road Lines сейчас не является.
+
+Замена: отобранные framework-independent модули с точными source SHA плюс собственный Capacitor scaffold на этапе 0. Сохраняем принципы: real/mock separation, осмысленный first-presentable-frame, диагностика запуска, безопасный viewport, cleanup и отдельная release-приёмка.
+Не переносим веб-Player Data, веб-рекламу, Yandex DRAFT/upload audit и landscape sizing как рабочие Android-механизмы.
+Если появится отдельный Yandex Games web target, пересмотреть bootstrap для этого target явно.
+Доказательство текущего этапа: API/исходники/тесты донора проверены; Android scaffold ещё не создан.
+
+## 2026-10-29: локальный source snapshot вместо Git dependency
+Kit experimental, а нужная receipt queue ещё в отдельной ветке. В vendor/mini-games-kit переносится выбранный замкнутый набор TS-модулей, focused docs и регрессионных тестов.
+main: 5450f9db344aacb5acdc103b4199fd8aeb11b10d.
+Seeds extraction: d4dee18c9b466e2b4a68d8d481db6dfc50ec9ee5.
+Не мержим ветки донора и не создаём зависимость от moving branch. Manifest фиксирует происхождение каждого файла. Код и тесты без семантических изменений; два barrel-файла сокращены до реально перенесённых exports. Ссылки omitted docs направлены на закреплённый upstream.
+Это перенос, а не доказательство интеграции модулей в игру.
+
+## 2026-10-29: portrait v1 и viewport kit
+BrowserViewportWatcher и resolveViewportState могут помочь с наблюдением геометрии. Экспортированные landscape sizing helpers сохранены для целостности исходника/его регрессионных тестов, но НЕ являются раскладкой Road Lines.
+Не вызывать default orientation blocker, который блокирует portrait. Собственная портретная раскладка и native safe insets обязательны.
+
+## 2026-10-29: награды и автосохранения
+Для локального выбора награды — DurablePendingTransactionSession. Для нативного earned callback — DurableReceiptQueue. Это разные границы.
+RevisionSnapshotQueue пригоден только для полных обычных снимков. Нужна собственная сериализация всех изменений сохранения, остановка устаревших producers и rebase после транзакции. Нельзя считать две независимые очереди одной транзакцией.
+Дедупликация, схема кошелька, receipt targets и нативный журнал остаются работой Road Lines.
+
+## 2026-10-29: приоритет продуктового плана
+docs/reference-reproduction-plan.md определяет внешний результат, контент, цены и предварительные тайминги. Kit даёт механизмы, не баланс, графику и UX.
+В частности: generic Android recipe советует скрывать banner при dialogs; в Road Lines banner остаётся в pause, но скрыт при win/skin offer/wheel/fullscreen ad.
+Восьмисекторное колесо, три звезды за первое решение, цены и частота рекламы — решения v1, не доказанные правила конкурента.
