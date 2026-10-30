@@ -1,3 +1,4 @@
+import type { Level } from '../core/model';
 import { levelSets, isLevelAvailable } from '../core/progression';
 import type { GameSave } from '../services/save';
 import { canSpin } from '../core/rewards';
@@ -8,6 +9,16 @@ import { coin, icon } from './icons';
 
 export type Screen = 'game' | 'home' | 'sets' | 'levels' | 'themes' | 'wheel';
 const emblem = `<div class="hero-board" aria-hidden="true"><svg class="menu-emblem" viewBox="0 0 240 220"><defs><linearGradient id="hero-ribbon" x1="0" y1="0" x2=".3" y2="1"><stop stop-color="var(--ribbon)"/><stop offset="1" stop-color="color-mix(in srgb,var(--ribbon),black 17%)"/></linearGradient></defs><g class="hero-cells" fill="var(--empty)"><rect x="24" y="26" width="56" height="50" rx="7"/><rect x="92" y="26" width="56" height="50" rx="7"/><rect x="160" y="26" width="56" height="50" rx="7"/><rect x="24" y="88" width="56" height="50" rx="7"/><rect x="92" y="88" width="56" height="50" rx="7"/><rect x="160" y="88" width="56" height="50" rx="7"/><rect x="24" y="150" width="56" height="50" rx="7"/><rect x="92" y="150" width="56" height="50" rx="7"/><rect x="160" y="150" width="56" height="50" rx="7"/></g><path d="M52 51h136v62H52v62h68" fill="none" stroke="color-mix(in srgb,var(--ribbon),black 25%)" stroke-width="50" stroke-linejoin="round" transform="translate(0 6)"/><path d="M52 51h136v62H52v62h68" fill="none" stroke="url(#hero-ribbon)" stroke-width="50" stroke-linejoin="round"/><path d="M30 28h180" stroke="#fff" stroke-opacity=".23" stroke-width="2" stroke-linecap="round"/><path d="M52 51h136v62H52v62h68" fill="none" stroke="var(--trail)" stroke-width="3" stroke-linecap="round" stroke-dasharray="1 10"/><circle cx="52" cy="51" r="10" fill="var(--trail)"/><circle cx="120" cy="175" r="9" fill="var(--ribbon)" stroke="var(--trail)" stroke-width="3"/><circle cx="188" cy="175" r="3" fill="var(--muted)" opacity=".3"/></svg><i class="hero-spark spark-one">✦</i><i class="hero-spark spark-two">✦</i></div>`;
+/** Figure mask only: never reveal the stored solution in navigation. */
+function levelMask(level: Level): string {
+  const xs = level.cells.map(c => c % level.width), ys = level.cells.map(c => Math.floor(c / level.width));
+  const minX = Math.min(...xs), minY = Math.min(...ys), cols = Math.max(...xs) - minX + 1, rows = Math.max(...ys) - minY + 1;
+  const step = Math.min(9, 48 / cols, 30 / rows), side = step * .8;
+  const x = (56 - cols * step + step - side) / 2, y = (38 - rows * step + step - side) / 2;
+  const pos = (c: number) => ({ x: x + (c % level.width - minX) * step, y: y + (Math.floor(c / level.width) - minY) * step });
+  const start = pos(level.start);
+  return `<svg class="level-mask" viewBox="0 0 56 38" aria-hidden="true">${level.cells.map(c => { const p = pos(c); return `<rect x="${p.x}" y="${p.y}" width="${side}" height="${side}" rx="${Math.min(1.3, side * .12)}" fill="currentColor"/>`; }).join('')}<circle cx="${start.x + side / 2}" cy="${start.y + side / 2}" r="${side * .21}"/></svg>`;
+}
 const smallStars = '<span class="level-stars" aria-hidden="true">★★★</span>';
 
 /** DOM navigation only; the store remains the sole progression writer. */
@@ -31,18 +42,18 @@ export function renderMenu(host: HTMLElement, screen: Exclude<Screen, 'game'>, s
   } else if (screen === 'themes') {
     content = `${heading}<p class="menu-caption">Два оформления бесплатно, остальные — за монеты</p><div class="theme-grid">${themes.map(t => {
       const owned = save.ownedThemes.includes(t.id), selected = save.themeId === t.id;
-      return `<button class="theme-card ${selected ? 'equipped' : ''}" data-action="select-theme" data-theme-id="${t.id}" aria-pressed="${selected}" aria-label="${t.name}, ${selected ? 'выбрана' : owned ? 'применить' : `${t.price} монет`}">${themePreview(t)}<strong>${t.name}</strong><span>${selected ? `${icon('check')} Выбрана` : owned ? 'Применить' : `${icon('lock')}${coin} ${t.price}`}</span></button>`;
+      return `<button class="theme-card ${selected ? 'equipped' : ''} ${owned ? 'owned' : ''}" data-action="select-theme" data-theme-id="${t.id}" aria-pressed="${selected}" aria-label="${t.name}, ${selected ? 'выбрана' : owned ? 'применить' : `${t.price} монет`}">${themePreview(t)}${!owned ? `<i class="theme-lock" aria-hidden="true">${icon('lock')}</i>` : ''}<strong>${t.name}</strong><span>${selected ? `${icon('check')} Выбрана` : owned ? 'Применить' : `${icon('lock')}${coin} ${t.price}`}</span></button>`;
     }).join('')}</div>`;
   } else if (screen === 'sets') {
     content = `${heading}<p class="menu-caption">Выбери набор задач</p><div class="set-list">${levelSets.map(s => {
       const done = s.levels.filter(l => save.completed.includes(l.id)).length;
-      return `<button class="set-card" style="--set-color:${s.color}" data-action="open-set" ${s.levels.length ? '' : 'disabled'}><span class="set-symbol">${icon(s.levels.length ? 'grid' : 'lock')}</span><span class="set-copy"><strong>${s.title}</strong><span>${s.description}</span>${s.levels.length ? `<span class="set-progress"><i style="width:${done / s.levels.length * 100}%"></i></span>` : ''}</span><span class="set-count">${s.levels.length ? `${done}/${s.levels.length}` : 'Скоро'}</span></button>`;
+      return `<button class="set-card" style="--set-color:${s.id === 'intro' ? 'var(--ribbon)' : s.color}" data-action="open-set" ${s.levels.length ? '' : 'disabled'}><span class="set-symbol">${s.levels.length ? levelMask(s.levels[Math.min(11, s.levels.length - 1)]!) : icon('lock')}</span><span class="set-copy"><strong>${s.title}</strong><span>${s.description}</span>${s.levels.length ? `<span class="set-progress"><i style="width:${done / s.levels.length * 100}%"></i></span>` : ''}</span><span class="set-count">${s.levels.length ? `${done}/${s.levels.length}` : 'Скоро'}</span></button>`;
     }).join('')}</div><p class="bank-caption">Сейчас доступны ${set.levels.length} задач первого набора.</p>`;
   } else {
     content = `${heading}<p class="menu-caption">${save.completed.length} из ${set.levels.length} пройдено</p>${finished ? '<div class="bank-complete"><strong>Набор пройден!</strong><span>Можно вернуться к любой задаче.</span></div>' : ''}
       <div class="level-grid">${set.levels.map((l, i) => {
         const done = save.completed.includes(l.id), available = isLevelAvailable(l.id, save.completed), current = l.id === save.levelId;
-        return `<button class="level-tile ${done ? 'completed' : ''} ${current ? 'current' : ''}" data-action="choose-level" data-level="${l.id}" ${available ? '' : 'disabled'} ${current ? 'aria-current="step"' : ''} aria-label="Уровень ${i + 1}${done ? ', пройден, три звезды' : available ? ', доступен' : ', закрыт'}"><strong>${i + 1}</strong>${done ? smallStars : available ? '<span class="level-dot" aria-hidden="true"></span>' : icon('lock')}</button>`;
+        return `<button class="level-tile ${done ? 'completed' : ''} ${current ? 'current' : ''}" data-action="choose-level" data-level="${l.id}" ${available ? '' : 'disabled'} ${current ? 'aria-current="step"' : ''} aria-label="Уровень ${i + 1}${done ? ', пройден, три звезды' : available ? ', доступен' : ', закрыт'}"><strong>${i + 1}</strong>${levelMask(l)}${done ? smallStars : available ? '<span class="level-dot" aria-hidden="true"></span>' : icon('lock')}</button>`;
       }).join('')}</div><p class="bank-caption">${finished ? 'Награда за первое прохождение уже получена.' : 'Пройди предыдущую задачу, чтобы открыть следующую.'}</p>`;
   }
   host.innerHTML = `${top}<div class="menu-body ${screen}">${content}</div>`;
