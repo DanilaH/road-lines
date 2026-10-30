@@ -14,6 +14,7 @@ import { installRouteInput } from './services/input';
 import { acquireSaveOwnership, SaveOwnershipError } from './services/ownership';
 import { Feedback } from './presentation/feedback';
 import { WinMotion } from './presentation/motion';
+import { ScreenMotion } from './presentation/screens';
 import { renderMenu, type Screen } from './ui/menus';
 import { isLevelAvailable } from './core/progression';
 import { getTheme } from './content/themes';
@@ -95,6 +96,7 @@ async function boot(): Promise<void> {
     transparent: true, antialias: true, banner: false, scale: { mode: Phaser.Scale.NONE }, audio: { noAudio: true }, scene, fps: { target: 60 } });
   const showBalance = (value: number): void => { shownBalance = value; $('.balance').textContent = String(value); $('.balance').style.fontSize = `${Math.min(19, 78 / Math.max(3, String(value).length))}px`;  $('.wallet').setAttribute('aria-label', `${value} монет`); };
   const motion = new WinMotion(root, feedback, showBalance);
+  const screens = new ScreenMotion();
   const wheelView = new WheelView($('.wheel-screen'), feedback);
   root.dataset.winPhase = 'idle';
   const layout = () => boardLayout(host.clientWidth, host.clientHeight, result, level);
@@ -206,14 +208,16 @@ async function boot(): Promise<void> {
   const unsubscribe = activity.onBlockedChange(blocked => {
     root.dataset.blocked = String(blocked);
     feedback.setBlocked(blocked);
-    if (blocked) { cancelWheel(); invalidate(); input.cancel(); flush(); motion.stop(); scene.settle(); showBalance(store.state.coins); }
+    if (blocked) { screens.stop(); cancelWheel(); invalidate(); input.cancel(); flush(); motion.stop(); scene.settle(); showBalance(store.state.coins); }
     redraw();
     if (game.isBooted) { if (blocked) game.loop.sleep(); else if (screen === 'game') game.loop.wake(); }
   });
   function setPause(value: boolean): void {
     if (result && screen === 'game') return;
+    if (!value) screens.pause($('.pause-overlay'), false);
     paused = value; $('.pause-overlay').hidden = !value; activity.setBlocked('pause', value);
-    redraw(); (value ? $('[data-action=resume]') : screen === 'game' ? $('[data-action=pause]') : $('[data-action=menu-settings]')).focus();
+    redraw(); if (value) screens.pause($('.pause-overlay'), true);
+    (value ? $('[data-action=resume]') : screen === 'game' ? $('[data-action=pause]') : $('[data-action=menu-settings]')).focus();
   }
   function onBack(): void {
     if (bonus) { closeBonus(); return; }
@@ -235,13 +239,16 @@ async function boot(): Promise<void> {
     invalidate(); motion.stop(); scene.settle(); showBalance(store.state.coins);
     screen = next; paused = false; $('.pause-overlay').hidden = true;
     activity.setBlocked('pause', false); notice(''); redraw(); game.loop.sleep();
+    screens.enterMenu(screen === 'wheel' ? $('.wheel-screen') : $('.menu-screen'));
     (screen === 'wheel' ? $('.wheel-body h1') : $('.menu-body h1')).focus();
   }
   function showGame(): void {
+    if (screen !== 'game' && screen !== 'wheel') screens.leaveMenu($('.menu-screen'));
+    else screens.stop();
     screen = 'game'; paused = false; $('.pause-overlay').hidden = true;
     activity.setBlocked('pause', false); notice(''); redraw();
     if (!activity.isBlocked()) game.loop.wake();
-    host.focus();
+    screens.enterGame(root); host.focus();
   }
   function chooseLevel(id: string): void {
     if (conflict || store.recoveryRequired || !isLevelAvailable(id, store.state.completed)) return;
@@ -400,7 +407,7 @@ async function boot(): Promise<void> {
     try { store.path(next, nextPath); } catch { $<HTMLButtonElement>('.next').disabled = false; saveError(); return; }
     motion.stop(); scene.settle(); showBalance(store.state.coins);
     invalidate(); input.cancel(); level = next; path = nextPath; result = false; reward = 0;
-    notice(''); redraw(); scene.open();
+    notice(''); redraw(); scene.open(); screens.stop(); screens.enterGame(root);
   }
   const prime = (): void => feedback.prime();
   root.addEventListener('pointerdown', prime, true); root.addEventListener('keydown', prime, true);
@@ -421,7 +428,7 @@ async function boot(): Promise<void> {
   };
   window.addEventListener('storage', onStorage);
   const onViewportResize = (): void => {
-    cancelWheel(); motion.stop(); scene.settle(); showBalance(store.state.coins);
+    screens.stop(); cancelWheel(); motion.stop(); scene.settle(); showBalance(store.state.coins);
     feedback.setBlocked(true); feedback.setBlocked(activity.isBlocked()); redraw();
   };
   window.addEventListener('resize', onViewportResize);
@@ -451,7 +458,7 @@ async function boot(): Promise<void> {
     input.dispose(); flush(); disposed = true; invalidate(); clearTimeout(saveTimer); clearTimeout(deadline);
     cancelAnimationFrame(frame); cancelAnimationFrame(secondFrame); cancelAnimationFrame(resizeFrame);
     clearInterval(clock); wheelToken++; wheelView.dispose(); wheelService.dispose();
-    resize.disconnect(); disposeRuntime(); unsubscribe(); motion.dispose(); feedback.dispose(); root.removeEventListener('click', click);
+    resize.disconnect(); disposeRuntime(); unsubscribe(); screens.dispose(); motion.dispose(); feedback.dispose(); root.removeEventListener('click', click);
     root.removeEventListener('pointerdown', prime, true); root.removeEventListener('keydown', prime, true);
     window.removeEventListener('resize', onViewportResize); window.removeEventListener('storage', onStorage); window.removeEventListener('pagehide', pagehide);
     root.removeEventListener('keydown', trapFocus); game.destroy(true); releaseWriter();

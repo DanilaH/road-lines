@@ -3,6 +3,7 @@ import { defaultTheme, colorNumber, tint, type Theme } from '../content/themes';
 import { levels } from '../content/levels';
 import type { Level } from '../core/model';
 import { boardLayout, cellRect, type BoardLayout } from '../ui/layout';
+import { shadedRect } from '../presentation/material';
 import { victoryLayout } from '../presentation/geometry';
 
 export class BoardScene extends Phaser.Scene {
@@ -60,40 +61,69 @@ export class BoardScene extends Phaser.Scene {
     const scaleRect = (r: { x: number; y: number; width: number; height: number }, scale: number) => ({
       x: r.x + r.width * (1 - scale) / 2, y: r.y + r.height * (1 - scale) / 2, width: r.width * scale, height: r.height * scale });
     const rect = (cell: number) => cellRect(this.level, layout, cell);
-    const surface = (r: { x: number; y: number; width: number; height: number }, alpha: number): void => {
+    const surface = (r: { x: number; y: number; width: number; height: number }, alpha: number, radius: number | Phaser.Types.GameObjects.Graphics.RoundedRectRadius = 0): void => {
       const tone = (y: number) => tint(this.theme.ribbon, .17 - Math.max(0, Math.min(1, (y - layout.y) / Math.max(1, layout.height))) * .29);
-      g.fillStyle(colorNumber(this.theme.ribbon), alpha); // Solid fallback for Canvas renderer.
-      g.fillGradientStyle(tone(r.y), tone(r.y), tone(r.y + r.height), tone(r.y + r.height), alpha);
-      g.fillRect(r.x, r.y, r.width, r.height);
+      shadedRect(g, r, radius, tone, alpha);
     };
     for (const [index, cell] of this.level.cells.entries()) {
       const t = Math.max(0, Math.min(1, (age - index * 7) / 220));
       const r = scaleRect(rect(cell), 1 - (1 - t) ** 3);
-      g.fillStyle(tint(this.theme.empty, -.15), .3); g.fillRect(r.x, r.y + (this.miniature ? 1 : 3), r.width, r.height);
-      g.fillStyle(colorNumber(this.theme.empty));
-      g.fillGradientStyle(tint(this.theme.empty, .20), tint(this.theme.empty, .12), colorNumber(this.theme.empty), tint(this.theme.empty, -.025));
-      g.fillRect(r.x, r.y, r.width, r.height);
+      const radius = Math.min(4, r.width * .075), rim = Math.max(.6, layout.cell * .022);
+      // A recessed pocket: darker inner top edge, soft light on the lower lip.
+      g.fillStyle(tint(this.theme.empty, -.18), .48); g.fillRoundedRect(r.x, r.y, r.width, r.height, radius);
+      const inner = { x: r.x + rim, y: r.y + rim * 1.6, width: Math.max(0, r.width - rim * 2), height: Math.max(0, r.height - rim * 2) };
+      shadedRect(g, inner, Math.max(0, radius - rim), y => tint(this.theme.empty, -.05 + Math.max(0, Math.min(1, (y - inner.y) / Math.max(1, inner.height))) * .14));
+      g.lineStyle(.9, 0xffffff, .42); g.lineBetween(r.x + radius, r.y + r.height + .5, r.x + r.width - radius, r.y + r.height + .5);
     }
-    const ribbon = (path: readonly number[], color: number, alpha = 1): void => {
-      const fill = (x: number, y: number, width: number, height: number): void => {
-        if (path === this.route) surface({ x, y, width, height }, alpha);
-        else { g.fillStyle(color, alpha); g.fillRect(x, y, width, height); }
+    const depth = this.miniature ? 1.2 : Math.min(3.5, layout.cell * .06);
+    const ribbon = (path: readonly number[], alpha: number, shadow = false): void => {
+      const connected = (i: number, delta: number) => path[i - 1] === path[i]! + delta || path[i + 1] === path[i]! + delta;
+      const fill = (r: { x: number; y: number; width: number; height: number }, radius: number | Phaser.Types.GameObjects.Graphics.RoundedRectRadius = 0) => {
+        if (shadow) { g.fillStyle(tint(this.theme.ribbon, -.35), alpha); g.fillRoundedRect(r.x, r.y + depth, r.width, r.height, radius); }
+        else surface(r, alpha, radius);
       };
-      for (const cell of path) {
+      for (let i = 0; i < path.length; i++) {
+        const cell = path[i]!;
         let r = rect(cell);
         if (this.opening) r = scaleRect(r, Math.max(0, Math.min(1, (age - 150) / 170)));
-        if (this.pulse?.cell === cell && !this.reduced) r = scaleRect(r, 1 + .07 * Math.sin(Math.min(1, (now - this.pulse.at) / 160) * Math.PI));
-        const inset = path === this.route && path.length === 1 ? r.width * 0.08 : 0;
-        fill(r.x + inset, r.y + inset, r.width - inset * 2, r.height - inset * 2);
+        if (this.pulse?.cell === cell && !this.reduced) r = scaleRect(r, 1 + .045 * Math.sin(Math.min(1, (now - this.pulse.at) / 160) * Math.PI));
+        const inset = path === this.route && path.length === 1 ? r.width * .08 : 0;
+        r = { x: r.x + inset, y: r.y + inset, width: r.width - inset * 2, height: r.height - inset * 2 };
+        const n = connected(i, -this.level.width), e = connected(i, 1), so = connected(i, this.level.width), w = connected(i, -1);
+        const radius = Math.min(4, r.width * .075);
+        // Round exposed corners only. Connected sides remain flush with their bridge.
+        fill(r, { tl: !n && !w ? radius : 0, tr: !n && !e ? radius : 0, bl: !so && !w ? radius : 0, br: !so && !e ? radius : 0 });
       }
       for (let i = 1; i < path.length; i++) {
         const a = rect(path[i - 1]!), b = rect(path[i]!);
-        if (a.x === b.x) fill(a.x, Math.min(a.y, b.y), a.width, Math.abs(a.y - b.y) + a.height);
-        else fill(Math.min(a.x, b.x), a.y, Math.abs(a.x - b.x) + a.width, a.height);
+        if (a.x === b.x) fill({ x: a.x, y: Math.min(a.y, b.y) + a.height, width: a.width, height: Math.max(0, Math.abs(a.y - b.y) - a.height) });
+        else fill({ x: Math.min(a.x, b.x) + a.width, y: a.y, width: Math.max(0, Math.abs(a.x - b.x) - a.width), height: a.height });
+      }
+      if (shadow || alpha < 1) return;
+      // Bevel follows actual path edges, never adjacency to an unconnected filled cell.
+      const line = (x: number, y: number, xx: number, yy: number, light: boolean) => {
+        g.lineStyle(Math.max(.65, layout.cell * .022), light ? 0xffffff : tint(this.theme.ribbon, -.4), light ? .26 : .22); g.lineBetween(x, y, xx, yy);
+      };
+      if (this.opening && age < 320) return;
+      for (let i = 0; i < path.length; i++) {
+        let r = rect(path[i]!);
+        if (path.length === 1) r = scaleRect(r, .84);
+        const edge = Math.min(4, r.width * .075) + 1;
+        const n = connected(i, -this.level.width), e = connected(i, 1), so = connected(i, this.level.width), w = connected(i, -1);
+        if (!n) line(r.x + (w ? 0 : edge), r.y + 1, r.x + r.width - (e ? 0 : edge), r.y + 1, true);
+        if (!w) line(r.x + 1, r.y + (n ? 0 : edge), r.x + 1, r.y + r.height - (so ? 0 : edge), true);
+        if (!so) line(r.x + (w ? 0 : edge), r.y + r.height - 1, r.x + r.width - (e ? 0 : edge), r.y + r.height - 1, false);
+        if (!e) line(r.x + r.width - 1, r.y + (n ? 0 : edge), r.x + r.width - 1, r.y + r.height - (so ? 0 : edge), false);
+      }
+      for (let i = 1; i < path.length; i++) {
+        const a = rect(path[i - 1]!), b = rect(path[i]!);
+        if (a.x !== b.x) { const x = Math.min(a.x, b.x) + a.width, end = Math.max(a.x, b.x); line(x, a.y + 1, end, a.y + 1, true); line(x, a.y + a.height - 1, end, a.y + a.height - 1, false); }
+        else { const y = Math.min(a.y, b.y) + a.height, end = Math.max(a.y, b.y); line(a.x + 1, y, a.x + 1, end, true); line(a.x + a.width - 1, y, a.x + a.width - 1, end, false); }
       }
     };
-    if (this.hint.length) ribbon(this.hint, colorNumber(this.theme.ribbon), 0.25);
-    ribbon(this.route, colorNumber(this.theme.ribbon));
+    if (this.hint.length) ribbon(this.hint, .25);
+    ribbon(this.route, .78, true);
+    ribbon(this.route, 1);
     for (const spark of this.sparks) {
       const t = Math.min(1, (now - spark.at) / 380), r = rect(spark.cell), distance = r.width * (0.30 + t * spark.speed);
       const x = r.x + r.width / 2 + Math.cos(spark.angle) * distance, y = r.y + r.height / 2 + Math.sin(spark.angle) * distance - t * r.height * .2;
@@ -120,7 +150,11 @@ export class BoardScene extends Phaser.Scene {
         cx + layout.cell * 0.15, cy - layout.cell * 0.02, cx + layout.cell * 0.28, cy - layout.cell * 0.13);
       if (this.route.length > 1) {
         const head = rect(this.route[this.route.length - 1]!);
-        g.lineStyle(2.2, colorNumber(this.theme.trail), 0.95); g.strokeCircle(head.x + head.width / 2, head.y + head.height / 2, layout.cell * 0.13);
+        const hx = head.x + head.width / 2, hy = head.y + head.height / 2, radius = layout.cell * .155;
+        g.fillStyle(tint(this.theme.ribbon, -.45), .26); g.fillCircle(hx, hy + 2, radius * 1.15);
+        g.lineStyle(1, colorNumber(this.theme.trail), .32); g.strokeCircle(hx, hy, radius * 1.45);
+        g.fillStyle(colorNumber(this.theme.trail), .97); g.fillCircle(hx, hy, radius);
+        g.fillStyle(colorNumber(this.theme.ribbon)); g.fillCircle(hx, hy, radius * .4);
       }
     }
   }

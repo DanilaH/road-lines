@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import { resolve } from 'node:path';
 
 async function ribbonPixels(page, hex) {
+  await page.locator('[data-transition-ghost]').evaluateAll(nodes => Promise.all(nodes.flatMap(el => el.getAnimations()).map(a => a.finished.catch(() => {}))));
+  await page.locator('#board').evaluate(el => Promise.all(el.getAnimations().map(a => a.finished.catch(() => {}))));
   const png = await page.locator('#board').screenshot();
   return page.evaluate(async ({ data, hex }) => {
     const image = new Image(); image.src = `data:image/png;base64,${data}`; await image.decode();
