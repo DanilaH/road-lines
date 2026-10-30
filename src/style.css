@@ -241,3 +241,15 @@ svg { display: block; width: 24px; height: 24px; flex-shrink: 0; }
   .result #board::after { display: none; }
   .primary-action, .secondary-action, .tool, .resume { transition: none; }
 }
+
+/* Generated reward objects keep real text/controls outside the bitmap. */
+.reward-art { display: block; object-fit: contain; flex-shrink: 0; pointer-events: none; }
+.daily-entry .reward-art, .gift-entry .reward-art { width: 44px; height: 44px; margin: -5px 0; }
+.gift-progress .reward-art { width: 42px; height: 42px; margin: -6px -6px -6px 0; filter: drop-shadow(0 3px 3px #5c33802b); }
+.bonus-art .reward-art-large { position: relative; z-index: 1; width: 100%; height: auto; aspect-ratio: 1; margin: auto; filter: drop-shadow(0 12px 12px #7c41b526); }
+[data-kind=gift] .bonus-art::before { content: ''; position: absolute; inset: -5%; border-radius: 50%; background: radial-gradient(circle, #ffdf7155, #b987ec22 48%, transparent 70%); }
+[data-kind=gift] .bonus-art .reward-art { animation: reward-float 3s ease-in-out infinite; }
+.wheel-medallion { position: absolute; width: 21%; aspect-ratio: 1; left: 39.5%; top: 39.5%; pointer-events: none; filter: drop-shadow(0 3px 3px #65421e55); }
+.wheel-medallion .reward-art { width: 100%; height: 100%; }
+@keyframes reward-float { 0%,100% { transform: translateY(3px) rotate(-2deg); } 50% { transform: translateY(-5px) rotate(2deg); } }
+@media(prefers-reduced-motion:reduce) { [data-kind=gift] .bonus-art .reward-art { animation: none; } }

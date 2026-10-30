@@ -62,7 +62,7 @@ export class WinMotion {
     this.after(this.reduced ? 180 : 1040, () => this.burst(100, -1));
     this.after(this.reduced ? 260 : 1370, () => this.burst(115, 1));
     this.after(850, () => { if (this.reward) this.scatter(); });
-    if (reward) this.after(1050, () => { this.feedback.play('progress'); this.animate(this.query('.gift-progress svg'), [{ transform: 'rotate(0) scale(1)' }, { transform: 'rotate(-15deg) scale(1.25)' }, { transform: 'rotate(12deg) scale(1.1)' }, { transform: 'rotate(0) scale(1)' }], { duration: 440 }); });
+    if (reward) this.after(1050, () => { this.feedback.play('progress'); this.animate(this.query('.gift-progress .reward-art'), [{ transform: 'rotate(0) scale(1)' }, { transform: 'rotate(-15deg) scale(1.25)' }, { transform: 'rotate(12deg) scale(1.1)' }, { transform: 'rotate(0) scale(1)' }], { duration: 440 }); });
   }
   private origin(): { x: number; y: number } {
     const r = this.query('#board').getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2 };

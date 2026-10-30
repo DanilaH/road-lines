@@ -21,6 +21,7 @@ import { applyTheme, themePreview } from './ui/themes';
 import { WheelService } from './services/wheel';
 import { WheelView } from './ui/wheel';
 import { localDate } from './core/rewards';
+import { rewardArt } from './ui/reward-art';
 import './style.css';
 let releaseWriter = (): void => {}; 
 
@@ -68,7 +69,7 @@ async function boot(): Promise<void> {
       <div id="board" tabindex="0" role="group" aria-label="Поле"></div>
       <p class="instruction"></p>
       <div class="rewards" hidden>
-        <div class="reward-row"><span class="earned"></span><div class="gift-progress"><div class="track"><span></span></div>${icon('gift')}<span class="fraction"></span></div></div>
+        <div class="reward-row"><span class="earned"></span><div class="gift-progress"><div class="track"><span></span></div>${rewardArt('gift')}<span class="fraction"></span></div></div>
         <button class="multiply" disabled>${icon('play')} ЗАБРАТЬ ×5</button>
         <button class="next" data-action="next"><span>ДАЛЬШЕ</span></button>
       </div>
@@ -133,7 +134,7 @@ async function boot(): Promise<void> {
     if (bonus) {
       const offer = store.state.offer;
       $('#bonus-title').textContent = bonus === 'gift' ? 'Подарок!' : 'Новое оформление';
-      $('.bonus-art').innerHTML = bonus === 'gift' ? icon('gift') : offer ? themePreview(getTheme(offer.themeId)) : '';
+      $('.bonus-art').innerHTML = bonus === 'gift' ? rewardArt('gift', true) : offer ? themePreview(getTheme(offer.themeId)) : '';
       $('.bonus-copy').textContent = bonus === 'gift' ? '+100 монет за 20 новых задач' : offer ? getTheme(offer.themeId).name : '';
       $('.bonus-video').hidden = bonus === 'gift'; $('.bonus-video-note').hidden = bonus === 'gift';
       $('.bonus-close').textContent = bonus === 'gift' ? 'ПРОДОЛЖИТЬ' : 'НЕ СЕЙЧАС';

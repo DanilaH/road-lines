@@ -3,6 +3,7 @@ import type { GameSave } from '../services/save';
 import { canSpin } from '../core/rewards';
 import { themes } from '../content/themes';
 import { themePreview } from './themes';
+import { rewardArt } from './reward-art';
 import { coin, icon } from './icons';
 
 export type Screen = 'game' | 'home' | 'sets' | 'levels' | 'themes' | 'wheel';
@@ -23,8 +24,8 @@ export function renderMenu(host: HTMLElement, screen: Exclude<Screen, 'game'>, s
   if (screen === 'home') {
     content = `<div class="home-hero">${emblem}<h1 tabindex="-1">Одной линией</h1><p>Заполни фигуру, не прерывая маршрут</p></div>
       <div class="home-actions"><button class="primary-action" data-action="continue">ПРОДОЛЖИТЬ<span>${save.completed.includes(save.levelId) && save.path.length > 1 ? 'Результат' : 'Уровень'} 1–${index + 1}</span></button>
-      <button class="secondary-action" data-action="sets">${icon('grid')} УРОВНИ</button><button class="secondary-action" data-action="themes">${icon('palette')} ТЕМЫ</button></div><button class="daily-entry" data-action="wheel">${icon('gift')}<span>ЕЖЕДНЕВНАЯ НАГРАДА<small>${canSpin(save) ? 'Бесплатная попытка доступна' : 'Сегодня уже получено'}</small></span><b>${canSpin(save) ? '●' : '✓'}</b></button>
-      ${save.giftNotice ? `<button class="gift-entry" data-action="gift">${icon('gift')} ПОДАРОК: +100 МОНЕТ</button>` : ''}<div class="home-progress"><div><span>Пройдено</span><strong>${save.completed.length} / ${set.levels.length}</strong></div><div class="menu-track"><span style="width:${save.completed.length / set.levels.length * 100}%"></span></div></div>
+      <button class="secondary-action" data-action="sets">${icon('grid')} УРОВНИ</button><button class="secondary-action" data-action="themes">${icon('palette')} ТЕМЫ</button></div><button class="daily-entry" data-action="wheel">${rewardArt('medallion')}<span>ЕЖЕДНЕВНАЯ НАГРАДА<small>${canSpin(save) ? 'Бесплатная попытка доступна' : 'Сегодня уже получено'}</small></span><b>${canSpin(save) ? '●' : '✓'}</b></button>
+      ${save.giftNotice ? `<button class="gift-entry" data-action="gift">${rewardArt('gift')} ПОДАРОК: +100 МОНЕТ</button>` : ''}<div class="home-progress"><div><span>Пройдено</span><strong>${save.completed.length} / ${set.levels.length}</strong></div><div class="menu-track"><span style="width:${save.completed.length / set.levels.length * 100}%"></span></div></div>
       <button class="quiet-action" data-action="menu-settings">${icon('settings')} ЗВУК И ВИБРАЦИЯ</button>`;
   } else if (screen === 'themes') {
     content = `${heading}<p class="menu-caption">Два оформления бесплатно, остальные — за монеты</p><div class="theme-grid">${themes.map(t => {

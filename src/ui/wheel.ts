@@ -1,6 +1,7 @@
 import { canSpin, localDate, wheelAngle, wheelPrizes, type WheelSpin } from '../core/rewards';
 import type { GameSave } from '../services/save';
 import type { Feedback } from '../presentation/feedback';
+import { rewardArt } from './reward-art';
 import { coin, icon } from './icons';
 const colors = ['#f6bc4a', '#f5d472', '#f0a45c', '#f5d472', '#f6bc4a', '#f5d472', '#f0a45c', '#f5d472'];
 const polar = (r: number, degrees: number) => ({ x: 160 + r * Math.cos(degrees * Math.PI / 180), y: 160 + r * Math.sin(degrees * Math.PI / 180) });
@@ -17,7 +18,7 @@ export class WheelView {
   private sparks: Animation[] = [];
   constructor(private host: HTMLElement, private feedback: Feedback) {
     host.innerHTML = `<header class="menu-header"><button class="tool" data-action="menu-back" aria-label="Назад">${icon('back')}</button><span class="menu-wallet">${coin}<span class="wheel-balance"></span></span></header>
-      <div class="wheel-body"><h1 tabindex="-1">Ежедневная награда</h1><p class="wheel-caption">Одна бесплатная попытка каждый день</p><div class="wheel-assembly"><div class="wheel-pointer" aria-hidden="true"></div>${wheelSvg()}<div class="wheel-sparks" aria-hidden="true"></div></div>
+      <div class="wheel-body"><h1 tabindex="-1">Ежедневная награда</h1><p class="wheel-caption">Одна бесплатная попытка каждый день</p><div class="wheel-assembly"><div class="wheel-pointer" aria-hidden="true"></div>${wheelSvg()}<div class="wheel-medallion" aria-hidden="true">${rewardArt('medallion')}</div><div class="wheel-sparks" aria-hidden="true"></div></div>
       <p class="wheel-result" role="status"></p><button class="wheel-spin" data-action="spin">КРУТИТЬ БЕСПЛАТНО</button><p class="wheel-clock"></p><button class="wheel-extra" disabled>${icon('play')} ЕЩЁ РАЗ ЗА ВИДЕО</button><p class="wheel-ad-note">Видео пока недоступно</p></div>`;
   }
   render(save: GameSave, busy: boolean): void {
