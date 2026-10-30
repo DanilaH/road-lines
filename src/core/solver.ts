@@ -1,16 +1,16 @@
-import { adjacent, validPath, type Level } from './model';
+import { canCross, canExtend, complete, validPath, type Level } from './model';
 export type SolveResult = { kind: 'FOUND'; path: number[] } | { kind: 'UNSOLVABLE' } | { kind: 'UNKNOWN' };
 export interface SolveOptions { budgetMs?: number; maxNodes?: number; now?: () => number; }
 export function solve(level: Level, prefix: readonly number[], options: SolveOptions = {}): SolveResult {
   if (!validPath(level, prefix)) return { kind: 'UNSOLVABLE' };
   const now = options.now ?? (() => performance.now());
   const deadline = now() + (options.budgetMs ?? 180), maxNodes = options.maxNodes ?? 100_000;
-  const neighbors = new Map(level.cells.map(cell => [cell, level.cells.filter(other => adjacent(level, cell, other))]));
+  const neighbors = new Map(level.cells.map(cell => [cell, level.cells.filter(other => canCross(level, cell, other))]));
   const path = [...prefix], used = new Set(path);
   let nodes = 0, exhausted = false;
   const search = (head: number): boolean => {
     if (++nodes > maxNodes || now() >= deadline) { exhausted = true; return false; }
-    if (path.length === level.cells.length) return true;
+    if (path.length === level.cells.length) return complete(level, path);
     const reachable = new Set([head]), queue = [head];
     for (const cell of queue) for (const next of neighbors.get(cell)!) {
       if ((!used.has(next) || next === head) && !reachable.has(next)) { reachable.add(next); queue.push(next); }
@@ -21,7 +21,7 @@ export function solve(level: Level, prefix: readonly number[], options: SolveOpt
       const degree = neighbors.get(cell)!.filter(n => reachable.has(n)).length;
       if (degree === 0 || (degree === 1 && ++leaves > 1)) return false;
     }
-    const candidates = neighbors.get(head)!.filter(n => !used.has(n));
+    const candidates = neighbors.get(head)!.filter(n => !used.has(n) && canExtend(level, path, n));
     candidates.sort((a, b) => neighbors.get(a)!.filter(n => !used.has(n)).length - neighbors.get(b)!.filter(n => !used.has(n)).length);
     for (const cell of candidates) {
       used.add(cell); path.push(cell);

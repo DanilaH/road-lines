@@ -10,6 +10,7 @@ export class BoardScene extends Phaser.Scene {
   private theme: Theme = defaultTheme;
   private miniature = false;
   private drawing?: Phaser.GameObjects.Graphics;
+  private checkpointLabels: Phaser.GameObjects.Text[] = [];
   private renderRatio = 1;
   private level: Level = levels[0]!;
   private route: readonly number[] = [this.level.start];
@@ -23,7 +24,7 @@ export class BoardScene extends Phaser.Scene {
   create(): void {
     this.drawing = this.add.graphics();
     this.scale.on('resize', this.redraw, this);
-    this.events.once('shutdown', () => { this.scale.off('resize', this.redraw, this); this.sparks = []; });
+    this.events.once('shutdown', () => { this.scale.off('resize', this.redraw, this); this.sparks = []; this.checkpointLabels = []; });
     this.redraw();
   }
   setState(level: Level, route: readonly number[], hint: readonly number[], miniature: boolean): void {
@@ -51,6 +52,7 @@ export class BoardScene extends Phaser.Scene {
   private redraw(): void {
     const g = this.drawing;
     if (!g) return;
+    for (const label of this.checkpointLabels) label.setVisible(false);
     g.clear(); g.setScale(this.renderRatio);
     let layout = boardLayout(this.scale.width / this.renderRatio, this.scale.height / this.renderRatio, this.miniature, this.level);
     if (this.winning) {
@@ -144,17 +146,61 @@ export class BoardScene extends Phaser.Scene {
       }
     }
     if (!this.miniature && (!this.opening || age > 170)) {
-      const start = rect(this.level.start), cx = start.x + start.width / 2, cy = start.y + start.height / 2;
-      g.lineStyle(2.4, colorNumber(this.theme.trail), 0.95); g.beginPath(); g.arc(cx, cy, layout.cell * 0.18, 0.4, 5.3); g.strokePath();
-      g.fillStyle(colorNumber(this.theme.trail)); g.fillTriangle(cx + layout.cell * 0.15, cy - layout.cell * 0.18,
-        cx + layout.cell * 0.15, cy - layout.cell * 0.02, cx + layout.cell * 0.28, cy - layout.cell * 0.13);
-      if (this.route.length > 1) {
+      if (!this.level.checkpoints?.includes(this.level.start)) {
+        const start = rect(this.level.start), cx = start.x + start.width / 2, cy = start.y + start.height / 2;
+        g.lineStyle(2.4, colorNumber(this.theme.trail), 0.95); g.beginPath(); g.arc(cx, cy, layout.cell * 0.18, 0.4, 5.3); g.strokePath();
+        g.fillStyle(colorNumber(this.theme.trail)); g.fillTriangle(cx + layout.cell * 0.15, cy - layout.cell * 0.18,
+          cx + layout.cell * 0.15, cy - layout.cell * 0.02, cx + layout.cell * 0.28, cy - layout.cell * 0.13);
+      }
+      if (this.route.length > 1 && !this.level.checkpoints?.includes(this.route[this.route.length - 1]!)) {
         const head = rect(this.route[this.route.length - 1]!);
         const hx = head.x + head.width / 2, hy = head.y + head.height / 2, radius = layout.cell * .155;
         g.fillStyle(tint(this.theme.ribbon, -.45), .26); g.fillCircle(hx, hy + 2, radius * 1.15);
         g.lineStyle(1, colorNumber(this.theme.trail), .32); g.strokeCircle(hx, hy, radius * 1.45);
         g.fillStyle(colorNumber(this.theme.trail), .97); g.fillCircle(hx, hy, radius);
         g.fillStyle(colorNumber(this.theme.ribbon)); g.fillCircle(hx, hy, radius * .4);
+      }
+    }
+    // Rules are drawn over the ribbon so they stay legible during hints and undo.
+    if (!this.opening || age > 240) {
+      for (const [a, b] of this.level.walls ?? []) {
+        const aa = rect(a), bb = rect(b), x = (aa.x + bb.x + aa.width) / 2, y = (aa.y + bb.y + aa.height) / 2;
+        const thickness = Math.max(2, layout.gap * .62), length = layout.cell * .88;
+        const r = aa.y === bb.y ? { x: x - thickness / 2, y: y - length / 2, width: thickness, height: length }
+          : { x: x - length / 2, y: y - thickness / 2, width: length, height: thickness };
+        g.fillStyle(colorNumber(this.theme.ink), .93); g.fillRoundedRect(r.x, r.y, r.width, r.height, thickness / 2);
+        g.lineStyle(Math.max(.5, thickness * .2), colorNumber(this.theme.panel), .45);
+        g.lineBetween(r.x + thickness * .2, r.y + thickness * .2, r.x + r.width - thickness * .2, r.y + r.height - thickness * .2);
+      }
+      if (this.level.finish !== undefined) {
+        const r = rect(this.level.finish), occupied = this.route.includes(this.level.finish), radius = r.width * .32;
+        const cx = r.x + r.width / 2, cy = r.y + r.height / 2;
+        g.fillStyle(0xf5ac44, .18); g.fillRoundedRect(r.x + 3, r.y + 3, r.width - 6, r.height - 6, 3);
+        g.lineStyle(Math.max(1.3, r.width * .04), occupied ? colorNumber(this.theme.trail) : 0xc57923, .95);
+        g.strokeRoundedRect(cx - radius, cy - radius, radius * 2, radius * 2, r.width * .07);
+        // A small chequered flag leaves the centre free for the head or final number.
+        const unit = r.width * .07, fx = r.x + r.width * .64, fy = r.y + r.height * .13;
+        g.lineStyle(Math.max(.8, unit * .4), occupied ? colorNumber(this.theme.trail) : 0x9b5b1c); g.lineBetween(fx, fy, fx, fy + unit * 4.5);
+        for (let yy = 0; yy < 2; yy++) for (let xx = 0; xx < 3; xx++) {
+          g.fillStyle((xx + yy) % 2 ? 0xfff5d6 : 0xa6601a); g.fillRect(fx + xx * unit, fy + yy * unit, unit, unit);
+        }
+      }
+      const next = this.level.checkpoints?.find(c => !this.route.includes(c));
+      for (const [i, cell] of (this.level.checkpoints ?? []).entries()) {
+        const r = rect(cell), x = r.x + r.width / 2, y = r.y + r.height / 2, visited = this.route.includes(cell);
+        const current = cell === this.route[this.route.length - 1], radius = r.width * .24;
+        g.fillStyle(0x35233f, .16); g.fillCircle(x, y + r.width * .035, radius * 1.08);
+        if (cell === next || current) {
+          g.lineStyle(Math.max(1, r.width * .045), cell === next ? 0xe7a52e : colorNumber(this.theme.trail), .95);
+          g.strokeCircle(x, y, radius * 1.3);
+        }
+        g.fillStyle(visited ? colorNumber(this.theme.ribbon) : 0xfffcf3); g.fillCircle(x, y, radius);
+        g.lineStyle(Math.max(.8, r.width * .025), visited ? 0xfffcf3 : 0x64516e, visited ? .9 : .45); g.strokeCircle(x, y, radius);
+        if (!this.miniature) {
+          const label = this.checkpointLabels[i] ?? (this.checkpointLabels[i] = this.add.text(0, 0, '', { fontFamily: 'Nunito, sans-serif', fontStyle: '900' }).setOrigin(.5).setResolution(2));
+          label.setText(String(i + 1)).setFontSize(Math.round(r.width * .34)).setColor(visited ? '#ffffff' : '#362447')
+            .setPosition(x * this.renderRatio, y * this.renderRatio).setScale(this.renderRatio).setVisible(true);
+        }
       }
     }
   }

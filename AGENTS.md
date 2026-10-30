@@ -34,6 +34,8 @@ TypeScript + Phaser + Vite; Android via Capacitor; native Yandex Mobile Ads inte
 - Undo/reset are free. Pause, background, second pointer and ads do not destroy the path.
 - Hint search uses the actual prefix. FOUND, UNSOLVABLE and UNKNOWN are distinct. Timeouts are not proof of dead ends; never charge for an unusable hint.
 
+- Optional finish/walls/ordered-checkpoint rules are specified in docs/MECHANICS.md. Apply them consistently to input, solver, completion and restore; retain all original 15 IDs/versions. Current bank: 30, target still 90.
+
 ## Presentation acceptance
 - Reference composition: free space, compact top controls, square grey cells with gaps, theme-coloured ribbon. Scale by figure bounds with a sensible maximum cell size.
 - New board: small grey squares grow, then the coloured start opens.
@@ -99,3 +101,4 @@ When adding the application, add and run actual app build and relevant model/flo
 - Never claim device quality/live fill/dashboard delivery from mocks or CI.
 - Do not ask for routine confirmation to continue already authorised reversible work. Ask only for genuinely missing essential information.
 - Final updates state what changed, what passed and what remains unverified. Keep them concise.
+

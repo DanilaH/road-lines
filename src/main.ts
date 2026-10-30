@@ -39,7 +39,7 @@ async function boot(): Promise<void> {
   if (store.state.daily.pending) await wheelService.commit();
   applyTheme(root, getTheme(store.state.themeId));
   let level = levels.find(l => l.id === store.state.levelId)!;
-  if (inspect && params.has('level')) level = levels[Math.max(0, Math.min(14, Number(params.get('level')) - 1))] ?? level;
+  if (inspect && params.has('level')) level = levels[Math.max(0, Math.min(levels.length - 1, Number(params.get('level')) - 1))] ?? level;
   let path = level.id === store.state.levelId ? [...store.state.path] : [level.start];
   if (fixture) { level = levels[2]!; path = [...level.witness]; }
   let result = fixture || complete(level, path), reward = 0;
@@ -154,14 +154,17 @@ async function boot(): Promise<void> {
     $<HTMLButtonElement>('[data-action=hint]').setAttribute('aria-label', busy ? 'Ищу продолжение' : `Подсказка, осталось ${store.state.hints}`);
     $('.result-heading').hidden = !result; $('.rewards').hidden = !result; $('#banner-slot').hidden = screen !== 'levels' && (screen !== 'game' || result);
     $('.instruction').hidden = result;
-    $('.instruction').textContent = busy ? 'Ищу продолжение…' : path.length === 1 ? 'Начни с цветной клетки' : 'Можно отпустить палец и продолжить';
+    const nextCheckpoint = level.checkpoints?.findIndex(c => !path.includes(c)) ?? -1;
+    const ruleCopy = [level.checkpoints?.length ? nextCheckpoint < 0 ? 'Все номера пройдены — заполни оставшиеся клетки' : `Проходи номера по порядку · следующая точка ${nextCheckpoint + 1}` : '',
+      level.finish !== undefined ? 'Флажок — последняя клетка' : '', level.walls?.length ? 'Стенки нужно обходить' : ''].filter(Boolean).join('. ');
+    $('.instruction').textContent = busy ? 'Ищу продолжение…' : ruleCopy || (path.length === 1 ? 'Начни с цветной клетки' : 'Можно отпустить палец и продолжить');
     $('.earned').innerHTML = fixture ? `${coin} +20` : reward ? `${coin} +${reward}` : 'Уже пройдено';
     const giftCount = store.state.completed.length === 0 ? 0 : (store.state.completed.length - 1) % 20 + 1;
     $('.fraction').textContent = `${giftCount}/20`;
     $('.track span').style.width = `${Math.min(100, giftCount * 5)}%`;
     $('.gift-progress').setAttribute('aria-label', `Подарок: ${giftCount} из 20`);
     $('.next span').textContent = index === levels.length - 1 ? 'К ВЫБОРУ УРОВНЕЙ' : 'ДАЛЬШЕ';
-    host.setAttribute('aria-label', `Задача ${index + 1}. Заполнено ${path.length} из ${level.cells.length}. Стрелки — движение и откат.`);
+    host.setAttribute('aria-label', `Задача ${index + 1}. Заполнено ${path.length} из ${level.cells.length}. ${ruleCopy ? ruleCopy + '. ' : ''}Стрелки — движение и откат.`);
     scene.setState(level, path, hint, result);
     activity.setGameplayDesired(screen === 'game' && !result);
     if (inspect) { host.dataset.path = path.join(','); host.dataset.level = level.id; }

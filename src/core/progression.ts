@@ -1,7 +1,7 @@
 import { levels } from '../content/levels';
 
 export const levelSets = [
-  { id: 'intro', title: 'Первые линии', description: 'От простого жеста к первым развилкам', color: '#55b975', levels },
+  { id: 'intro', title: 'Первые линии', description: '30 задач: финиш, стенки и порядок точек', color: '#55b975', levels },
   { id: 'turns', title: 'Повороты', description: 'Набор готовится', color: '#45b7bf', levels: [] },
   { id: 'shapes', title: 'Сложные фигуры', description: 'Набор готовится', color: '#a183ce', levels: [] },
 ] as const;

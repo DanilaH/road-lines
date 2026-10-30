@@ -2,18 +2,31 @@ export interface Level {
   id: string; version: number; width: number; height: number;
   cells: readonly number[]; start: number; witness: readonly number[];
   tag: string; origin: string;
+  /** Optional rules; existing classic levels keep their IDs and versions. */
+  finish?: number;
+  walls?: readonly (readonly [number, number])[];
+  /** Ordered cells, including the start as number 1. */
+  checkpoints?: readonly number[];
 }
 export const adjacent = (level: Level, a: number, b: number): boolean =>
   Math.abs(a % level.width - b % level.width) + Math.abs(Math.floor(a / level.width) - Math.floor(b / level.width)) === 1;
-export function validPath(level: Level, path: readonly number[]): boolean {
-  return path.length > 0 && path[0] === level.start && new Set(path).size === path.length &&
-    path.every((cell, i) => Number.isInteger(cell) && level.cells.includes(cell) && (i === 0 || adjacent(level, path[i - 1]!, cell)));
+export const canCross = (level: Level, a: number, b: number): boolean => adjacent(level, a, b) &&
+  !(level.walls ?? []).some(([x, y]) => (x === a && y === b) || (x === b && y === a));
+export function canExtend(level: Level, path: readonly number[], cell: number): boolean {
+  if (!level.cells.includes(cell) || path.includes(cell) || !canCross(level, path[path.length - 1]!, cell)) return false;
+  if (cell === level.finish && path.length !== level.cells.length - 1) return false;
+  return !level.checkpoints?.includes(cell) || level.checkpoints.find(c => !path.includes(c)) === cell;
 }
-export const complete = (level: Level, path: readonly number[]): boolean => path.length === level.cells.length && validPath(level, path);
+export function validPath(level: Level, path: readonly number[]): boolean {
+  return path.length > 0 && path[0] === level.start && level.cells.includes(level.start) &&
+    path.every((cell, i) => Number.isInteger(cell) && (i === 0 || canExtend(level, path.slice(0, i), cell)));
+}
+export const complete = (level: Level, path: readonly number[]): boolean => path.length === level.cells.length &&
+  (level.finish === undefined || path[path.length - 1] === level.finish) && validPath(level, path);
 /** One legal edge or one reverse edge; no teleport to an older cell. */
 export function advance(level: Level, path: readonly number[], cell: number): number[] {
   const last = path[path.length - 1]!;
-  if (cell === last || !level.cells.includes(cell) || !adjacent(level, last, cell)) return [...path];
+  if (cell === last) return [...path];
   if (path.length > 1 && cell === path[path.length - 2]) return path.slice(0, -1);
-  return path.includes(cell) ? [...path] : [...path, cell];
+  return canExtend(level, path, cell) ? [...path, cell] : [...path];
 }

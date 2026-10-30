@@ -1,3 +1,4 @@
+import { runMechanicsSmoke } from './mechanics-smoke.mjs';
 import { runMenuSmoke } from './menu-smoke.mjs';
 import { runThemeSmoke } from './theme-smoke.mjs';
 import { runRewardsSmoke } from './rewards-smoke.mjs';
@@ -42,14 +43,17 @@ try {
     assert.equal(await page.locator('.set-card:disabled').count(), 2);
     await page.locator('[data-action=open-set]:enabled').click();
     await page.screenshot({ path: resolve(output, `levels-${width}x${height}.png`) });
-    assert.equal(await page.locator('.level-tile').count(), 15);
+    assert.equal(await page.locator('.level-tile').count(), 30);
     assert.equal(await page.locator('.level-tile:enabled').count(), 1);
-    const grid = await page.locator('.level-grid').boundingBox();
+    const grid = await page.locator('.menu-screen').boundingBox();
     const reserved = await page.locator('#banner-slot').boundingBox();
     assert(grid && reserved && grid.y + grid.height <= reserved.y, 'Grid clears banner');
     for (const button of await page.locator('.level-tile').all()) {
       const b = await button.boundingBox(); assert(b && b.width >= 48 && b.height >= 48, 'Grid tap targets');
     }
+    await page.locator('.level-tile').last().scrollIntoViewIfNeeded();
+    const lastTile = await page.locator('.level-tile').last().boundingBox();
+    assert(lastTile && lastTile.y + lastTile.height <= reserved.y, 'Last task scrolls above banner');
     await page.keyboard.press('Escape');
     await page.keyboard.press('Escape');
     await enterGame(page);
@@ -211,10 +215,14 @@ try {
       await gameplay.getByRole('button', { name: 'ПРОДОЛЖИТЬ', exact: true }).click();
     }
   }
-  assert.equal((await readSave()).coins, 300);
+  assert.equal((await readSave()).coins, 700);
   await gameplay.getByRole('button', { name: 'К ВЫБОРУ УРОВНЕЙ', exact: true }).click();
+  if (await gameplay.locator('.bonus-overlay').isVisible()) {
+    await gameplay.locator('[data-action=close-bonus]').click();
+    await gameplay.getByRole('button', { name: 'К ВЫБОРУ УРОВНЕЙ', exact: true }).click();
+  }
   await gameplay.locator('.bank-complete').waitFor();
-  assert.equal(await gameplay.locator('.level-tile.completed').count(), 15);
+  assert.equal(await gameplay.locator('.level-tile.completed').count(), 30);
   await gameplay.getByRole('button', { name: 'Уровень 1, пройден, три звезды', exact: true }).click();
   await gameplay.locator('#app[data-screen=game]').waitFor();
   // A worker hint is spent only after a found continuation is presented.
@@ -223,7 +231,7 @@ try {
   assert.equal((await readSave()).hints, 2);
   await gameplay.getByRole('button', { name: 'Начать заново', exact: true }).click();
   await move(await center(first, 0)); await gameplay.mouse.down(); await move(await center(first, 2)); await gameplay.mouse.up();
-  await gameplay.locator('.result').waitFor(); assert.equal((await readSave()).coins, 300);
+  await gameplay.locator('.result').waitFor(); assert.equal((await readSave()).coins, 700);
   // Restore a deterministic branch puzzle, then prove dead-end help is free.
   await gameplay.evaluate(({ key, level }) => {
     const s = JSON.parse(localStorage.getItem(key));
@@ -272,6 +280,7 @@ try {
   await other.getByText('Игра уже открыта в другой вкладке. Закрой её и попробуй снова.', { exact: true }).waitFor();
   await other.close();
   assert.deepEqual(errors, []); await gameplay.close(); await gameplayContext.close();
+  await runMechanicsSmoke(browser, url, output, root);
   await runMenuSmoke(browser, url, output);
   await runThemeSmoke(browser, url, output);
   await runRewardsSmoke(browser, url, output, root);

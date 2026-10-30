@@ -17,7 +17,11 @@ function levelMask(level: Level): string {
   const x = (56 - cols * step + step - side) / 2, y = (38 - rows * step + step - side) / 2;
   const pos = (c: number) => ({ x: x + (c % level.width - minX) * step, y: y + (Math.floor(c / level.width) - minY) * step });
   const start = pos(level.start);
-  return `<svg class="level-mask" viewBox="0 0 56 38" aria-hidden="true">${level.cells.map(c => { const p = pos(c); return `<rect x="${p.x}" y="${p.y}" width="${side}" height="${side}" rx="${Math.min(1.3, side * .12)}" fill="currentColor"/>`; }).join('')}<circle cx="${start.x + side / 2}" cy="${start.y + side / 2}" r="${side * .21}"/></svg>`;
+  const finish = level.finish === undefined ? '' : (() => { const p = pos(level.finish!); return `<rect x="${p.x + side * .2}" y="${p.y + side * .2}" width="${side * .6}" height="${side * .6}" fill="none" stroke="var(--ribbon)" stroke-width="1.2"/>`; })();
+  const walls = (level.walls ?? []).map(([a, b]) => { const aa = pos(a), bb = pos(b), cx = (aa.x + bb.x + side) / 2, cy = (aa.y + bb.y + side) / 2;
+    return `<path d="${aa.y === bb.y ? `M${cx},${cy - side / 2}v${side}` : `M${cx - side / 2},${cy}h${side}`}" stroke="var(--ribbon)" stroke-width="1.2"/>`; }).join('');
+  const points = (level.checkpoints ?? []).map(c => { const p = pos(c); return `<circle cx="${p.x + side / 2}" cy="${p.y + side / 2}" r="${side * .2}" fill="var(--ribbon)"/>`; }).join('');
+  return `<svg class="level-mask" viewBox="0 0 56 38" aria-hidden="true">${level.cells.map(c => { const p = pos(c); return `<rect x="${p.x}" y="${p.y}" width="${side}" height="${side}" rx="${Math.min(1.3, side * .12)}" fill="currentColor"/>`; }).join('')}<circle cx="${start.x + side / 2}" cy="${start.y + side / 2}" r="${side * .21}"/>${walls}${finish}${points}</svg>`;
 }
 const smallStars = '<span class="level-stars" aria-hidden="true">★★★</span>';
 
@@ -53,7 +57,8 @@ export function renderMenu(host: HTMLElement, screen: Exclude<Screen, 'game'>, s
     content = `${heading}<p class="menu-caption">${save.completed.length} из ${set.levels.length} пройдено</p>${finished ? '<div class="bank-complete"><strong>Набор пройден!</strong><span>Можно вернуться к любой задаче.</span></div>' : ''}
       <div class="level-grid">${set.levels.map((l, i) => {
         const done = save.completed.includes(l.id), available = isLevelAvailable(l.id, save.completed), current = l.id === save.levelId;
-        return `<button class="level-tile ${done ? 'completed' : ''} ${current ? 'current' : ''}" data-action="choose-level" data-level="${l.id}" ${available ? '' : 'disabled'} ${current ? 'aria-current="step"' : ''} aria-label="Уровень ${i + 1}${done ? ', пройден, три звезды' : available ? ', доступен' : ', закрыт'}"><strong>${i + 1}</strong>${levelMask(l)}${done ? smallStars : available ? '<span class="level-dot" aria-hidden="true"></span>' : icon('lock')}</button>`;
+        const chapter = l.id === 'finish-01' ? 'Финиш' : l.id === 'walls-01' ? 'Стенки' : l.id === 'checkpoints-01' ? 'Порядок точек' : '';
+        return `${chapter ? `<div class="level-chapter"><span>${chapter}</span><small>${i + 1}–${i + 5}</small></div>` : ''}<button class="level-tile ${done ? 'completed' : ''} ${current ? 'current' : ''}" data-action="choose-level" data-level="${l.id}" ${available ? '' : 'disabled'} ${current ? 'aria-current="step"' : ''} aria-label="Уровень ${i + 1}${done ? ', пройден, три звезды' : available ? ', доступен' : ', закрыт'}"><strong>${i + 1}</strong>${levelMask(l)}${done ? smallStars : available ? '<span class="level-dot" aria-hidden="true"></span>' : icon('lock')}</button>`;
       }).join('')}</div><p class="bank-caption">${finished ? 'Награда за первое прохождение уже получена.' : 'Пройди предыдущую задачу, чтобы открыть следующую.'}</p>`;
   }
   host.innerHTML = `${top}<div class="menu-body ${screen}">${content}</div>`;
