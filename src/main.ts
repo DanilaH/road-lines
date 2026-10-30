@@ -110,6 +110,8 @@ async function boot(): Promise<void> {
     const index = levels.indexOf(level);
     const theme = getTheme(store.state.themeId); applyTheme(root, theme); scene.setTheme(theme);
     $('.surface').className = `surface ${result ? 'result' : 'play'}`;
+    const ruleCount = Number(level.finish !== undefined) + Number(Boolean(level.walls?.length)) + Number(Boolean(level.checkpoints?.length));
+    host.classList.toggle('multi-rule', ruleCount > 1);
     root.dataset.screen = screen;
     $('.game-content').style.visibility = screen === 'game' ? 'visible' : 'hidden';
     $('.game-content').inert = screen !== 'game' || paused || bonus !== null;
