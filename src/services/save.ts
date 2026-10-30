@@ -1,24 +1,32 @@
 import { complete, validPath, type Level } from '../core/model';
 import { levels } from '../content/levels';
+import { themes, getTheme, defaultTheme, freeThemeIds } from '../content/themes';
 export const SAVE_KEY = 'road-lines.save.v1';
 export interface GameSave {
-  version: 1; levelId: string; levelVersion: number; path: number[];
+  version: 2; levelId: string; levelVersion: number; path: number[];
   completed: string[]; coins: number; hints: number;
+  themeId: string; ownedThemes: string[];
   drafts: Record<string, { version: number; path: number[] }>;
 }
 export interface SyncStorage { getItem(key: string): string | null; setItem(key: string, value: string): void; }
-export const defaultSave = (): GameSave => ({ version: 1, levelId: levels[0]!.id, levelVersion: 1,
-  path: [levels[0]!.start], completed: [], coins: 0, hints: 3, drafts: {} });
+export const defaultSave = (): GameSave => ({ version: 2, levelId: levels[0]!.id, levelVersion: 1,
+  path: [levels[0]!.start], completed: [], coins: 0, hints: 3, drafts: {}, themeId: defaultTheme.id, ownedThemes: [...freeThemeIds] });
 export function decodeSave(raw: string): GameSave {
   const data: unknown = JSON.parse(raw);
   if (!data || typeof data !== 'object') throw Error('Invalid save');
   const d = data as Record<string, unknown>;
-  if (d.version !== 1 || !Array.isArray(d.completed) || d.completed.some(id => typeof id !== 'string' || !levels.some(l => l.id === id)) ||
+  if ((d.version !== 1 && d.version !== 2) || !Array.isArray(d.completed) || d.completed.some(id => typeof id !== 'string' || !levels.some(l => l.id === id)) ||
     new Set(d.completed).size !== d.completed.length || !Number.isSafeInteger(d.coins) || (d.coins as number) < 0 ||
     !Number.isSafeInteger(d.hints) || (d.hints as number) < 0) throw Error('Invalid progression');
   const level = levels.find(l => l.id === d.levelId);
   if (!level) throw Error('Unknown current level');
   const path = d.levelVersion === level.version && Array.isArray(d.path) && validPath(level, d.path) ? d.path as number[] : [level.start];
+  const legacyThemes = d.version === 1 && d.themeId === undefined && d.ownedThemes === undefined;
+  const ownedThemes = legacyThemes ? [...freeThemeIds] : d.ownedThemes;
+  const themeId = legacyThemes ? defaultTheme.id : d.themeId;
+  if (!Array.isArray(ownedThemes) || ownedThemes.some(id => typeof id !== 'string' || !themes.some(t => t.id === id)) ||
+    new Set(ownedThemes).size !== ownedThemes.length || !freeThemeIds.every(id => ownedThemes.includes(id)) ||
+    typeof themeId !== 'string' || !ownedThemes.includes(themeId)) throw Error('Invalid theme ownership');
   // Additive migration from stage-1 saves. Drafts are transient; wallet/progression stay strict.
   const drafts: GameSave['drafts'] = {};
   if (d.drafts && typeof d.drafts === 'object') for (const l of levels) {
@@ -28,8 +36,8 @@ export function decodeSave(raw: string): GameSave {
     }
   }
   drafts[level.id] = { version: level.version, path: [...path] };
-  return { version: 1, levelId: level.id, levelVersion: level.version, path: [...path],
-    completed: [...d.completed] as string[], coins: d.coins as number, hints: d.hints as number, drafts };
+  return { version: 2, levelId: level.id, levelVersion: level.version, path: [...path],
+    completed: [...d.completed] as string[], coins: d.coins as number, hints: d.hints as number, drafts, themeId, ownedThemes: [...ownedThemes] };
 }
 /** One synchronous document writer. Memory follows confirmed atomic replacement. */
 export class GameStore {
@@ -54,6 +62,15 @@ export class GameStore {
   path(level: Level, path: readonly number[]): void {
     if (!validPath(level, path)) throw Error('Illegal prefix');
     this.write({ ...this.state, levelId: level.id, levelVersion: level.version, path: [...path] });
+  }
+  selectTheme(id: string): 'unchanged' | 'equipped' | 'purchased' | 'insufficient' {
+    const theme = getTheme(id), owned = this.state.ownedThemes.includes(id);
+    if (owned && this.state.themeId === id) return 'unchanged';
+    if (!owned && this.state.coins < theme.price) return 'insufficient';
+    // Coins, ownership and equipment become durable in one atomic replacement.
+    this.write({ ...this.state, coins: this.state.coins - (owned ? 0 : theme.price), themeId: id,
+      ownedThemes: owned ? this.state.ownedThemes : [...this.state.ownedThemes, id] });
+    return owned ? 'equipped' : 'purchased';
   }
   finish(level: Level, path: readonly number[]): number {
     if (!complete(level, path)) throw Error('Incomplete level');

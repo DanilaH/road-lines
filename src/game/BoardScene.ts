@@ -1,11 +1,12 @@
 import Phaser from 'phaser';
-import { presentation } from '../config/presentation';
+import { defaultTheme, colorNumber, type Theme } from '../content/themes';
 import { levels } from '../content/levels';
 import type { Level } from '../core/model';
 import { boardLayout, cellRect, type BoardLayout } from '../ui/layout';
 import { victoryLayout } from '../presentation/geometry';
 
 export class BoardScene extends Phaser.Scene {
+  private theme: Theme = defaultTheme;
   private miniature = false;
   private drawing?: Phaser.GameObjects.Graphics;
   private renderRatio = 1;
@@ -36,6 +37,7 @@ export class BoardScene extends Phaser.Scene {
     if (this.pulse && now - this.pulse.at > 160) this.pulse = null;
     if (wasAnimating) this.redraw();
   }
+  setTheme(theme: Theme): void { this.theme = theme; this.redraw(); }
   setRenderRatio(value: number): void { this.renderRatio = value; this.redraw(); }
   private redraw(): void {
     const g = this.drawing;
@@ -52,7 +54,7 @@ export class BoardScene extends Phaser.Scene {
     const rect = (cell: number) => cellRect(this.level, layout, cell);
     for (const [index, cell] of this.level.cells.entries()) {
       const t = Math.max(0, Math.min(1, (age - index * 7) / 220));
-      const r = scaleRect(rect(cell), 1 - (1 - t) ** 3); g.fillStyle(presentation.empty); g.fillRect(r.x, r.y, r.width, r.height);
+      const r = scaleRect(rect(cell), 1 - (1 - t) ** 3); g.fillStyle(colorNumber(this.theme.empty)); g.fillRect(r.x, r.y, r.width, r.height);
     }
     const ribbon = (path: readonly number[], color: number, alpha = 1): void => {
       g.fillStyle(color, alpha);
@@ -69,9 +71,9 @@ export class BoardScene extends Phaser.Scene {
         else g.fillRect(Math.min(a.x, b.x), a.y, Math.abs(a.x - b.x) + a.width, a.height);
       }
     };
-    if (this.hint.length) ribbon(this.hint, presentation.fill, 0.25);
-    ribbon(this.route, presentation.fill);
-    g.fillStyle(0xffffff, 0.72);
+    if (this.hint.length) ribbon(this.hint, colorNumber(this.theme.ribbon), 0.25);
+    ribbon(this.route, colorNumber(this.theme.ribbon));
+    g.fillStyle(colorNumber(this.theme.trail), 0.9);
     for (let i = 1; i < this.route.length; i++) {
       const a = rect(this.route[i - 1]!), b = rect(this.route[i]!);
       const distance = Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
@@ -82,12 +84,12 @@ export class BoardScene extends Phaser.Scene {
     }
     if (!this.miniature && (!this.opening || age > 170)) {
       const start = rect(this.level.start), cx = start.x + start.width / 2, cy = start.y + start.height / 2;
-      g.lineStyle(2.4, 0xffffff, 0.95); g.beginPath(); g.arc(cx, cy, layout.cell * 0.18, 0.4, 5.3); g.strokePath();
-      g.fillStyle(0xffffff); g.fillTriangle(cx + layout.cell * 0.15, cy - layout.cell * 0.18,
+      g.lineStyle(2.4, colorNumber(this.theme.trail), 0.95); g.beginPath(); g.arc(cx, cy, layout.cell * 0.18, 0.4, 5.3); g.strokePath();
+      g.fillStyle(colorNumber(this.theme.trail)); g.fillTriangle(cx + layout.cell * 0.15, cy - layout.cell * 0.18,
         cx + layout.cell * 0.15, cy - layout.cell * 0.02, cx + layout.cell * 0.28, cy - layout.cell * 0.13);
       if (this.route.length > 1) {
         const head = rect(this.route[this.route.length - 1]!);
-        g.lineStyle(2.2, 0xffffff, 0.95); g.strokeCircle(head.x + head.width / 2, head.y + head.height / 2, layout.cell * 0.13);
+        g.lineStyle(2.2, colorNumber(this.theme.trail), 0.95); g.strokeCircle(head.x + head.width / 2, head.y + head.height / 2, layout.cell * 0.13);
       }
     }
   }

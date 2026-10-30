@@ -16,6 +16,8 @@ import { Feedback } from './presentation/feedback';
 import { WinMotion } from './presentation/motion';
 import { renderMenu, type Screen } from './ui/menus';
 import { isLevelAvailable } from './core/progression';
+import { getTheme } from './content/themes';
+import { applyTheme, themePreview } from './ui/themes';
 import './style.css';
 let releaseWriter = (): void => {}; 
 
@@ -27,6 +29,7 @@ async function boot(): Promise<void> {
   const fixture = inspect && params.get('screen') === 'result';
   releaseWriter = await acquireSaveOwnership();
   const store = new GameStore(localStorage);
+  applyTheme(root, getTheme(store.state.themeId));
   let level = levels.find(l => l.id === store.state.levelId)!;
   if (inspect && params.has('level')) level = levels[Math.max(0, Math.min(14, Number(params.get('level')) - 1))] ?? level;
   let path = level.id === store.state.levelId ? [...store.state.path] : [level.start];
@@ -34,6 +37,8 @@ async function boot(): Promise<void> {
   let result = fixture || complete(level, path), reward = 0;
   if (result && !fixture) reward = store.finish(level, path);
   let screen: Screen = fixture || (inspect && params.has('level')) ? 'game' : 'home';
+  let themeOrigin: { screen: Screen; paused: boolean } = { screen: 'home', paused: false };
+  let pendingTheme: string | null = null;
   const feedback = new Feedback();
   let shownBalance = store.state.coins, collecting = false;
   let paused = false, disposed = false, saveFailed = false, conflict = false, busy = false, revision = 0;
@@ -44,6 +49,7 @@ async function boot(): Promise<void> {
   root.innerHTML = `
     <section class="surface" aria-label="Road Lines"><div class="game-content">
       <header class="hud"><span class="level"></span><div class="tools">
+        <button class="tool result-theme" data-action="themes" aria-label="Темы" hidden>${icon('palette')}</button>
         <button class="tool result-menu" data-action="home" aria-label="Главное меню" hidden>${icon('home')}</button>
         <button class="tool" data-action="restart" aria-label="Начать заново">${icon('restart')}</button>
         <span class="wallet">${coin}<span class="balance"></span></span>
@@ -60,12 +66,18 @@ async function boot(): Promise<void> {
       </div>
       </div><section class="menu-screen" aria-label="Навигация"></section>
       <div id="banner-slot" aria-hidden="true"></div>
-      <section class="pause-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="pause-title"><div class="pause-card"><h2 id="pause-title">Пауза</h2><button data-action="resume" class="resume">ПРОДОЛЖИТЬ</button><div class="pause-navigation"><button data-action="sets">ВЫБОР УРОВНЕЙ</button><button data-action="home">ГЛАВНОЕ МЕНЮ</button></div><div class="settings"><button data-action="sound" aria-pressed="true"></button><button data-action="vibration" aria-pressed="true"></button></div></div></section>
+      <section class="pause-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="pause-title"><div class="pause-card"><h2 id="pause-title">Пауза</h2><button data-action="resume" class="resume">ПРОДОЛЖИТЬ</button><div class="pause-navigation"><button data-action="sets">ВЫБОР УРОВНЕЙ</button><button data-action="home">ГЛАВНОЕ МЕНЮ</button><button data-action="themes">ТЕМЫ</button></div><div class="settings"><button data-action="sound" aria-pressed="true"></button><button data-action="vibration" aria-pressed="true"></button></div></div></section>
+      <section class="theme-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="theme-title"><div class="theme-purchase">
+        <button class="tool purchase-close" data-action="cancel-theme" aria-label="Закрыть покупку">${icon('close')}</button>
+        <h2 id="theme-title"></h2><div class="purchase-preview"></div><p class="purchase-balance"></p>
+        <button class="primary-action" data-action="buy-theme"></button><p class="purchase-shortage" role="status"></p>
+      </div></section>
       <div class="notice" hidden role="status"><span></span><button data-action="notice"></button></div>
     </section><div id="startup" role="status">Загрузка…</div>`;
   const $ = <T extends HTMLElement = HTMLElement>(selector: string): T => root.querySelector<T>(selector)!;
   const host = $('#board'), scene = new BoardScene();
   let renderRatio = getRenderPixelRatio(2);
+  scene.setTheme(getTheme(store.state.themeId));
   scene.setRenderRatio(renderRatio); scene.setState(level, path, hint, result);
   const initialSize = getBackingStoreSize(host.clientWidth, host.clientHeight, renderRatio);
   const game = new Phaser.Game({ type: Phaser.AUTO, parent: host, width: initialSize.width, height: initialSize.height,
@@ -81,18 +93,29 @@ async function boot(): Promise<void> {
   function invalidate(): void { revision++; hints.cancel(); busy = false; hint = []; rollback = null; }
   function redraw(): void {
     const index = levels.indexOf(level);
+    const theme = getTheme(store.state.themeId); applyTheme(root, theme); scene.setTheme(theme);
     $('.surface').className = `surface ${result ? 'result' : 'play'}`;
     root.dataset.screen = screen;
     $('.game-content').style.visibility = screen === 'game' ? 'visible' : 'hidden';
     $('.game-content').inert = screen !== 'game' || paused;
     $('.game-content').setAttribute('aria-hidden', String(screen !== 'game' || paused));
     $('.menu-screen').hidden = screen === 'game';
-    $('.menu-screen').inert = paused;
+    $('.menu-screen').inert = paused || pendingTheme !== null;
     if (screen !== 'game') renderMenu($('.menu-screen'), screen, store.state);
     $('.pause-navigation').hidden = screen !== 'game';
     $('#pause-title').textContent = screen === 'game' ? 'Пауза' : 'Настройки';
     $('[data-action=resume]').textContent = screen === 'game' ? 'ПРОДОЛЖИТЬ' : 'ГОТОВО';
-    $('.result-menu').hidden = !result;
+    $('.result-menu').hidden = !result; $('.result-theme').hidden = !result;
+    $('.theme-overlay').hidden = pendingTheme === null;
+    if (pendingTheme) {
+      const item = getTheme(pendingTheme);
+      $('#theme-title').textContent = item.name;
+      $('.purchase-preview').innerHTML = themePreview(item);
+      $('.purchase-balance').textContent = `Баланс: ${store.state.coins} монет`;
+      $('[data-action=buy-theme]').textContent = `КУПИТЬ ЗА ${item.price}`;
+      $<HTMLButtonElement>('[data-action=buy-theme]').disabled = store.state.coins < item.price || conflict || store.recoveryRequired;
+      $('.purchase-shortage').textContent = store.state.coins < item.price ? `Не хватает монет: ${item.price - store.state.coins}.` : 'Покупка за игровые монеты';
+    }
     $('.level').textContent = `1–${index + 1}`;
     showBalance(shownBalance);
     $('[data-action=sound]').textContent = `Звук: ${feedback.settings.sound ? 'вкл' : 'выкл'}`;
@@ -168,8 +191,10 @@ async function boot(): Promise<void> {
     redraw(); (value ? $('[data-action=resume]') : screen === 'game' ? $('[data-action=pause]') : $('[data-action=menu-settings]')).focus();
   }
   function onBack(): void {
+    if (pendingTheme) { closeThemePurchase(); return; }
     if (activity.isBlocked() && !paused) return;
     if (paused) setPause(false);
+    else if (screen === 'themes') returnFromThemes();
     else if (screen === 'levels') navigate('sets');
     else if (screen === 'sets') navigate('home');
     else if (screen === 'game' && result) navigate('home');
@@ -200,6 +225,41 @@ async function boot(): Promise<void> {
     level = selected; path = nextPath; result = false; reward = 0; showBalance(store.state.coins);
     showGame(); scene.open();
   }
+  function openThemes(): void {
+    const origin = { screen, paused };
+    navigate('themes');
+    if (screen === 'themes') themeOrigin = origin;
+  }
+  function returnFromThemes(): void {
+    if (themeOrigin.screen === 'game') {
+      showGame(); if (themeOrigin.paused) setPause(true);
+    } else navigate(themeOrigin.screen === 'themes' ? 'home' : themeOrigin.screen);
+  }
+  function focusTheme(id: string): void {
+    root.querySelector<HTMLButtonElement>(`.theme-card[data-theme-id="${id}"]`)?.focus({ preventScroll: true });
+  }
+  function closeThemePurchase(): void {
+    const id = pendingTheme; pendingTheme = null;
+    activity.setBlocked('theme-confirm', false); redraw(); if (id) focusTheme(id);
+  }
+  function selectTheme(id: string): void {
+    if (screen !== 'themes' || conflict || store.recoveryRequired) return;
+    if (!store.state.ownedThemes.includes(id)) {
+      pendingTheme = getTheme(id).id; redraw(); activity.setBlocked('theme-confirm', true);
+      ($<HTMLButtonElement>('[data-action=buy-theme]').disabled ? $('[data-action=cancel-theme]') : $('[data-action=buy-theme]')).focus();
+      return;
+    }
+    try { store.selectTheme(id); } catch { saveError(); return; }
+    showBalance(store.state.coins); redraw(); focusTheme(id);
+  }
+  function buyTheme(): void {
+    if (!pendingTheme || conflict || store.recoveryRequired) return;
+    const id = pendingTheme;
+    try {
+      if (store.selectTheme(id) === 'insufficient') { redraw(); return; }
+    } catch { saveError(); redraw(); return; }
+    showBalance(store.state.coins); closeThemePurchase(); feedback.play('progress');
+  }
   async function requestHint(): Promise<void> {
     if (busy || result || activity.isBlocked() || complete(level, path)) return;
     if (!store.state.hints) { notice('Подсказки закончились. Можно бесплатно откатить маршрут или начать заново.'); return; }
@@ -220,9 +280,13 @@ async function boot(): Promise<void> {
   }
   function click(event: MouseEvent): void {
     const target = (event.target as Element).closest<HTMLButtonElement>('button[data-action]');
-    if (!target || target.disabled || (activity.isBlocked() && target.dataset.action !== 'resume' && target.dataset.action !== 'notice' && target.dataset.action !== 'sound' && target.dataset.action !== 'vibration' && !(paused && (target.dataset.action === 'sets' || target.dataset.action === 'home')))) return;
+    if (!target || target.disabled || (activity.isBlocked() && target.dataset.action !== 'resume' && target.dataset.action !== 'notice' && target.dataset.action !== 'sound' && target.dataset.action !== 'vibration' && !(pendingTheme && (target.dataset.action === 'buy-theme' || target.dataset.action === 'cancel-theme')) && !(paused && (target.dataset.action === 'sets' || target.dataset.action === 'home' || target.dataset.action === 'themes')))) return;
     feedback.play('button');
     switch (target.dataset.action) {
+      case 'themes': openThemes(); break;
+      case 'select-theme': selectTheme(target.dataset.themeId!); break;
+      case 'buy-theme': buyTheme(); break;
+      case 'cancel-theme': closeThemePurchase(); break;
       case 'home': navigate('home'); break;
       case 'sets': navigate('sets'); break;
       case 'open-set': navigate('levels'); break;
@@ -264,13 +328,13 @@ async function boot(): Promise<void> {
   root.addEventListener('pointerdown', prime, true); root.addEventListener('keydown', prime, true);
   root.addEventListener('click', click);
   const trapFocus = (event: KeyboardEvent): void => {
-    if (event.key === 'Tab' && paused) {
-      event.preventDefault(); const buttons = [...root.querySelectorAll<HTMLButtonElement>('.pause-card button')].filter(button => button.getClientRects().length > 0);
+    if (event.key === 'Tab' && (paused || pendingTheme)) {
+      event.preventDefault(); const buttons = [...root.querySelectorAll<HTMLButtonElement>(pendingTheme ? '.theme-purchase button' : '.pause-card button')].filter(button => !button.disabled && button.getClientRects().length > 0);
       const index = buttons.indexOf(document.activeElement as HTMLButtonElement);
       buttons[(index + (event.shiftKey ? -1 : 1) + buttons.length) % buttons.length]!.focus();
     }
   };
-  $('.pause-overlay').addEventListener('keydown', trapFocus);
+  root.addEventListener('keydown', trapFocus);
   const resize = new ResizeObserver(() => { input.cancel(); syncSize(); }); resize.observe(host);
   const onStorage = (event: StorageEvent): void => {
     if (event.key !== SAVE_KEY && event.key !== null) return;
@@ -305,7 +369,7 @@ async function boot(): Promise<void> {
     resize.disconnect(); disposeRuntime(); unsubscribe(); motion.dispose(); feedback.dispose(); root.removeEventListener('click', click);
     root.removeEventListener('pointerdown', prime, true); root.removeEventListener('keydown', prime, true);
     window.removeEventListener('resize', onViewportResize); window.removeEventListener('storage', onStorage); window.removeEventListener('pagehide', pagehide);
-    $('.pause-overlay').removeEventListener('keydown', trapFocus); game.destroy(true); releaseWriter();
+    root.removeEventListener('keydown', trapFocus); game.destroy(true); releaseWriter();
   }
   const pagehide = (event: PageTransitionEvent): void => { flush(); if (!event.persisted) dispose(); };
   window.addEventListener('pagehide', pagehide);

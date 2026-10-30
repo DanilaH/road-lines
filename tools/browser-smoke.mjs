@@ -1,4 +1,5 @@
 import { runMenuSmoke } from './menu-smoke.mjs';
+import { runThemeSmoke } from './theme-smoke.mjs';
 import { chromium } from '@playwright/test';
 import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
@@ -267,6 +268,7 @@ try {
   await other.close();
   assert.deepEqual(errors, []); await gameplay.close(); await gameplayContext.close();
   await runMenuSmoke(browser, url, output);
+  await runThemeSmoke(browser, url, output);
   writeFileSync(resolve(output, inspect ? 'browser-inspect.json' : 'browser-production.json'), JSON.stringify({ inspect, results }, null, 2));
   console.log(`Browser smoke: ${results.length} viewports passed (${inspect ? 'inspect' : 'production'}), plus live resize.`);
 } finally {
