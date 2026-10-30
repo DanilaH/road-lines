@@ -16,10 +16,17 @@ WheelService применяет vendored DurablePendingTransactionSession. stage
 Двойной prepare защищён busy; commit идемпотентен по spinId, чужой id отвергается. Main использует generation/session checks, отменяет WAAPI/timers/частицы, снимает clock/listeners и запрещает записи сервиса после dispose.
 
 ## Проверки
-До технической очистки workspace прошли 145 tests (97 kit + 48 application), inspect/production browser flows и Android sync. После очистки локальная папка восстановлена из pinned GitHub base и сохранённых скриптов/текста; свежий CI на восстановленном commit обязателен и записывается ниже.
+До технической очистки workspace прошли 145 tests (97 kit + 48 application), inspect/production browser flows и Android sync. После очистки локальная папка восстановлена из pinned GitHub base и сохранённых скриптов/текста; свежий CI на восстановленном commit прошёл и записан ниже.
 Unit: gift thresholds 0–90 и idempotence, offer cadence/target/replay, v2 migration, stage→reload→commit, concurrent prepare, rollback даты, stale id, failed stage/commit, lost ack, purchase/path/reward между stage и commit, corrupt ledger, dispose.
 Browser: прежние 15 input-прохождений/пять viewport/menus/themes; дополнительно wheel layout на 320×568/360×800/390×844/412×915/576×1280, двойной spin, сохранённый outcome до анимации, точный сектор под указателем, reload во время spin, Back/фон без поздней повторной награды, перевод даты назад/вперёд, disk-full, реальный tenth-clear offer и отказ без потери base reward.
 
 ## Границы
 Банк пока 15, поэтому первый подарок на 20-й задаче недостижим в обычной игре. Пороговая политика проверена unit-тестом до 90; фактический threshold grant/popup через 20 реальных уровней нужно проверить при расширении банка на этапе 5. Нельзя называть текущий банк 90-уровневым или считать этот сценарий device-accepted.
 Нет нативной рекламы/дополнительной rewarded попытки/earned unlock. Нет physical-device acceptance звука, вибрации, Back, font-scale/insets. APK debug; подписанный store release — отдельный этап.
+
+
+## Проверенная ревизия и APK
+Code commit: 7811ef94c4b49706d26cf2bd3093d2ad9b4201d1.
+App and kit checks: https://github.com/DanilaH/road-lines/actions/runs/41030208990 — success, job 123977893655. Clean npm ci, 145 tests/22 files, inspect и production browser flows прошли на восстановленном коде.
+Android debug build: https://github.com/DanilaH/road-lines/actions/runs/41030209008 — success, job 123977893335. Clean npm ci, JDK 21/SDK 36, build/sync/assembleDebug.
+Артефакт road-lines-debug: https://github.com/DanilaH/road-lines/actions/runs/41030209008/artifacts/12965163290 . ZIP 4232008 bytes; sha256:616a5b74ab9f480198a995014082a1d3957487632fecce7641124400ac77ef31. Это digest ZIP GitHub Actions, не хеш извлечённого APK.
