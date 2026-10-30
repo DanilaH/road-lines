@@ -12,4 +12,4 @@ ScreenMotion отвечает только за WAAPI presentation. Меню→�
 - npm run check: 71 vendor files / 66 unchanged, 15 independently validated shapes, TypeScript, 145 tests / 22 files.
 - Pixel-проверка тем ждёт окончания board fade и outgoing ghost, затем проверяет тот же узкий цветовой диапазон ленты; sample во время overlay fade не считается финальным цветом темы.
 - Дополнительный browser flow: ввод до завершения fade; быстрое pause/resume; resize; reduced motion; отсутствие actionable ghosts, сохранение prefix.
-- Полный inspect browser smoke прошёл на пяти viewport и всех 15 задачах, включая темы/покупки/reward flows. Production smoke и Android CI запускаются на итоговой версии. Runtime физического Android не подтверждён.
+- Полный inspect browser smoke прошёл на пяти viewport и всех 15 задачах, включая темы/покупки/reward flows. Production smoke также прошёл на пяти viewport и всех 15 задачах; переходы, темы и reward flows проверены. Код: d1134949f7aa196645bb68cbc35d8303a13326de. Android debug build прошёл. CI: 41076517662 / 41076517576. Runtime физического Android не подтверждён.
