@@ -25,4 +25,11 @@
 - Пять viewport: 320×568, 360×800, 390×844, 412×915, 576×1280. Меню/наборы/сетка сняты из текущего renderer; сетка не перекрывает баннер, цели от 48 CSS px. Сохраняются прежние pointer/touch/worker/reward/background сценарии и все 15 фактических решений.
 
 ## Границы
-Android debug compilation проверяется отдельным CI после коммита. Physical-device Back/касания/звук/вибрация и системные inset/font-scale не подтверждены браузером. Не release build, рекламы нет. Главное меню — собственная композиция в выбранной палитре, точный экран конкурента не восстановлен.
+Android debug compilation прошла в отдельном CI; ссылки и хеш ниже. Physical-device Back/касания/звук/вибрация и системные inset/font-scale не подтверждены браузером. Не release build, рекламы нет. Главное меню — собственная композиция в выбранной палитре, точный экран конкурента не восстановлен.
+
+
+## CI и Android-артефакт
+Проверяемый code commit: 4733ad7f95c60bff75c47605a23c84ce69db54cc.
+Android debug build: https://github.com/DanilaH/road-lines/actions/runs/41017388455 — success, job 123936711600. Сборка через clean npm ci, JDK 21/SDK 36.
+Артефакт road-lines-debug: https://github.com/DanilaH/road-lines/actions/runs/41017388455/artifacts/12960446122 . ZIP 4 223 448 bytes; sha256:e280c3aff4d3de0ce25a85a907526dbae78810677f300b9c7bb62453d52d83aa. Это digest ZIP GitHub Actions, не хеш извлечённого APK.
+App and kit checks: https://github.com/DanilaH/road-lines/actions/runs/41017388443 — success, job 123936711568. Clean npm ci, check, inspect и production browser flows прошли.

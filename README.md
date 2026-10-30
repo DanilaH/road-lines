@@ -30,7 +30,7 @@ Inspection-сборка: `npm run build:inspect`, `npm run preview`, затем 
 - `npm run android:sync` — production web build, создание/обновление Android с native overlays.
 - `npm run android:build` — debug APK при JDK 21+ и SDK 36. В CI есть отдельный Android workflow.
 
-[Android и воспроизводимость](docs/ANDROID_SETUP.md). Android debug APK текущего игрового этапа [собран в CI](https://github.com/DanilaH/road-lines/actions/runs/40942705635). На физическом устройстве ещё не проверен. Подробная проверка — [STAGE2_VALIDATION.md](docs/STAGE2_VALIDATION.md).
+[Android и воспроизводимость](docs/ANDROID_SETUP.md). Android debug APK текущего игрового этапа [собран в CI](https://github.com/DanilaH/road-lines/actions/runs/41017388455). На физическом устройстве ещё не проверен. Подробная проверка — [STAGE2_VALIDATION.md](docs/STAGE2_VALIDATION.md).
 
 Звук и вибрация выключаются раздельно в паузе; настройки сохраняются. Prefers-reduced-motion уменьшает движение и число частиц. Компиляция вибромоста не доказывает его силу на конкретном телефоне.
 
