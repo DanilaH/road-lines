@@ -21,7 +21,14 @@ GameStore.selectTheme: проверить id/владение/баланс; ат
 - npm run test:browser и node tools/browser-smoke.mjs --production: оба финальных прогона прошли. Новые сценарии: каталог на пяти viewport, scroll/цели/диалог, все 8 реальных палитр, точные Phaser pixels и background, покупки/двойной confirm/reload/повтор, недостаток средств, failed disk write/retry, возврат в home/pause/result, награда и переход после покупки.
 - Сохраняются полные прежние input/worker/touch/background/ownership сценарии и все 15 решений.
 - Screenshots снимаются из текущей игры в .test-output/themes-*, theme-dusk-play, theme-neon-play, theme-dusk-result.
-- npm run android:sync: production web build + Capacitor generation/sync прошли. Android compilation/CI и артефакт фиксируются после коммита.
+- npm run android:sync: production web build + Capacitor generation/sync прошли. Android compilation и оба CI прошли; ссылки и хеш ниже.
 
 ## Ограничения
 Не добавлены реальные ads, rewarded unlock темы, wheel и подарки. Полный этап 3 ещё не завершён. Native физический плейтест, системный font scale/insets и качество звука/вибрации не подтверждены браузером/компиляцией. Android APK — debug, не signed store release.
+
+
+## CI и APK
+Code commit: 9e303b4a34caa3ff6fa14844bfd43f9064b160b1.
+App and kit checks: https://github.com/DanilaH/road-lines/actions/runs/41020851786 — success, job 123947587015. Clean npm ci, 131 tests, inspect и production browser flows прошли.
+Android debug build: https://github.com/DanilaH/road-lines/actions/runs/41020851628 — success, job 123947586254. Clean npm ci, JDK 21/SDK 36, web build, sync и assembleDebug.
+Артефакт road-lines-debug: https://github.com/DanilaH/road-lines/actions/runs/41020851628/artifacts/12961970220 . ZIP 4226519 bytes; sha256:5f4ba4062074c0a7263f7a8a894e87ff1bde7bdf4438acecad59fcc030fa7ef1. Это digest ZIP GitHub Actions, не хеш извлечённого APK.
