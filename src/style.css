@@ -185,3 +185,59 @@ svg { display: block; width: 24px; height: 24px; flex-shrink: 0; }
 @media (max-height:650px) { .wheel-body { height: calc(100% - 68px); padding-top: 0; }.wheel-body h1 { font-size: 23px; }.wheel-caption { margin-bottom: 14px; }.wheel-assembly { width: min(100%, 240px); }.wheel-result { margin: 8px 0; font-size: 15px; min-height: 24px; }.wheel-clock { margin: 14px 0; }.wheel-spin { min-height: 50px; }.wheel-body { padding-bottom: 20px; }.home-hero .menu-emblem { width: 66px; height: 66px; margin-bottom: 4px; }.menu-body.home { gap: 10px; }.home-hero h1 { font-size: 24px; }.home-hero p { font-size: 12px; }.bonus-art { max-width: 180px; } }
 .home-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }.home-actions .primary-action { grid-column: 1 / -1; }.home-actions .secondary-action { font-size: 13px; gap: 7px; padding: 12px 8px; }.home-actions .secondary-action svg { width: 20px; height: 20px; }
 .bonus-art { position: relative; }.bonus-art > svg { position: relative; z-index: 1; }[data-kind=offer] .bonus-art::before { content: ''; position: absolute; inset: -8%; background: repeating-conic-gradient(#c9b0ed55 0deg 18deg, transparent 18deg 36deg); border-radius: 50%; }[data-kind=gift] .bonus-art > svg { animation: gift-wiggle 1.8s ease-in-out infinite; }@keyframes gift-wiggle { 0%,100% { transform: rotate(-5deg) scale(1); }50% { transform: rotate(5deg) scale(1.06); } }@media(prefers-reduced-motion:reduce){[data-kind=gift] .bonus-art > svg { animation: none; }}
+
+/* Visual polish: one quiet atmosphere layer, with accents reserved for interaction. */
+.surface, .menu-screen {
+  background: radial-gradient(ellipse at 16% 18%, color-mix(in srgb, var(--ribbon) 7%, transparent), transparent 52%),
+    radial-gradient(ellipse at 90% 78%, color-mix(in srgb, var(--primary) 6%, transparent), transparent 55%), var(--background);
+}
+.surface::after, .menu-screen::before {
+  content: ''; position: absolute; inset: 90px 12px 70px; pointer-events: none; z-index: 0; opacity: .4;
+  background: radial-gradient(circle at 9% 19%, var(--ribbon) 0 1.4px, transparent 2.5px),
+    radial-gradient(circle at 87% 14%, var(--primary) 0 1px, transparent 2px),
+    radial-gradient(circle at 17% 63%, var(--ribbon) 0 1px, transparent 2px),
+    radial-gradient(circle at 90% 66%, var(--ribbon) 0 1.7px, transparent 3px),
+    radial-gradient(circle at 28% 88%, #eab53d 0 1.5px, transparent 2.5px),
+    radial-gradient(circle at 71% 37%, #eab53d 0 1px, transparent 2px),
+    radial-gradient(circle at 64% 93%, var(--primary) 0 1px, transparent 2px);
+  animation: ambient-drift 9s ease-in-out infinite alternate;
+}
+.menu-header, .menu-body { position: relative; z-index: 1; }
+#board { z-index: 1; }
+#board canvas { position: relative; z-index: 1; }
+.result #board::before {
+  content: ''; position: absolute; inset: -20%; pointer-events: none;
+  background: radial-gradient(ellipse, color-mix(in srgb, var(--ribbon) 14%, transparent), transparent 62%);
+}
+.result #board::after {
+  content: ''; position: absolute; pointer-events: none; left: 50%; top: 50%; width: 130px; height: 130px;
+  margin: -65px; border-radius: 50%; border: 2px solid color-mix(in srgb, var(--ribbon) 40%, transparent);
+  animation: victory-ring 850ms ease-out both;
+}
+.tool, .wallet, .secondary-action, .daily-entry {
+  background-image: linear-gradient(155deg, #ffffff25, #ffffff00 65%);
+  box-shadow: inset 0 1px 0 #ffffff45, 0 3px 8px #18243c06;
+  border-radius: 12px;
+}
+.primary-action, .resume {
+  background: linear-gradient(165deg, color-mix(in srgb, var(--primary) 85%, white), var(--primary) 58%, color-mix(in srgb, var(--primary) 91%, black));
+  box-shadow: inset 0 1px 0 #ffffff60, 0 4px 0 color-mix(in srgb, var(--primary), black 19%), 0 8px 18px color-mix(in srgb, var(--primary) 16%, transparent);
+  border-radius: 13px;
+}
+.primary-action, .secondary-action, .tool, .resume { transition: transform 100ms ease-out; }
+.coin { background: radial-gradient(circle at 32% 26%, #fff2a0, #ffd249 45%, #f5b928 85%); }
+.result-heading h1 { text-shadow: 0 2px 0 color-mix(in srgb, var(--accent) 13%, transparent); }
+.star { filter: drop-shadow(0 3px 0 #dfa126) drop-shadow(0 5px 9px #ffc62b35); }
+.track span, .menu-track span { background-image: linear-gradient(0deg, #ffffff00, #ffffff45); }
+.track { box-shadow: inset 0 1px 2px #44335d1c; }
+.theme-card { box-shadow: inset 0 1px 0 #fff3, 0 4px 12px #17243d08; }
+.wheel-screen { background: radial-gradient(ellipse at 50% 40%, #54466c, #222433 72%); }
+.wheel-spin { background: linear-gradient(160deg, #ffe392, #f6bc4a 60%, #efaa31); }
+[data-blocked=true] .surface::after, [data-blocked=true] .menu-screen::before { animation-play-state: paused; }
+@keyframes ambient-drift { from { transform: translateY(10px); opacity: .24; } to { transform: translateY(-16px); opacity: .48; } }
+@keyframes victory-ring { from { transform: scale(.4); opacity: .6; } to { transform: scale(2.8); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .surface::after, .menu-screen::before { animation: none; opacity: .22; }
+  .result #board::after { display: none; }
+  .primary-action, .secondary-action, .tool, .resume { transition: none; }
+}

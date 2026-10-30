@@ -195,7 +195,7 @@ async function boot(): Promise<void> {
   function change(next: number[]): void {
     if (screen !== 'game' || result || activity.isBlocked() || conflict) return;
     const reverse = next.length < path.length;
-    invalidate(); path = next; notice(''); redraw(); scene.react(path[path.length - 1]!);
+    invalidate(); path = next; notice(''); redraw(); scene.react(path[path.length - 1]!, reverse);
     feedback.play(reverse ? 'undo' : 'cell', path.length / level.cells.length);
     if (complete(level, path)) finish();
     else { clearTimeout(saveTimer); saveTimer = setTimeout(flush, 80); }

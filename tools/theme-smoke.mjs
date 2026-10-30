@@ -10,14 +10,21 @@ async function ribbonPixels(page, hex) {
     const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
     const expected = [1, 3, 5].map(i => Number.parseInt(hex.slice(i, i + 2), 16));
     let count = 0;
-    for (let i = 0; i < pixels.length; i += 4) if (expected.every((v, c) => pixels[i + c] === v)) count++;
+    // The field now shades the same hue from 17% lighter to 12% darker.
+    // Match that narrow colour ramp, rather than requiring a flat RGB pixel.
+    const ramp = Array.from({ length: 60 }, (_, i) => {
+      const amount = -.12 + i * .29 / 59, target = amount < 0 ? 0 : 255;
+      return expected.map(v => Math.round(v * (1 - Math.abs(amount)) + target * Math.abs(amount)));
+    });
+    for (let i = 0; i < pixels.length; i += 4)
+      if (ramp.some(rgb => rgb.every((v, c) => Math.abs(pixels[i + c] - v) <= 2))) count++;
     return count;
   }, { data: png.toString('base64'), hex });
 }
 const matrix = [
-  ['classic', 'Классика', '#7e67d9', '#fafaf8', 0], ['mint', 'Мята', '#379b68', '#f4faf2', 0],
-  ['lagoon', 'Лагуна', '#168caa', '#f1fafb', 500], ['sunset', 'Закат', '#d86a4b', '#fff6ee', 500],
-  ['lavender', 'Лаванда', '#a35dba', '#f8f3fc', 500], ['honey', 'Мёд', '#b88122', '#fffae9', 500],
+  ['classic', 'Классика', '#8550ed', '#fafaf8', 0], ['mint', 'Мята', '#20ae79', '#f4faf2', 0],
+  ['lagoon', 'Лагуна', '#129fc3', '#f1fafb', 500], ['sunset', 'Закат', '#ee7452', '#fff6ee', 500],
+  ['lavender', 'Лаванда', '#b855d3', '#f8f3fc', 500], ['honey', 'Мёд', '#b88122', '#fffae9', 500],
   ['dusk', 'Сумерки', '#a38afa', '#202335', 500], ['neon', 'Неон', '#a8d94b', '#192725', 500],
 ];
 const key = 'road-lines.save.v1';
@@ -54,7 +61,7 @@ export async function runThemeSmoke(browser, url, output) {
     assert.equal((await save(page)).themeId, 'mint'); assert.equal((await save(page)).coins, 0);
     await page.keyboard.press('Escape');
     await page.locator('[data-action=continue]').click();
-    assert(await ribbonPixels(page, '#379b68') > 100, 'Free theme reaches real Phaser field');
+    assert(await ribbonPixels(page, '#20ae79') > 100, 'Free theme reaches real Phaser field');
     await page.close();
   }
 
@@ -131,3 +138,4 @@ export async function runThemeSmoke(browser, url, output) {
   await failure.close();
   console.log('Themes: 5 catalog viewports, 8 real palettes, purchases/reload/repeat/failure and exact Back origins passed.');
 }
+
