@@ -1,4 +1,9 @@
 const paths = {
+  back: '<path d="m14 5-7 7 7 7M7 12h14"/>',
+  grid: '<path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/>',
+  lock: '<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/>',
+  home: '<path d="m3 10 9-7 9 7M5 9v12h14V9M9 21v-7h6v7"/>',
+  settings: '<path d="M4 7h16M4 17h16M8 4v6M16 14v6"/>',
   restart: '<path d="M5 9a8 8 0 1 1-1 7M5 3v6h6"/>',
   pause: '<path d="M8 5v14M16 5v14"/>',
   hint: '<path d="M9 18h6M10 21h4M8.3 14.5A6 6 0 1 1 16 14.2c-1.2 1-1 2-1 2H9s.2-1-1-2Z"/>',

@@ -4,10 +4,11 @@ export const SAVE_KEY = 'road-lines.save.v1';
 export interface GameSave {
   version: 1; levelId: string; levelVersion: number; path: number[];
   completed: string[]; coins: number; hints: number;
+  drafts: Record<string, { version: number; path: number[] }>;
 }
 export interface SyncStorage { getItem(key: string): string | null; setItem(key: string, value: string): void; }
 export const defaultSave = (): GameSave => ({ version: 1, levelId: levels[0]!.id, levelVersion: 1,
-  path: [levels[0]!.start], completed: [], coins: 0, hints: 3 });
+  path: [levels[0]!.start], completed: [], coins: 0, hints: 3, drafts: {} });
 export function decodeSave(raw: string): GameSave {
   const data: unknown = JSON.parse(raw);
   if (!data || typeof data !== 'object') throw Error('Invalid save');
@@ -18,8 +19,17 @@ export function decodeSave(raw: string): GameSave {
   const level = levels.find(l => l.id === d.levelId);
   if (!level) throw Error('Unknown current level');
   const path = d.levelVersion === level.version && Array.isArray(d.path) && validPath(level, d.path) ? d.path as number[] : [level.start];
+  // Additive migration from stage-1 saves. Drafts are transient; wallet/progression stay strict.
+  const drafts: GameSave['drafts'] = {};
+  if (d.drafts && typeof d.drafts === 'object') for (const l of levels) {
+    const draft = (d.drafts as Record<string, { version?: unknown; path?: unknown }>)[l.id];
+    if (draft?.version === l.version && Array.isArray(draft.path) && validPath(l, draft.path)) {
+      drafts[l.id] = { version: l.version, path: [...draft.path] };
+    }
+  }
+  drafts[level.id] = { version: level.version, path: [...path] };
   return { version: 1, levelId: level.id, levelVersion: level.version, path: [...path],
-    completed: [...d.completed] as string[], coins: d.coins as number, hints: d.hints as number };
+    completed: [...d.completed] as string[], coins: d.coins as number, hints: d.hints as number, drafts };
 }
 /** One synchronous document writer. Memory follows confirmed atomic replacement. */
 export class GameStore {

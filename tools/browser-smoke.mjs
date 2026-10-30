@@ -1,3 +1,4 @@
+import { runMenuSmoke } from './menu-smoke.mjs';
 import { chromium } from '@playwright/test';
 import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
@@ -13,6 +14,10 @@ const port = 4189;
 const server = spawn(process.execPath, ['node_modules/vite/bin/vite.js', 'preview', '--host', '127.0.0.1', '--port', String(port), '--strictPort'], { cwd: root, stdio: ['ignore', 'pipe', 'pipe'] });
 const url = `http://127.0.0.1:${port}`;
 const results = [];
+const enterGame = async page => {
+  await page.locator('#app[data-ready=true]').waitFor();
+  if (await page.locator('[data-action=continue]').isVisible()) await page.locator('[data-action=continue]').click();
+};
 let browser;
 const output = resolve(root, '.test-output');
 mkdirSync(output, { recursive: true });
@@ -29,6 +34,23 @@ try {
     page.on('pageerror', error => errors.push(error.message));
     await page.goto(url);
     await page.locator('#app[data-ready=true]').waitFor();
+    await page.screenshot({ path: resolve(output, `home-${width}x${height}.png`) });
+    await page.locator('[data-action=sets]:visible').click();
+    await page.screenshot({ path: resolve(output, `sets-${width}x${height}.png`) });
+    assert.equal(await page.locator('.set-card:disabled').count(), 2);
+    await page.locator('[data-action=open-set]:enabled').click();
+    await page.screenshot({ path: resolve(output, `levels-${width}x${height}.png`) });
+    assert.equal(await page.locator('.level-tile').count(), 15);
+    assert.equal(await page.locator('.level-tile:enabled').count(), 1);
+    const grid = await page.locator('.level-grid').boundingBox();
+    const reserved = await page.locator('#banner-slot').boundingBox();
+    assert(grid && reserved && grid.y + grid.height <= reserved.y, 'Grid clears banner');
+    for (const button of await page.locator('.level-tile').all()) {
+      const b = await button.boundingBox(); assert(b && b.width >= 48 && b.height >= 48, 'Grid tap targets');
+    }
+    await page.keyboard.press('Escape');
+    await page.keyboard.press('Escape');
+    await enterGame(page);
     assert.equal(await page.locator('#board canvas').count(), 1);
     await page.getByRole('button', { name: 'Пауза', exact: true }).click();
     await page.getByRole('dialog').waitFor();
@@ -41,7 +63,7 @@ try {
     assert(play && banner && play.y + play.height <= banner.y + 1, 'Board must not overlap native banner reservation');
     const hud = await page.locator('.hud').boundingBox();
     assert(hud && hud.x >= 0 && hud.x + hud.width <= width, 'HUD containment');
-    for (const button of await page.locator('.hud button').all()) {
+    for (const button of await page.locator('.hud button:visible').all()) {
       const b = await button.boundingBox(); assert(b && b.width >= 48 && b.height >= 48, '48px action target');
     }
     await page.screenshot({ path: resolve(output, `play-${width}x${height}.png`) });
@@ -57,10 +79,12 @@ try {
       assert(rewards.y + rewards.height <= height, 'Rewards on screen');
       await page.screenshot({ path: resolve(output, `result-${width}x${height}.png`) });
       await page.getByRole('button', { name: 'ДАЛЬШЕ', exact: true }).click();
+      await enterGame(page);
       await page.locator('.play').waitFor();
     } else {
       await page.goto(`${url}/?screen=result`);
       await page.locator('#app[data-ready=true]').waitFor();
+      await enterGame(page);
       assert.equal(await page.locator('.result-heading').isVisible(), false, 'Inspection route is excluded from production');
     }
     assert.deepEqual(errors, []);
@@ -69,7 +93,7 @@ try {
   }
   // Resize the running renderer without creating a second canvas or stale bounds.
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
-  await page.goto(url); await page.locator('#app[data-ready=true]').waitFor();
+  await page.goto(url); await enterGame(page);
   await page.setViewportSize({ width: 320, height: 568 });
   await page.waitForFunction(() => document.querySelector('#board canvas')?.width === Math.round(document.querySelector('#board')?.clientWidth * Math.min(devicePixelRatio, 2)));
   assert.equal(await page.locator('#board canvas').count(), 1);
@@ -94,7 +118,7 @@ try {
   const saveKey = 'road-lines.save.v1';
   const errors = [];
   gameplay.on('pageerror', e => errors.push(e.message));
-  const open = async () => { await gameplay.goto(url); await gameplay.locator('#app[data-ready=true]').waitFor(); };
+  const open = async () => { await gameplay.goto(url); await enterGame(gameplay); };
   const readSave = () => gameplay.evaluate(key => JSON.parse(localStorage.getItem(key)), saveKey);
   const center = async (level, cell) => {
     const b = await gameplay.locator('#board').boundingBox();
@@ -111,7 +135,7 @@ try {
   await move(await center(first, first.start)); await gameplay.mouse.down();
   await move(await center(first, 1)); await gameplay.mouse.up();
   assert.deepEqual((await readSave()).path, [0, 1]);
-  await gameplay.reload(); await gameplay.locator('#app[data-ready=true]').waitFor();
+  await gameplay.reload(); await enterGame(gameplay);
   assert.deepEqual((await readSave()).path, [0, 1]);
   await move(await center(first, 1)); await gameplay.mouse.down(); await move(await center(first, 0)); await gameplay.mouse.up();
   assert.deepEqual((await readSave()).path, [0]);
@@ -130,7 +154,7 @@ try {
   assert(painted.count > 20 && painted.width === 390 && painted.height === 844);
   assert(await gameplay.evaluate(() => window.__audioProbe.oscillators > 8 && window.__audioProbe.contexts.length === 1));
   await gameplay.screenshot({ path: resolve(output, 'win-celebration.png') });
-  await gameplay.reload(); await gameplay.locator('#app[data-ready=true]').waitFor();
+  await gameplay.reload(); await enterGame(gameplay);
   assert.equal((await readSave()).coins, 20);
   await gameplay.getByRole('button', { name: 'ДАЛЬШЕ', exact: true }).click();
   await gameplay.locator('.play').waitFor();
@@ -182,8 +206,11 @@ try {
     }
   }
   assert.equal((await readSave()).coins, 300);
-  await gameplay.getByRole('button', { name: 'ПРОЙТИ СНОВА', exact: true }).click();
-  await gameplay.locator('.play').waitFor();
+  await gameplay.getByRole('button', { name: 'К ВЫБОРУ УРОВНЕЙ', exact: true }).click();
+  await gameplay.locator('.bank-complete').waitFor();
+  assert.equal(await gameplay.locator('.level-tile.completed').count(), 15);
+  await gameplay.getByRole('button', { name: 'Уровень 1, пройден, три звезды', exact: true }).click();
+  await gameplay.locator('#app[data-screen=game]').waitFor();
   // A worker hint is spent only after a found continuation is presented.
   await gameplay.getByRole('button', { name: 'Подсказка, осталось 3', exact: true }).click();
   await gameplay.getByText('Бледная линия показывает продолжение.', { exact: true }).waitFor();
@@ -196,7 +223,7 @@ try {
     const s = JSON.parse(localStorage.getItem(key));
     localStorage.setItem(key, JSON.stringify({ ...s, levelId: level.id, levelVersion: 1, path: [level.start] }));
   }, { key: saveKey, level: catalog[2] });
-  await gameplay.reload(); await gameplay.locator('#app[data-ready=true]').waitFor();
+  await gameplay.reload(); await enterGame(gameplay);
   const branch = catalog[2];
   // A diagonal misses the central rectangles of the orthogonal neighbours.
   await move(await center(branch, 0)); await gameplay.mouse.down(); await move(await center(branch, 4)); await gameplay.mouse.up();
@@ -239,6 +266,7 @@ try {
   await other.getByText('Игра уже открыта в другой вкладке. Закрой её и попробуй снова.', { exact: true }).waitFor();
   await other.close();
   assert.deepEqual(errors, []); await gameplay.close(); await gameplayContext.close();
+  await runMenuSmoke(browser, url, output);
   writeFileSync(resolve(output, inspect ? 'browser-inspect.json' : 'browser-production.json'), JSON.stringify({ inspect, results }, null, 2));
   console.log(`Browser smoke: ${results.length} viewports passed (${inspect ? 'inspect' : 'production'}), plus live resize.`);
 } finally {
