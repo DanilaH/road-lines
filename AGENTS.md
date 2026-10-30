@@ -34,7 +34,7 @@ TypeScript + Phaser + Vite; Android via Capacitor; native Yandex Mobile Ads inte
 - Undo/reset are free. Pause, background, second pointer and ads do not destroy the path.
 - Hint search uses the actual prefix. FOUND, UNSOLVABLE and UNKNOWN are distinct. Timeouts are not proof of dead ends; never charge for an unusable hint.
 
-- Optional finish/walls/ordered-checkpoint rules are specified in docs/MECHANICS.md. Apply them consistently to input, solver, completion and restore; retain all original 15 IDs/versions. Current bank: 30, target still 90.
+- Optional finish/walls/ordered-checkpoint rules are specified in docs/MECHANICS.md. Apply them consistently to input, solver, completion and restore; retain all original 15 IDs/versions. Current bank: 90 in three sets of 30; preserve all original 30 records. New sets unlock after three tutorials, independently; completing a set must never silently advance into another set.
 
 ## Presentation acceptance
 - Reference composition: free space, compact top controls, square grey cells with gaps, theme-coloured ribbon. Scale by figure bounds with a sensible maximum cell size.
@@ -85,7 +85,7 @@ Update docs/IMPLEMENTATION_STATUS.md when a stage changes. Do not call the whole
 Baseline commands:
 - npm ci
 - npm run check (manifest integrity + application/kit TS + copied kit regression tests)
-- npm run test:browser (inspection build: five viewports plus all 15 puzzles via actual pointer input)
+- npm run test:browser (inspection build: five viewports plus all 90 puzzles via actual pointer input)
 - node tools/browser-smoke.mjs --production (production build, inspection route excluded)
 - npm run android:sync (production web build + deterministic Android generation/sync)
 - npm run android:build (JDK 21+, SDK 36; debug APK, not release acceptance)

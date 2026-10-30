@@ -1,9 +1,13 @@
 import { readFileSync } from 'node:fs';
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 const text = readFileSync(new URL('../src/content/levels.ts', import.meta.url), 'utf8');
 const catalog = JSON.parse(text.slice(text.indexOf('= ') + 2).trim().replace(/;$/, ''));
-assert.equal(catalog.length, 30);
-const ids = new Set(), puzzles = new Set(), classicShapes = new Set(), audit = [];
+assert.equal(catalog.length, 90);
+const authorAudit = JSON.parse(readFileSync(new URL('../docs/BANK_CONTENT_AUDIT.json', import.meta.url), 'utf8'));
+assert.equal(authorAudit.levels.length, 60);
+assert.equal(createHash('sha256').update(JSON.stringify(catalog.slice(0, 30))).digest('hex'), authorAudit.legacy30Sha256, 'Existing 30 records changed');
+const ids = new Set(), puzzles = new Set(), classicShapes = new Set(), newMasks = new Set(), audit = [];
 // Deliberately independent of the game model and solver.
 for (const l of catalog) {
   assert(!ids.has(l.id)); ids.add(l.id);
@@ -50,11 +54,12 @@ for (const l of catalog) {
       (l.walls ?? []).map(e => e.map(point).sort().join('|')).sort(), checkpoints.map(point)]));
   }
   const canonical = variants.sort()[0]; assert(!puzzles.has(canonical), 'Rotated/reflected duplicate rules: ' + l.id); puzzles.add(canonical);
+  if (catalog.indexOf(l) < 30) newMasks.add(shapeVariants.sort()[0]);
   if (l.finish === undefined && !l.walls?.length && !checkpoints.length) {
     const shape = shapeVariants.sort()[0]; assert(!classicShapes.has(shape), 'Duplicate classic shape: ' + l.id); classicShapes.add(shape);
   }
   // Enumerate all geometric routes to prove each new rule actually removes solutions.
-  if (l.tag === 'finish' || l.tag === 'walls' || l.tag === 'checkpoints') {
+  if (catalog.indexOf(l) < 30 && (l.tag === 'finish' || l.tag === 'walls' || l.tag === 'checkpoints')) {
     let classic = 0, constrained = 0;
     const route = [l.start], used = new Set(route);
     const visit = head => {
@@ -73,6 +78,27 @@ for (const l of catalog) {
     visit(l.start); assert(constrained > 0 && constrained < classic, 'Decorative or unsolvable rules: ' + l.id);
     audit.push({ id: l.id, cells: l.cells.length, classicSolutions: classic, ruleSolutions: constrained });
   }
+  if (catalog.indexOf(l) >= 30) {
+    const record = authorAudit.levels.find(a => a.id === l.id); assert(record, 'Missing author audit: ' + l.id);
+    const geometric = route => route.length === l.cells.length && route[0] === l.start && new Set(route).size === route.length &&
+      route.every((c, i) => available.has(c) && (i === 0 || adjacent(route[i - 1], c)));
+    const legal = (route, omit) => {
+      if (omit !== 'finish' && l.finish !== undefined && route.at(-1) !== l.finish) return false;
+      if (omit !== 'walls' && route.slice(1).some((c, i) => wallKeys.has([route[i], c].sort((a, b) => a - b).join(',')))) return false;
+      const order = checkpoints.map(c => route.indexOf(c));
+      return omit === 'checkpoints' || order.every((v, i) => !i || v > order[i - 1]);
+    };
+    const rules = ['finish', 'walls', 'checkpoints'].filter(k => l[k] !== undefined);
+    assert.deepEqual(Object.keys(record.counterexamples).sort(), [...rules].sort());
+    for (const rule of rules) {
+      const route = record.counterexamples[rule];
+      assert(geometric(route) && legal(route, rule) && !legal(route), 'Rule has no independent effect: ' + l.id + '/' + rule);
+    }
+    // Every added silhouette must differ from every other mask, including the old bank.
+    const shape = shapeVariants.sort()[0];
+    assert(!newMasks.has(shape), 'Repeated new silhouette: ' + l.id); newMasks.add(shape);
+    audit.push({ id: l.id, cells: l.cells.length, rules: rules.join('+') || 'classic', branches: record.branches });
+  }
 }
-console.log('Content audit: 30 distinct rule layouts under eight symmetries; 15 original classic masks retained; all witnesses/bounds/rules valid.');
+console.log('Content audit: 90 distinct rule layouts; original 30 records unchanged; 60 new silhouettes unique under eight symmetries; witnesses and each rule contribution independently checked.');
 console.table(audit);

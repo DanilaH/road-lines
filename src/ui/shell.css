@@ -118,6 +118,8 @@ button:focus-visible { outline: 3px solid var(--ribbon); outline-offset: 5px; }
 .set-symbol > svg:not(.level-mask) { width: 25px; height: 25px; }
 .set-symbol .level-mask circle { fill: #fbd976; stroke: none; }
 .set-copy strong { font-size: 20px; font-weight: 1000; letter-spacing: -.4px; }
+.set-copy { min-width: 0; }
+.set-count { flex-shrink: 0; }
 .set-copy > span { font-size: 12px; }.set-count { font-weight: 950; font-size: 13px; }
 .set-progress { background: #0000001a; height: 6px; border-radius: 5px; }
 .set-progress i { border-radius: inherit; background: #fff0bf; box-shadow: inset 0 1px 0 #fff8; }

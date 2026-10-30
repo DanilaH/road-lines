@@ -1,3 +1,4 @@
+import { runBankSmoke } from './bank-smoke.mjs';
 import { runMechanicsSmoke } from './mechanics-smoke.mjs';
 import { runMenuSmoke } from './menu-smoke.mjs';
 import { runThemeSmoke } from './theme-smoke.mjs';
@@ -174,6 +175,7 @@ try {
   // All actual witnesses through the production input; reject no legal authored turn.
   for (let index = 1; index < catalog.length; index++) {
     const level = catalog[index];
+    if (index >= 30) { await gameplay.waitForTimeout(550); await gameplay.screenshot({ path: resolve(output, `bank-${level.id}.png`) }); }
     await move(await center(level, level.start)); await gameplay.mouse.down();
     for (const [step, cell] of level.witness.slice(1).entries()) {
       await move(await center(level, cell));
@@ -192,10 +194,18 @@ try {
       assert.equal((await readSave()).coins, 40);
     }
     if (index < catalog.length - 1) {
-      await gameplay.getByRole('button', { name: 'ДАЛЬШЕ', exact: true }).click({ clickCount: index === 2 ? 2 : 1 });
+      const nextLabel = (index + 1) % 30 === 0 ? 'К ВЫБОРУ УРОВНЕЙ' : 'ДАЛЬШЕ';
+      await gameplay.getByRole('button', { name: nextLabel, exact: true }).click({ clickCount: index === 2 ? 2 : 1 });
       if (await gameplay.locator('.bonus-overlay').isVisible()) {
         await gameplay.locator('[data-action=close-bonus]').click();
-        await gameplay.getByRole('button', { name: 'ДАЛЬШЕ', exact: true }).click();
+        await gameplay.getByRole('button', { name: nextLabel, exact: true }).click();
+      }
+      if ((index + 1) % 30 === 0) {
+        await gameplay.locator('.bank-complete').waitFor();
+        assert.equal(await gameplay.locator('.level-tile.completed').count(), 30);
+        await gameplay.getByRole('button', { name: 'Выбрать набор', exact: true }).click();
+        await gameplay.locator(`[data-action=open-set][data-set=${index === 29 ? 'turns' : 'shapes'}]`).click();
+        await gameplay.getByRole('button', { name: 'Уровень 1, доступен', exact: true }).click();
       }
       if (index === 3) {
         await gameplay.evaluate(() => { Object.defineProperty(document, 'hidden', { configurable: true, value: true }); document.dispatchEvent(new Event('visibilitychange')); });
@@ -215,7 +225,7 @@ try {
       await gameplay.getByRole('button', { name: 'ПРОДОЛЖИТЬ', exact: true }).click();
     }
   }
-  assert.equal((await readSave()).coins, 700);
+  assert.equal((await readSave()).coins, 2200);
   await gameplay.getByRole('button', { name: 'К ВЫБОРУ УРОВНЕЙ', exact: true }).click();
   if (await gameplay.locator('.bonus-overlay').isVisible()) {
     await gameplay.locator('[data-action=close-bonus]').click();
@@ -223,6 +233,9 @@ try {
   }
   await gameplay.locator('.bank-complete').waitFor();
   assert.equal(await gameplay.locator('.level-tile.completed').count(), 30);
+  await gameplay.getByText('Все 90 задач пройдены!', { exact: true }).waitFor();
+  await gameplay.getByRole('button', { name: 'Выбрать набор', exact: true }).click();
+  await gameplay.locator('[data-action=open-set][data-set=intro]').click();
   await gameplay.getByRole('button', { name: 'Уровень 1, пройден, три звезды', exact: true }).click();
   await gameplay.locator('#app[data-screen=game]').waitFor();
   // A worker hint is spent only after a found continuation is presented.
@@ -231,7 +244,7 @@ try {
   assert.equal((await readSave()).hints, 2);
   await gameplay.getByRole('button', { name: 'Начать заново', exact: true }).click();
   await move(await center(first, 0)); await gameplay.mouse.down(); await move(await center(first, 2)); await gameplay.mouse.up();
-  await gameplay.locator('.result').waitFor(); assert.equal((await readSave()).coins, 700);
+  await gameplay.locator('.result').waitFor(); assert.equal((await readSave()).coins, 2200);
   // Restore a deterministic branch puzzle, then prove dead-end help is free.
   await gameplay.evaluate(({ key, level }) => {
     const s = JSON.parse(localStorage.getItem(key));
@@ -281,11 +294,12 @@ try {
   await other.close();
   assert.deepEqual(errors, []); await gameplay.close(); await gameplayContext.close();
   await runMechanicsSmoke(browser, url, output, root);
+  await runBankSmoke(browser, url, output, root);
   await runMenuSmoke(browser, url, output);
   await runThemeSmoke(browser, url, output);
   await runRewardsSmoke(browser, url, output, root);
   writeFileSync(resolve(output, inspect ? 'browser-inspect.json' : 'browser-production.json'), JSON.stringify({ inspect, results }, null, 2));
-  console.log(`Browser smoke: ${results.length} viewports passed (${inspect ? 'inspect' : 'production'}), plus live resize.`);
+  console.log(`Browser smoke: all 90 pointer solutions, three set endings and ${results.length} viewports passed (${inspect ? 'inspect' : 'production'}), plus live resize.`);
 } finally {
   await browser?.close();
   server.kill('SIGTERM');

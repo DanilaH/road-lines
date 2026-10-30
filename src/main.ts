@@ -16,7 +16,7 @@ import { Feedback } from './presentation/feedback';
 import { WinMotion } from './presentation/motion';
 import { ScreenMotion } from './presentation/screens';
 import { renderMenu, type Screen } from './ui/menus';
-import { isLevelAvailable } from './core/progression';
+import { isLevelAvailable, isSetAvailable, getLevelSet, levelLabel, nextInSet, type SetId } from './core/progression';
 import { getTheme } from './content/themes';
 import { applyTheme, themePreview } from './ui/themes';
 import { WheelService } from './services/wheel';
@@ -44,6 +44,7 @@ async function boot(): Promise<void> {
   if (fixture) { level = levels[2]!; path = [...level.witness]; }
   let result = fixture || complete(level, path), reward = 0;
   if (result && !fixture) reward = store.finish(level, path);
+  let viewSetId: SetId = getLevelSet(level.id).id;
   let screen: Screen = fixture || (inspect && params.has('level')) ? 'game' : 'home';
   let themeOrigin: { screen: Screen; paused: boolean } = { screen: 'home', paused: false };
   let pendingTheme: string | null = null;
@@ -118,7 +119,7 @@ async function boot(): Promise<void> {
     $('.wheel-screen').inert = bonus !== null;
     if (screen === 'wheel') wheelView.render(store.state, wheelBusy);
     $('.menu-screen').inert = paused || pendingTheme !== null || bonus !== null;
-    if (screen !== 'game' && screen !== 'wheel') renderMenu($('.menu-screen'), screen, store.state);
+    if (screen !== 'game' && screen !== 'wheel') renderMenu($('.menu-screen'), screen, store.state, viewSetId);
     $('.pause-navigation').hidden = screen !== 'game';
     $('#pause-title').textContent = screen === 'game' ? 'Пауза' : 'Настройки';
     $('[data-action=resume]').textContent = screen === 'game' ? 'ПРОДОЛЖИТЬ' : 'ГОТОВО';
@@ -142,7 +143,7 @@ async function boot(): Promise<void> {
       $('.bonus-video').hidden = bonus === 'gift'; $('.bonus-video-note').hidden = bonus === 'gift';
       $('.bonus-close').textContent = bonus === 'gift' ? 'ПРОДОЛЖИТЬ' : 'НЕ СЕЙЧАС';
     }
-    $('.level').innerHTML = `<small>Уровень</small><strong>1–${index + 1}</strong>`;
+    $('.level').innerHTML = `<small>Уровень</small><strong>${levelLabel(level.id)}</strong>`;
     showBalance(shownBalance);
     $('[data-action=sound]').textContent = `Звук: ${feedback.settings.sound ? 'вкл' : 'выкл'}`;
     $('[data-action=sound]').setAttribute('aria-pressed', String(feedback.settings.sound));
@@ -163,7 +164,7 @@ async function boot(): Promise<void> {
     $('.fraction').textContent = `${giftCount}/20`;
     $('.track span').style.width = `${Math.min(100, giftCount * 5)}%`;
     $('.gift-progress').setAttribute('aria-label', `Подарок: ${giftCount} из 20`);
-    $('.next span').textContent = index === levels.length - 1 ? 'К ВЫБОРУ УРОВНЕЙ' : 'ДАЛЬШЕ';
+    $('.next span').textContent = !nextInSet(level.id) ? 'К ВЫБОРУ УРОВНЕЙ' : 'ДАЛЬШЕ';
     host.setAttribute('aria-label', `Задача ${index + 1}. Заполнено ${path.length} из ${level.cells.length}. ${ruleCopy ? ruleCopy + '. ' : ''}Стрелки — движение и откат.`);
     scene.setState(level, path, hint, result);
     activity.setGameplayDesired(screen === 'game' && !result);
@@ -240,6 +241,7 @@ async function boot(): Promise<void> {
     if (screen === 'wheel') cancelWheel();
     if (!flush()) return;
     invalidate(); motion.stop(); scene.settle(); showBalance(store.state.coins);
+    if (next === 'levels' && screen === 'game') viewSetId = getLevelSet(level.id).id;
     screen = next; paused = false; $('.pause-overlay').hidden = true;
     activity.setBlocked('pause', false); notice(''); redraw(); game.loop.sleep();
     screens.enterMenu(screen === 'wheel' ? $('.wheel-screen') : $('.menu-screen'));
@@ -260,7 +262,7 @@ async function boot(): Promise<void> {
     const nextPath = complete(selected, saved) ? [selected.start] : [...saved];
     try { store.path(selected, nextPath); } catch { saveError(); return; }
     invalidate(); motion.stop(); scene.settle(); input.cancel();
-    level = selected; path = nextPath; result = false; reward = 0; showBalance(store.state.coins);
+    level = selected; viewSetId = getLevelSet(level.id).id; path = nextPath; result = false; reward = 0; showBalance(store.state.coins);
     showGame(); scene.open();
   }
   function openThemes(): void {
@@ -372,7 +374,9 @@ async function boot(): Promise<void> {
       case 'cancel-theme': closeThemePurchase(); break;
       case 'home': navigate('home'); break;
       case 'sets': navigate('sets'); break;
-      case 'open-set': navigate('levels'); break;
+      case 'open-set':
+        if (isSetAvailable(target.dataset.set!, store.state.completed)) { viewSetId = target.dataset.set as SetId; navigate('levels'); }
+        break;
       case 'menu-back': onBack(); break;
       case 'continue': showGame(); break;
       case 'choose-level': chooseLevel(target.dataset.level!); break;
@@ -403,8 +407,8 @@ async function boot(): Promise<void> {
     const token = revision, done = await motion.collect();
     collecting = false;
     if (!done || disposed || activity.isBlocked() || token !== revision) return;
-    if (levels.indexOf(level) === levels.length - 1) { navigate('levels'); return; }
-    const next = levels[levels.indexOf(level) + 1]!;
+    const next = nextInSet(level.id);
+    if (!next) { navigate('levels'); return; }
     const draft = store.state.drafts[next.id]?.path ?? [next.start];
     const nextPath = complete(next, draft) ? [next.start] : [...draft];
     try { store.path(next, nextPath); } catch { $<HTMLButtonElement>('.next').disabled = false; saveError(); return; }
