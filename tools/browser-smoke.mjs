@@ -1,5 +1,6 @@
 import { runMenuSmoke } from './menu-smoke.mjs';
 import { runThemeSmoke } from './theme-smoke.mjs';
+import { runRewardsSmoke } from './rewards-smoke.mjs';
 import { chromium } from '@playwright/test';
 import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
@@ -188,6 +189,10 @@ try {
     }
     if (index < catalog.length - 1) {
       await gameplay.getByRole('button', { name: 'ДАЛЬШЕ', exact: true }).click({ clickCount: index === 2 ? 2 : 1 });
+      if (await gameplay.locator('.bonus-overlay').isVisible()) {
+        await gameplay.locator('[data-action=close-bonus]').click();
+        await gameplay.getByRole('button', { name: 'ДАЛЬШЕ', exact: true }).click();
+      }
       if (index === 3) {
         await gameplay.evaluate(() => { Object.defineProperty(document, 'hidden', { configurable: true, value: true }); document.dispatchEvent(new Event('visibilitychange')); });
         await gameplay.waitForTimeout(700);
@@ -269,6 +274,7 @@ try {
   assert.deepEqual(errors, []); await gameplay.close(); await gameplayContext.close();
   await runMenuSmoke(browser, url, output);
   await runThemeSmoke(browser, url, output);
+  await runRewardsSmoke(browser, url, output, root);
   writeFileSync(resolve(output, inspect ? 'browser-inspect.json' : 'browser-production.json'), JSON.stringify({ inspect, results }, null, 2));
   console.log(`Browser smoke: ${results.length} viewports passed (${inspect ? 'inspect' : 'production'}), plus live resize.`);
 } finally {

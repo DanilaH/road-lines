@@ -14,8 +14,9 @@
 ## Темы
 Каталог 8 тем и покупка реализованы: 2 бесплатные, 6 по 500, общая палитра UI/Phaser, подтверждение и атомарное сохранение ownership/coins/themeId. Миграция v1→v2. 131 tests, inspect/production browser flows, android:sync и оба CI прошли на 9e303b4a34caa3ff6fa14844bfd43f9064b160b1. APK и evidence — STAGE3_THEMES_VALIDATION.md.
 
-## Дальше в этапе 3
-Gift reward/skin offer и ежедневное колесо. Меню и сетка уже реализованы; весь этап 3 ещё не завершён.
+## Награды и колесо
+Экраны и локальная логика этапа 3 реализованы: ежедневное колесо, durable pending/recovery, gift ledger и предложение темы. Схема v3. Свежий CI восстановленной версии проверяется; evidence — STAGE3_REWARDS_VALIDATION.md.
+В текущем банке 15 задач, поэтому подарок за 20 первых прохождений пока недостижим. Реальные видеонаграды остаются этапом 4.
 
 ## Далее
 4. Реальные Android banner/interstitial/rewarded + durable receipt journal/ack.

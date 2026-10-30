@@ -18,6 +18,9 @@ import { renderMenu, type Screen } from './ui/menus';
 import { isLevelAvailable } from './core/progression';
 import { getTheme } from './content/themes';
 import { applyTheme, themePreview } from './ui/themes';
+import { WheelService } from './services/wheel';
+import { WheelView } from './ui/wheel';
+import { localDate } from './core/rewards';
 import './style.css';
 let releaseWriter = (): void => {}; 
 
@@ -29,6 +32,8 @@ async function boot(): Promise<void> {
   const fixture = inspect && params.get('screen') === 'result';
   releaseWriter = await acquireSaveOwnership();
   const store = new GameStore(localStorage);
+  const wheelService = new WheelService(store);
+  if (store.state.daily.pending) await wheelService.commit();
   applyTheme(root, getTheme(store.state.themeId));
   let level = levels.find(l => l.id === store.state.levelId)!;
   if (inspect && params.has('level')) level = levels[Math.max(0, Math.min(14, Number(params.get('level')) - 1))] ?? level;
@@ -39,6 +44,9 @@ async function boot(): Promise<void> {
   let screen: Screen = fixture || (inspect && params.has('level')) ? 'game' : 'home';
   let themeOrigin: { screen: Screen; paused: boolean } = { screen: 'home', paused: false };
   let pendingTheme: string | null = null;
+  let bonus: 'gift' | 'offer' | null = null;
+  let wheelBusy = false, wheelPreparing = false, wheelToken = 0;
+  let wheelCommit: Promise<void> | null = null;
   const feedback = new Feedback();
   let shownBalance = store.state.coins, collecting = false;
   let paused = false, disposed = false, saveFailed = false, conflict = false, busy = false, revision = 0;
@@ -64,7 +72,7 @@ async function boot(): Promise<void> {
         <button class="multiply" disabled>${icon('play')} ЗАБРАТЬ ×5</button>
         <button class="next" data-action="next"><span>ДАЛЬШЕ</span></button>
       </div>
-      </div><section class="menu-screen" aria-label="Навигация"></section>
+      </div><section class="menu-screen" aria-label="Навигация"></section><section class="wheel-screen" hidden aria-label="Ежедневная награда"></section>
       <div id="banner-slot" aria-hidden="true"></div>
       <section class="pause-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="pause-title"><div class="pause-card"><h2 id="pause-title">Пауза</h2><button data-action="resume" class="resume">ПРОДОЛЖИТЬ</button><div class="pause-navigation"><button data-action="sets">ВЫБОР УРОВНЕЙ</button><button data-action="home">ГЛАВНОЕ МЕНЮ</button><button data-action="themes">ТЕМЫ</button></div><div class="settings"><button data-action="sound" aria-pressed="true"></button><button data-action="vibration" aria-pressed="true"></button></div></div></section>
       <section class="theme-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="theme-title"><div class="theme-purchase">
@@ -72,6 +80,7 @@ async function boot(): Promise<void> {
         <h2 id="theme-title"></h2><div class="purchase-preview"></div><p class="purchase-balance"></p>
         <button class="primary-action" data-action="buy-theme"></button><p class="purchase-shortage" role="status"></p>
       </div></section>
+      <section class="bonus-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="bonus-title"><div class="bonus-card"><h2 id="bonus-title"></h2><div class="bonus-art"></div><p class="bonus-copy"></p><button class="bonus-video" disabled>${icon('play')} ОТКРЫТЬ ЗА ВИДЕО</button><p class="bonus-video-note">Видео пока недоступно</p><button class="bonus-close" data-action="close-bonus"></button></div></section>
       <div class="notice" hidden role="status"><span></span><button data-action="notice"></button></div>
     </section><div id="startup" role="status">Загрузка…</div>`;
   const $ = <T extends HTMLElement = HTMLElement>(selector: string): T => root.querySelector<T>(selector)!;
@@ -84,6 +93,7 @@ async function boot(): Promise<void> {
     transparent: true, antialias: true, banner: false, scale: { mode: Phaser.Scale.NONE }, audio: { noAudio: true }, scene, fps: { target: 60 } });
   const showBalance = (value: number): void => { shownBalance = value; $('.balance').textContent = String(value); $('.wallet').setAttribute('aria-label', `${value} монет`); };
   const motion = new WinMotion(root, feedback, showBalance);
+  const wheelView = new WheelView($('.wheel-screen'), feedback);
   root.dataset.winPhase = 'idle';
   const layout = () => boardLayout(host.clientWidth, host.clientHeight, result, level);
   function notice(text: string, action = ''): void {
@@ -97,11 +107,14 @@ async function boot(): Promise<void> {
     $('.surface').className = `surface ${result ? 'result' : 'play'}`;
     root.dataset.screen = screen;
     $('.game-content').style.visibility = screen === 'game' ? 'visible' : 'hidden';
-    $('.game-content').inert = screen !== 'game' || paused;
-    $('.game-content').setAttribute('aria-hidden', String(screen !== 'game' || paused));
-    $('.menu-screen').hidden = screen === 'game';
-    $('.menu-screen').inert = paused || pendingTheme !== null;
-    if (screen !== 'game') renderMenu($('.menu-screen'), screen, store.state);
+    $('.game-content').inert = screen !== 'game' || paused || bonus !== null;
+    $('.game-content').setAttribute('aria-hidden', String(screen !== 'game' || paused || bonus !== null));
+    $('.menu-screen').hidden = screen === 'game' || screen === 'wheel';
+    $('.wheel-screen').hidden = screen !== 'wheel';
+    $('.wheel-screen').inert = bonus !== null;
+    if (screen === 'wheel') wheelView.render(store.state, wheelBusy);
+    $('.menu-screen').inert = paused || pendingTheme !== null || bonus !== null;
+    if (screen !== 'game' && screen !== 'wheel') renderMenu($('.menu-screen'), screen, store.state);
     $('.pause-navigation').hidden = screen !== 'game';
     $('#pause-title').textContent = screen === 'game' ? 'Пауза' : 'Настройки';
     $('[data-action=resume]').textContent = screen === 'game' ? 'ПРОДОЛЖИТЬ' : 'ГОТОВО';
@@ -115,6 +128,15 @@ async function boot(): Promise<void> {
       $('[data-action=buy-theme]').textContent = `КУПИТЬ ЗА ${item.price}`;
       $<HTMLButtonElement>('[data-action=buy-theme]').disabled = store.state.coins < item.price || conflict || store.recoveryRequired;
       $('.purchase-shortage').textContent = store.state.coins < item.price ? `Не хватает монет: ${item.price - store.state.coins}.` : 'Покупка за игровые монеты';
+    }
+    $('.bonus-overlay').hidden = bonus === null; $('.bonus-overlay').dataset.kind = bonus ?? '';
+    if (bonus) {
+      const offer = store.state.offer;
+      $('#bonus-title').textContent = bonus === 'gift' ? 'Подарок!' : 'Новое оформление';
+      $('.bonus-art').innerHTML = bonus === 'gift' ? icon('gift') : offer ? themePreview(getTheme(offer.themeId)) : '';
+      $('.bonus-copy').textContent = bonus === 'gift' ? '+100 монет за 20 новых задач' : offer ? getTheme(offer.themeId).name : '';
+      $('.bonus-video').hidden = bonus === 'gift'; $('.bonus-video-note').hidden = bonus === 'gift';
+      $('.bonus-close').textContent = bonus === 'gift' ? 'ПРОДОЛЖИТЬ' : 'НЕ СЕЙЧАС';
     }
     $('.level').textContent = `1–${index + 1}`;
     showBalance(shownBalance);
@@ -130,9 +152,10 @@ async function boot(): Promise<void> {
     $('.instruction').hidden = result;
     $('.instruction').textContent = busy ? 'Ищу продолжение…' : path.length === 1 ? 'Начни с цветной клетки' : 'Можно отпустить палец и продолжить';
     $('.earned').innerHTML = fixture ? `${coin} +20` : reward ? `${coin} +${reward}` : 'Уже пройдено';
-    $('.fraction').textContent = `${store.state.completed.length}/20`;
-    $('.track span').style.width = `${Math.min(100, store.state.completed.length * 5)}%`;
-    $('.gift-progress').setAttribute('aria-label', `Подарок: ${store.state.completed.length} из 20`);
+    const giftCount = store.state.completed.length === 0 ? 0 : (store.state.completed.length - 1) % 20 + 1;
+    $('.fraction').textContent = `${giftCount}/20`;
+    $('.track span').style.width = `${Math.min(100, giftCount * 5)}%`;
+    $('.gift-progress').setAttribute('aria-label', `Подарок: ${giftCount} из 20`);
     $('.next span').textContent = index === levels.length - 1 ? 'К ВЫБОРУ УРОВНЕЙ' : 'ДАЛЬШЕ';
     host.setAttribute('aria-label', `Задача ${index + 1}. Заполнено ${path.length} из ${level.cells.length}. Стрелки — движение и откат.`);
     scene.setState(level, path, hint, result);
@@ -181,7 +204,7 @@ async function boot(): Promise<void> {
   const unsubscribe = activity.onBlockedChange(blocked => {
     root.dataset.blocked = String(blocked);
     feedback.setBlocked(blocked);
-    if (blocked) { invalidate(); input.cancel(); flush(); motion.stop(); scene.settle(); showBalance(store.state.coins); }
+    if (blocked) { cancelWheel(); invalidate(); input.cancel(); flush(); motion.stop(); scene.settle(); showBalance(store.state.coins); }
     redraw();
     if (game.isBooted) { if (blocked) game.loop.sleep(); else if (screen === 'game') game.loop.wake(); }
   });
@@ -191,9 +214,11 @@ async function boot(): Promise<void> {
     redraw(); (value ? $('[data-action=resume]') : screen === 'game' ? $('[data-action=pause]') : $('[data-action=menu-settings]')).focus();
   }
   function onBack(): void {
+    if (bonus) { closeBonus(); return; }
     if (pendingTheme) { closeThemePurchase(); return; }
     if (activity.isBlocked() && !paused) return;
     if (paused) setPause(false);
+    else if (screen === 'wheel') navigate('home');
     else if (screen === 'themes') returnFromThemes();
     else if (screen === 'levels') navigate('sets');
     else if (screen === 'sets') navigate('home');
@@ -203,11 +228,12 @@ async function boot(): Promise<void> {
   function navigate(next: Exclude<Screen, 'game'>): void {
     if (conflict || store.recoveryRequired) { notice('Нужно заново открыть сохранение.', 'Перезагрузить'); return; }
     input.cancel();
+    if (screen === 'wheel') cancelWheel();
     if (!flush()) return;
     invalidate(); motion.stop(); scene.settle(); showBalance(store.state.coins);
     screen = next; paused = false; $('.pause-overlay').hidden = true;
     activity.setBlocked('pause', false); notice(''); redraw(); game.loop.sleep();
-    $('.menu-body h1').focus();
+    (screen === 'wheel' ? $('.wheel-body h1') : $('.menu-body h1')).focus();
   }
   function showGame(): void {
     screen = 'game'; paused = false; $('.pause-overlay').hidden = true;
@@ -260,6 +286,47 @@ async function boot(): Promise<void> {
     } catch { saveError(); redraw(); return; }
     showBalance(store.state.coins); closeThemePurchase(); feedback.play('progress');
   }
+  function openBonus(kind: 'gift' | 'offer'): void {
+    if ((kind === 'gift' && !store.state.giftNotice) || (kind === 'offer' && !store.state.offer)) return;
+    if (!flush()) return;
+    motion.stop(); showBalance(store.state.coins); bonus = kind; activity.setBlocked('reward-modal', true); redraw(); $('.bonus-close').focus();
+  }
+  function closeBonus(): void {
+    if (!bonus) return;
+    try { if (bonus === 'gift') store.acknowledgeGift(); else store.dismissOffer(); } catch { saveError(); return; }
+    bonus = null; activity.setBlocked('reward-modal', false); redraw(); feedback.play('progress');
+    if (screen === 'game') $('.next').focus(); else $('.menu-body h1').focus();
+  }
+  function cancelWheel(): void {
+    wheelToken++; wheelView.stop();
+    if (!wheelPreparing && store.state.daily.pending && !disposed) void settleWheel();
+    else if (!wheelPreparing) wheelBusy = false;
+  }
+  async function settleWheel(celebrate = false): Promise<void> {
+    if (wheelPreparing || disposed) return;
+    if (wheelCommit) return wheelCommit;
+    wheelCommit = (async () => {
+      try {
+        if (store.state.daily.pending) await wheelService.commit();
+        if (disposed) return;
+        wheelBusy = false; showBalance(store.state.coins); redraw();
+        if (celebrate && screen === 'wheel' && !activity.isBlocked()) wheelView.celebrate();
+      } catch { if (!disposed) { wheelBusy = false; saveError(); redraw(); } }
+    })().finally(() => { wheelCommit = null; });
+    return wheelCommit;
+  }
+  async function spinWheel(): Promise<void> {
+    if (screen !== 'wheel' || wheelBusy || wheelCommit || activity.isBlocked() || conflict || store.recoveryRequired) return;
+    wheelBusy = true; wheelPreparing = true; const token = ++wheelToken; redraw();
+    let spin;
+    try { spin = await wheelService.prepare(localDate()); }
+    catch { if (!disposed) { wheelBusy = false; saveError(); redraw(); } return; }
+    finally { wheelPreparing = false; }
+    if (disposed) return;
+    if (token !== wheelToken || screen !== 'wheel' || activity.isBlocked()) { await settleWheel(); return; }
+    const shown = await wheelView.spin(spin);
+    if (!disposed) await settleWheel(shown && token === wheelToken);
+  }
   async function requestHint(): Promise<void> {
     if (busy || result || activity.isBlocked() || complete(level, path)) return;
     if (!store.state.hints) { notice('Подсказки закончились. Можно бесплатно откатить маршрут или начать заново.'); return; }
@@ -280,9 +347,13 @@ async function boot(): Promise<void> {
   }
   function click(event: MouseEvent): void {
     const target = (event.target as Element).closest<HTMLButtonElement>('button[data-action]');
-    if (!target || target.disabled || (activity.isBlocked() && target.dataset.action !== 'resume' && target.dataset.action !== 'notice' && target.dataset.action !== 'sound' && target.dataset.action !== 'vibration' && !(pendingTheme && (target.dataset.action === 'buy-theme' || target.dataset.action === 'cancel-theme')) && !(paused && (target.dataset.action === 'sets' || target.dataset.action === 'home' || target.dataset.action === 'themes')))) return;
+    if (!target || target.disabled || (activity.isBlocked() && target.dataset.action !== 'resume' && target.dataset.action !== 'notice' && target.dataset.action !== 'sound' && target.dataset.action !== 'vibration' && !(bonus && target.dataset.action === 'close-bonus') && !(pendingTheme && (target.dataset.action === 'buy-theme' || target.dataset.action === 'cancel-theme')) && !(paused && (target.dataset.action === 'sets' || target.dataset.action === 'home' || target.dataset.action === 'themes')))) return;
     feedback.play('button');
     switch (target.dataset.action) {
+      case 'wheel': navigate('wheel'); break;
+      case 'spin': void spinWheel(); break;
+      case 'gift': openBonus('gift'); break;
+      case 'close-bonus': closeBonus(); break;
       case 'themes': openThemes(); break;
       case 'select-theme': selectTheme(target.dataset.themeId!); break;
       case 'buy-theme': buyTheme(); break;
@@ -300,6 +371,9 @@ async function boot(): Promise<void> {
       case 'hint': void requestHint(); break;
       case 'notice':
         if (conflict || store.recoveryRequired) location.reload();
+        else if (saveFailed && screen === 'wheel') {
+          try { store.reload(); saveFailed = false; notice(''); redraw(); if (store.state.daily.pending) void settleWheel(); } catch { saveError(); }
+        }
         else if (saveFailed) { if (complete(level, path)) finish(); else if (flush()) notice(''); }
         else if (rollback !== null) { const p = path.slice(0, rollback); change(p); flush(); }
         break;
@@ -311,6 +385,8 @@ async function boot(): Promise<void> {
   async function goNext(): Promise<void> {
     if (!result || collecting) return;
     if (fixture) { location.assign(location.pathname); return; }
+    if (store.state.giftNotice) { openBonus('gift'); return; }
+    if (store.state.offer?.levelId === level.id) { openBonus('offer'); return; }
     collecting = true; $<HTMLButtonElement>('.next').disabled = true;
     const token = revision, done = await motion.collect();
     collecting = false;
@@ -328,8 +404,8 @@ async function boot(): Promise<void> {
   root.addEventListener('pointerdown', prime, true); root.addEventListener('keydown', prime, true);
   root.addEventListener('click', click);
   const trapFocus = (event: KeyboardEvent): void => {
-    if (event.key === 'Tab' && (paused || pendingTheme)) {
-      event.preventDefault(); const buttons = [...root.querySelectorAll<HTMLButtonElement>(pendingTheme ? '.theme-purchase button' : '.pause-card button')].filter(button => !button.disabled && button.getClientRects().length > 0);
+    if (event.key === 'Tab' && (paused || pendingTheme || bonus)) {
+      event.preventDefault(); const buttons = [...root.querySelectorAll<HTMLButtonElement>(bonus ? '.bonus-card button' : pendingTheme ? '.theme-purchase button' : '.pause-card button')].filter(button => !button.disabled && button.getClientRects().length > 0);
       const index = buttons.indexOf(document.activeElement as HTMLButtonElement);
       buttons[(index + (event.shiftKey ? -1 : 1) + buttons.length) % buttons.length]!.focus();
     }
@@ -343,11 +419,17 @@ async function boot(): Promise<void> {
   };
   window.addEventListener('storage', onStorage);
   const onViewportResize = (): void => {
-    motion.stop(); scene.settle(); showBalance(store.state.coins);
+    cancelWheel(); motion.stop(); scene.settle(); showBalance(store.state.coins);
     feedback.setBlocked(true); feedback.setBlocked(activity.isBlocked()); redraw();
   };
   window.addEventListener('resize', onViewportResize);
 
+  let calendar = localDate();
+  const clock = setInterval(() => {
+    if (disposed || document.hidden) return;
+    if (calendar !== localDate()) { calendar = localDate(); redraw(); }
+    if (screen === 'wheel') wheelView.tick(store.state);
+  }, 1000);
   let rendererReady = false, platformReady = false;
   const deadline = setTimeout(() => { const startup = root.querySelector('#startup'); if (startup) startup.textContent = 'Запуск занимает слишком много времени. Перезапусти приложение.'; }, 15_000);
   function presentable(): void {
@@ -366,6 +448,7 @@ async function boot(): Promise<void> {
     if (disposed) return;
     input.dispose(); flush(); disposed = true; invalidate(); clearTimeout(saveTimer); clearTimeout(deadline);
     cancelAnimationFrame(frame); cancelAnimationFrame(secondFrame); cancelAnimationFrame(resizeFrame);
+    clearInterval(clock); wheelToken++; wheelView.dispose(); wheelService.dispose();
     resize.disconnect(); disposeRuntime(); unsubscribe(); motion.dispose(); feedback.dispose(); root.removeEventListener('click', click);
     root.removeEventListener('pointerdown', prime, true); root.removeEventListener('keydown', prime, true);
     window.removeEventListener('resize', onViewportResize); window.removeEventListener('storage', onStorage); window.removeEventListener('pagehide', pagehide);

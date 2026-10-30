@@ -53,8 +53,9 @@ export class WinMotion {
     });
     this.animate(this.query('.rewards'), [{ opacity: 0, transform: 'translateY(24px)' }, { opacity: 1, transform: 'translateY(0)' }],
       { duration: 220, delay: this.reduced ? 50 : 520, fill: 'backwards', easing: 'ease-out' });
-    const fraction = Math.max(0, giftCount - (reward > 0 ? 1 : 0)) / 20;
-    this.animate(this.query('.track span'), [{ width: `${fraction * 100}%` }, { width: `${Math.min(100, giftCount * 5)}%` }], { duration: 600, delay: 650, fill: 'backwards', easing: 'ease-out' });
+    const meter = (n: number) => n === 0 ? 0 : (n - 1) % 20 + 1;
+    const fraction = meter(Math.max(0, giftCount - (reward > 0 ? 1 : 0))) / 20;
+    this.animate(this.query('.track span'), [{ width: `${fraction * 100}%` }, { width: `${meter(giftCount) * 5}%` }], { duration: 600, delay: 650, fill: 'backwards', easing: 'ease-out' });
     this.feedback.play('win');
     this.after(this.reduced ? 80 : 650, () => { this.root.dataset.winPhase = 'idle'; settleBoard(); next.disabled = false; });
     this.after(this.reduced ? 100 : 720, () => this.burst(115, 0));
