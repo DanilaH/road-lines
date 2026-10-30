@@ -22,7 +22,7 @@ async function ribbonPixels(page, hex) {
   }, { data: png.toString('base64'), hex });
 }
 const matrix = [
-  ['classic', 'Классика', '#8550ed', '#fafaf8', 0], ['mint', 'Мята', '#20ae79', '#f4faf2', 0],
+  ['classic', 'Классика', '#8550ed', '#fff9ef', 0], ['mint', 'Мята', '#20ae79', '#f4faf2', 0],
   ['lagoon', 'Лагуна', '#129fc3', '#f1fafb', 500], ['sunset', 'Закат', '#ee7452', '#fff6ee', 500],
   ['lavender', 'Лаванда', '#b855d3', '#f8f3fc', 500], ['honey', 'Мёд', '#b88122', '#fffae9', 500],
   ['dusk', 'Сумерки', '#a38afa', '#202335', 500], ['neon', 'Неон', '#a8d94b', '#192725', 500],

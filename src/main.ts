@@ -23,6 +23,7 @@ import { WheelView } from './ui/wheel';
 import { localDate } from './core/rewards';
 import { rewardArt } from './ui/reward-art';
 import './style.css';
+import './ui/shell.css';
 let releaseWriter = (): void => {}; 
 
 async function boot(): Promise<void> {
@@ -92,7 +93,7 @@ async function boot(): Promise<void> {
   const initialSize = getBackingStoreSize(host.clientWidth, host.clientHeight, renderRatio);
   const game = new Phaser.Game({ type: Phaser.AUTO, parent: host, width: initialSize.width, height: initialSize.height,
     transparent: true, antialias: true, banner: false, scale: { mode: Phaser.Scale.NONE }, audio: { noAudio: true }, scene, fps: { target: 60 } });
-  const showBalance = (value: number): void => { shownBalance = value; $('.balance').textContent = String(value); $('.wallet').setAttribute('aria-label', `${value} монет`); };
+  const showBalance = (value: number): void => { shownBalance = value; $('.balance').textContent = String(value); $('.balance').style.fontSize = `${Math.min(19, 78 / Math.max(3, String(value).length))}px`;  $('.wallet').setAttribute('aria-label', `${value} монет`); };
   const motion = new WinMotion(root, feedback, showBalance);
   const wheelView = new WheelView($('.wheel-screen'), feedback);
   root.dataset.winPhase = 'idle';
@@ -139,7 +140,7 @@ async function boot(): Promise<void> {
       $('.bonus-video').hidden = bonus === 'gift'; $('.bonus-video-note').hidden = bonus === 'gift';
       $('.bonus-close').textContent = bonus === 'gift' ? 'ПРОДОЛЖИТЬ' : 'НЕ СЕЙЧАС';
     }
-    $('.level').textContent = `1–${index + 1}`;
+    $('.level').innerHTML = `<small>Уровень</small><strong>1–${index + 1}</strong>`;
     showBalance(shownBalance);
     $('[data-action=sound]').textContent = `Звук: ${feedback.settings.sound ? 'вкл' : 'выкл'}`;
     $('[data-action=sound]').setAttribute('aria-pressed', String(feedback.settings.sound));

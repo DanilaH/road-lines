@@ -6,7 +6,7 @@ export interface Theme {
 }
 
 export const themes: readonly Theme[] = [
-  { id: 'classic', name: 'Классика', price: 0, background: '#fafaf8', empty: '#e1e3e5', ribbon: '#8550ed', trail: '#ffffff', ink: '#3b4144', muted: '#8b938c', panel: '#eceee8', soft: '#f0f1ed', accent: '#49a966', primary: '#55b975', primaryInk: '#ffffff', selected: '#daf0dc' },
+  { id: 'classic', name: 'Классика', price: 0, background: '#fff9ef', empty: '#e1e3e5', ribbon: '#8550ed', trail: '#ffffff', ink: '#362447', muted: '#8d7d93', panel: '#fffdf7', soft: '#f3ebdf', accent: '#8150ce', primary: '#8550ed', primaryInk: '#ffffff', selected: '#e9defb' },
   { id: 'mint', name: 'Мята', price: 0, background: '#f4faf2', empty: '#dce8d9', ribbon: '#20ae79', trail: '#eaffdb', ink: '#304d3d', muted: '#6c8774', panel: '#e3eee0', soft: '#edf4e9', accent: '#347c52', primary: '#379b68', primaryInk: '#ffffff', selected: '#d0e9d1' },
   { id: 'lagoon', name: 'Лагуна', price: 500, background: '#f1fafb', empty: '#d5e7e9', ribbon: '#129fc3', trail: '#d9ffff', ink: '#244952', muted: '#6c8990', panel: '#deedf0', soft: '#e8f4f6', accent: '#11798f', primary: '#168caa', primaryInk: '#ffffff', selected: '#c9e7eb' },
   { id: 'sunset', name: 'Закат', price: 500, background: '#fff6ee', empty: '#efdfd4', ribbon: '#ee7452', trail: '#fff5ce', ink: '#64463f', muted: '#a08476', panel: '#f3e5d9', soft: '#fbede1', accent: '#b65b40', primary: '#c65d42', primaryInk: '#ffffff', selected: '#f8d9c8' },
