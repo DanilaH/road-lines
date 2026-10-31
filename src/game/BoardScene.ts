@@ -3,6 +3,7 @@ import { defaultTheme, colorNumber, tint, type Theme } from '../content/themes';
 import { levels } from '../content/levels';
 import type { Level } from '../core/model';
 import { boardLayout, cellRect, type BoardLayout } from '../ui/layout';
+import { drawStartToken, drawFinishSocket } from '../presentation/markers';
 import { shadedRect } from '../presentation/material';
 import { victoryLayout } from '../presentation/geometry';
 
@@ -145,14 +146,12 @@ export class BoardScene extends Phaser.Scene {
         g.fillCircle(a.x + (b.x - a.x) * t + a.width / 2, a.y + (b.y - a.y) * t + a.height / 2, this.miniature ? 0.8 : 1.2);
       }
     }
-    if (!this.miniature && (!this.opening || age > 170)) {
+    if (!this.opening || age > 170) {
       if (!this.level.checkpoints?.includes(this.level.start)) {
-        const start = rect(this.level.start), cx = start.x + start.width / 2, cy = start.y + start.height / 2;
-        g.lineStyle(2.4, colorNumber(this.theme.trail), 0.95); g.beginPath(); g.arc(cx, cy, layout.cell * 0.18, 0.4, 5.3); g.strokePath();
-        g.fillStyle(colorNumber(this.theme.trail)); g.fillTriangle(cx + layout.cell * 0.15, cy - layout.cell * 0.18,
-          cx + layout.cell * 0.15, cy - layout.cell * 0.02, cx + layout.cell * 0.28, cy - layout.cell * 0.13);
+        const start = rect(this.level.start);
+        drawStartToken(g, start.x + start.width / 2, start.y + start.height / 2, layout.cell, this.theme);
       }
-      if (this.route.length > 1 && !this.level.checkpoints?.includes(this.route[this.route.length - 1]!)) {
+      if (!this.miniature && this.route.length > 1 && !this.level.checkpoints?.includes(this.route[this.route.length - 1]!)) {
         const head = rect(this.route[this.route.length - 1]!);
         const hx = head.x + head.width / 2, hy = head.y + head.height / 2, radius = layout.cell * .155;
         g.fillStyle(tint(this.theme.ribbon, -.45), .26); g.fillCircle(hx, hy + 2, radius * 1.15);
@@ -173,17 +172,8 @@ export class BoardScene extends Phaser.Scene {
         g.lineBetween(r.x + thickness * .2, r.y + thickness * .2, r.x + r.width - thickness * .2, r.y + r.height - thickness * .2);
       }
       if (this.level.finish !== undefined) {
-        const r = rect(this.level.finish), occupied = this.route.includes(this.level.finish), radius = r.width * .32;
-        const cx = r.x + r.width / 2, cy = r.y + r.height / 2;
-        g.fillStyle(0xf5ac44, .18); g.fillRoundedRect(r.x + 3, r.y + 3, r.width - 6, r.height - 6, 3);
-        g.lineStyle(Math.max(1.3, r.width * .04), occupied ? colorNumber(this.theme.trail) : 0xc57923, .95);
-        g.strokeRoundedRect(cx - radius, cy - radius, radius * 2, radius * 2, r.width * .07);
-        // A small chequered flag leaves the centre free for the head or final number.
-        const unit = r.width * .07, fx = r.x + r.width * .64, fy = r.y + r.height * .13;
-        g.lineStyle(Math.max(.8, unit * .4), occupied ? colorNumber(this.theme.trail) : 0x9b5b1c); g.lineBetween(fx, fy, fx, fy + unit * 4.5);
-        for (let yy = 0; yy < 2; yy++) for (let xx = 0; xx < 3; xx++) {
-          g.fillStyle((xx + yy) % 2 ? 0xfff5d6 : 0xa6601a); g.fillRect(fx + xx * unit, fy + yy * unit, unit, unit);
-        }
+        const r = rect(this.level.finish);
+        drawFinishSocket(g, r.x + r.width / 2, r.y + r.height / 2, r.width, this.theme, this.route.includes(this.level.finish));
       }
       const next = this.level.checkpoints?.find(c => !this.route.includes(c));
       for (const [i, cell] of (this.level.checkpoints ?? []).entries()) {

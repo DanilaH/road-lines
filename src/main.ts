@@ -159,7 +159,7 @@ async function boot(): Promise<void> {
     $('.instruction').hidden = result;
     const nextCheckpoint = level.checkpoints?.findIndex(c => !path.includes(c)) ?? -1;
     const ruleCopy = [level.checkpoints?.length ? nextCheckpoint < 0 ? 'Все номера пройдены — заполни оставшиеся клетки' : `Проходи номера по порядку · следующая точка ${nextCheckpoint + 1}` : '',
-      level.finish !== undefined ? 'Флажок — последняя клетка' : '', level.walls?.length ? 'Стенки нужно обходить' : ''].filter(Boolean).join('. ');
+      level.finish !== undefined ? 'Пустой ромб — последняя клетка' : '', level.walls?.length ? 'Стенки нужно обходить' : ''].filter(Boolean).join('. ');
     $('.instruction').textContent = busy ? 'Ищу продолжение…' : ruleCopy || (path.length === 1 ? 'Начни с цветной клетки' : 'Можно отпустить палец и продолжить');
     $('.earned').innerHTML = fixture ? `${coin} +20` : reward ? `${coin} +${reward}` : 'Уже пройдено';
     const giftCount = store.state.completed.length === 0 ? 0 : (store.state.completed.length - 1) % 20 + 1;
