@@ -62,9 +62,11 @@ export class GameStore {
   state: GameSave;
   recoveryRequired = false;
   private baseline: string | null;
+  private canonicalBaseline = false;
   constructor(private storage: SyncStorage) {
     const raw = storage.getItem(SAVE_KEY); this.baseline = raw;
     this.state = raw === null ? defaultSave() : decodeSave(raw);
+    this.canonicalBaseline = raw !== null && raw === JSON.stringify(this.state);
   }
   write(next: GameSave): void {
     if (this.recoveryRequired) throw Error('Authoritative reload required');
@@ -75,13 +77,13 @@ export class GameStore {
       try { if (this.storage.getItem(SAVE_KEY) !== raw) throw error; }
       catch { this.recoveryRequired = true; throw error; }
     }
-    this.state = snapshot; this.baseline = raw;
+    this.state = snapshot; this.baseline = raw; this.canonicalBaseline = true;
   }
   reload(): GameSave {
     const raw = this.storage.getItem(SAVE_KEY);
     if (!this.recoveryRequired && raw !== this.baseline) throw Error('Save changed in another writer');
     const state = raw === null ? defaultSave() : decodeSave(raw);
-    this.state = state; this.baseline = raw; this.recoveryRequired = false; return state;
+    this.state = state; this.baseline = raw; this.canonicalBaseline = raw !== null && raw === JSON.stringify(state); this.recoveryRequired = false; return state;
   }
   stageSpin(spin: WheelSpin): void {
     if (this.state.daily.pending) throw Error('Spin already pending');
@@ -98,7 +100,7 @@ export class GameStore {
   acknowledgeGift(): void { if (this.state.giftNotice) this.write({ ...this.state, giftNotice: null }); }
   path(level: Level, path: readonly number[]): void {
     if (!validPath(level, path)) throw Error('Illegal prefix');
-    if (this.state.levelId === level.id && this.state.levelVersion === level.version && path.length === this.state.path.length &&
+    if (this.canonicalBaseline && this.state.levelId === level.id && this.state.levelVersion === level.version && path.length === this.state.path.length &&
       path.every((cell, i) => cell === this.state.path[i]) && (!this.state.offer || complete(level, path))) {
       // An unchanged ordinary prefix is a no-op, but never bypass writer/conflict recovery.
       if (this.recoveryRequired) throw Error('Authoritative reload required');

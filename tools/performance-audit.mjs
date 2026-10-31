@@ -2,9 +2,14 @@ import {chromium} from '@playwright/test';
 import {spawn,spawnSync} from 'node:child_process';
 import {readFileSync,writeFileSync,mkdirSync,cpSync,existsSync,symlinkSync} from 'node:fs';
 import {resolve} from 'node:path';
+import {createHash} from 'node:crypto';
+import {readdirSync,statSync} from 'node:fs';
 const root=process.cwd(),out=resolve(root,'.test-output/performance-audit');mkdirSync(out,{recursive:true});
 const mode=process.argv.includes('--supplement')?'supplement':process.argv.includes('--drag-repeats')?'drag-repeats':'main';
 const sourceCommit=spawnSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).stdout.trim();
+const sourceHash=createHash('sha256');
+for(const file of readdirSync('src',{recursive:true}).filter(f=>statSync('src/'+f).isFile()).sort()){const path='src/'+file;sourceHash.update(path+'\0').update(readFileSync(path)).update('\0');}
+const sourceSha256=sourceHash.digest('hex');
 // Diagnostic build only. Never adds inspection globals to src/ or the normal release build.
 const probe=resolve(out,'probe-src');mkdirSync(probe,{recursive:true});cpSync(resolve(root,'src'),resolve(probe,'src'),{recursive:true});
 for(const f of ['index.html','package.json','vite.config.ts','tsconfig.json'])cpSync(resolve(root,f),resolve(probe,f));
@@ -13,9 +18,10 @@ const mainFile=resolve(probe,'src/main.ts'),original=readFileSync(mainFile,'utf8
 if(!original.includes(needle))throw Error('Probe insertion point changed: review the harness before running.');
 writeFileSync(mainFile,original.replace(needle,'  (window as any).__perf = { scene, game, motion, screens, feedback, hints, wheelView, store, activity, dispose, state: () => ({screen, paused, result, path: [...path], disposed}) };\n'+needle));
 if(spawnSync(process.execPath,['node_modules/vite/bin/vite.js','build',probe],{stdio:'inherit'}).status!==0)process.exit(1);
-writeFileSync(resolve(out,'provenance.json'),JSON.stringify({sourceCommit,mode,probe:'Isolated production source copy; sole source change exposes existing objects. Instrumentation/ablation added at runtime. Normal release globals untouched.'},null,2));
+writeFileSync(resolve(out,'provenance.json'),JSON.stringify({sourceCommit,sourceSha256,mode,probe:'Isolated production source copy; sole source change exposes existing objects. Instrumentation/ablation added at runtime. Normal release globals untouched.'},null,2));
+if(process.argv.includes('--prepare-only'))process.exit(0);
 const raw=readFileSync('src/content/levels.ts','utf8'),levels=JSON.parse(raw.slice(raw.indexOf('= ')+2).trim().replace(/;$/,''));
-const key='road-lines.save.v1',report={source:sourceCommit,environment:{headless:true,viewport:[390,844],dpr:2,method:'Private production source copy with object exposure only; wrappers add overhead; ablations are diagnostic, not usable game variants.'},render:[],effects:[],memory:[],resources:[],save:[],errors:[]};
+const key='road-lines.save.v1',report={source:sourceCommit,sourceSha256,environment:{headless:true,viewport:[390,844],dpr:2,method:'Private production source copy with object exposure only; wrappers add overhead; ablations are diagnostic, not usable game variants.'},render:[],effects:[],memory:[],resources:[],save:[],errors:[]};
 const flush=()=>writeFileSync(resolve(out,mode==='main'?'results.json':mode+'.json'),JSON.stringify(report,null,2));
 const seed=(l,{path=[l.start],rich=false}={})=>({version:3,levelId:l.id,levelVersion:l.version,path,completed:rich?levels.map(l=>l.id):[],coins:rich?2200:0,hints:3,themeId:'classic',ownedThemes:['classic','mint'],drafts:rich?Object.fromEntries(levels.map(x=>[x.id,{version:x.version,path:x.witness}])):{},giftMilestones:rich?4:0,giftNotice:null,lastOfferAt:rich?70:0,offer:null,daily:{lastDate:null,pending:null,last:null}});
 let browser;const server=spawn(process.execPath,['node_modules/vite/bin/vite.js','preview','.test-output/performance-audit/probe-src','--host','127.0.0.1','--port','4202','--strictPort'],{stdio:'ignore'}),url='http://127.0.0.1:4202';

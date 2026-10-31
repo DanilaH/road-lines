@@ -103,6 +103,18 @@ describe('save ownership', () => {
     expect(() => a.path(level, [0, 1])).toThrow('reload required');
     expect(new GameStore(storage).state.coins).toBe(20);
   });
+  it('persists a canonical snapshot before skipping unchanged legacy or new prefixes', () => {
+    for (const legacy of [true, false]) {
+      const backing = memory(); let writes = 0;
+      if (legacy) backing.setItem('', JSON.stringify({ version: 1, levelId: 'intro-01', levelVersion: 1, path: [0], completed: [], coins: 0, hints: 3 }));
+      const storage = { getItem: backing.getItem, setItem(k: string, raw: string) { writes++; backing.setItem(k, raw); } };
+      const a = new GameStore(storage);
+      a.path(levels[0]!, [0]);
+      expect(JSON.parse(backing.getItem()!)).toMatchObject({ version: 3, themeId: 'classic', ownedThemes: ['classic', 'mint'] });
+      a.path(levels[0]!, [0]); expect(writes).toBe(1);
+      a.reload(); a.path(levels[0]!, [0]); expect(writes).toBe(1);
+    }
+  });
   it('still persists clearing an offer for an unchanged unfinished prefix', () => {
     const storage = memory(), a = new GameStore(storage);
     for (const level of levels.slice(0, 10)) a.finish(level, level.witness);
