@@ -2,6 +2,8 @@ import { createValueTransferPlan, valueAfterVisualArrival, valueTransferEmission
 import type { Feedback } from './feedback';
 
 interface Particle { x: number; y: number; vx: number; vy: number; age: number; life: number; angle: number; spin: number; size: number; kind: number; color: string; }
+const starPoints = Array.from({ length: 10 }, (_, i) => { const r = i % 2 ? .4 : 1, a = i * Math.PI / 5; return { x: Math.cos(a) * r, y: Math.sin(a) * r }; });
+const ribbonPoints = Array.from({ length: 11 }, (_, i) => ({ sin: Math.sin(i * .8), cos: Math.cos(i * .8), y: -.5 + i / 10 }));
 const colors = ['#a855ed', '#ffcc24', '#24ccd4', '#f75da3', '#9bdc36', '#ff8e48'];
 export class WinMotion {
   private timers = new Set<ReturnType<typeof setTimeout>>();
@@ -9,6 +11,10 @@ export class WinMotion {
   private coins: HTMLElement[] = [];
   private canvas: HTMLCanvasElement;
   private particles: Particle[] = [];
+  private pool: Particle[] = [];
+  private ctx: CanvasRenderingContext2D | null;
+  private starPath?: Path2D;
+  private drawFrame = (now: number): void => this.draw(now);
   private raf = 0;
   private lastFrame = 0;
   private finishCollect?: (ok: boolean) => void;
@@ -17,6 +23,8 @@ export class WinMotion {
   private reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   constructor(private root: HTMLElement, private feedback: Feedback, private displayBalance: (value: number) => void) {
     this.canvas = document.createElement('canvas'); this.canvas.className = 'celebration-layer'; this.canvas.setAttribute('aria-hidden', 'true'); root.append(this.canvas);
+    this.ctx = this.canvas.getContext('2d');
+    if (typeof Path2D !== 'undefined') { this.starPath = new Path2D(); for (const p of starPoints) this.starPath.lineTo(p.x, p.y); this.starPath.closePath(); }
   }
   private after(ms: number, fn: () => void): void { const timer = setTimeout(() => { this.timers.delete(timer); fn(); }, ms); this.timers.add(timer); }
   private animate(el: Element, keyframes: Keyframe[], options: KeyframeAnimationOptions): void {
@@ -112,11 +120,13 @@ export class WinMotion {
     const actualCount = this.reduced ? 18 : count;
     for (let i = 0; i < actualCount && this.particles.length < 360; i++) {
       const angle = -Math.PI / 2 + (Math.random() - .5) * 2.9, speed = (260 + Math.random() * 400) * (this.reduced ? .4 : 1);
-      this.particles.push({ x: origin.x + side * Math.min(width * .22, 125), y: origin.y + (side < 0 ? -innerHeight * .24 : side > 0 ? innerHeight * .22 : 0),
-        vx: Math.cos(angle) * speed + side * 70, vy: Math.sin(angle) * speed, age: 0, life: 2.7 + Math.random() * 1.3,
-        angle: Math.random() * 6, spin: (Math.random() - .5) * 12, size: 4 + Math.random() * 6, kind: i % 12 === 11 ? 3 : i % 3, color: colors[(i + Math.floor(i / 12)) % colors.length]! });
+      const p = this.pool.pop() ?? { x: 0, y: 0, vx: 0, vy: 0, age: 0, life: 0, angle: 0, spin: 0, size: 0, kind: 0, color: '' };
+      p.x = origin.x + side * Math.min(width * .22, 125); p.y = origin.y + (side < 0 ? -innerHeight * .24 : side > 0 ? innerHeight * .22 : 0);
+      p.vx = Math.cos(angle) * speed + side * 70; p.vy = Math.sin(angle) * speed; p.age = 0; p.life = 2.7 + Math.random() * 1.3;
+      p.angle = Math.random() * 6; p.spin = (Math.random() - .5) * 12; p.size = 4 + Math.random() * 6;
+      p.kind = i % 12 === 11 ? 3 : i % 3; p.color = colors[(i + Math.floor(i / 12)) % colors.length]!; this.particles.push(p);
     }
-    if (!this.raf) { this.lastFrame = performance.now(); this.raf = requestAnimationFrame(now => this.draw(now)); }
+    if (!this.raf) { this.lastFrame = performance.now(); this.raf = requestAnimationFrame(this.drawFrame); }
   }
   private draw(now: number): void {
     this.raf = 0;
@@ -124,37 +134,44 @@ export class WinMotion {
     if (this.canvas.width !== Math.round(w * ratio) || this.canvas.height !== Math.round(h * ratio)) {
       this.canvas.width = Math.round(w * ratio); this.canvas.height = Math.round(h * ratio);
     }
-    const ctx = this.canvas.getContext('2d'); if (!ctx) { this.particles = []; return; }
+    const ctx = this.ctx; if (!ctx) { this.releaseParticles(); return; }
     ctx.setTransform(ratio, 0, 0, ratio, 0, 0); ctx.clearRect(0, 0, w, h);
     const dt = Math.min(.035, Math.max(0, (now - this.lastFrame) / 1000)); this.lastFrame = now;
-    this.particles = this.particles.filter(p => p.age < p.life && p.y < h + 90);
+    let kept = 0;
+    for (const p of this.particles) { if (p.age < p.life && p.y < h + 90) this.particles[kept++] = p; else this.pool.push(p); }
+    this.particles.length = kept;
     for (const p of this.particles) {
       p.age += dt; p.vx *= 1 - dt * .35; p.vy += dt * 420; p.x += p.vx * dt; p.y += p.vy * dt; p.angle += p.spin * dt;
       ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.angle); ctx.fillStyle = p.color;
       ctx.globalAlpha = Math.min(1, Math.max(0, (p.life - p.age) * 2));
       if (p.kind === 0) ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * .65);
       else if (p.kind === 1) { ctx.beginPath(); ctx.moveTo(0, -p.size); ctx.lineTo(p.size, p.size); ctx.lineTo(-p.size, p.size); ctx.fill(); }
-      else if (p.kind === 2) { ctx.beginPath(); for (let j = 0; j < 10; j++) { const r = j % 2 ? p.size * .4 : p.size; const a = j * Math.PI / 5; ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r); } ctx.closePath(); ctx.fill(); }
+      else if (p.kind === 2) {
+        if (this.starPath) { ctx.scale(p.size, p.size); ctx.fill(this.starPath); }
+        else { ctx.beginPath(); for (const point of starPoints) ctx.lineTo(point.x * p.size, point.y * p.size); ctx.closePath(); ctx.fill(); }
+      }
       else {
         const length = p.size * 14;
         ctx.scale(Math.cos(p.age * 8) * .5 + .7, 1); ctx.beginPath();
+        const sin = Math.sin(p.age * 9), cos = Math.cos(p.age * 9);
         for (let j = 0; j <= 10; j++) {
-          const x = Math.sin(j * .8 + p.age * 9) * p.size * .75, y = -length / 2 + j * length / 10;
+          const point = ribbonPoints[j]!, x = (point.sin * cos + point.cos * sin) * p.size * .75, y = length * point.y;
           if (j === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
         }
         ctx.strokeStyle = p.color; ctx.lineWidth = 3; ctx.stroke();
       }
       ctx.restore();
     }
-    if (this.particles.length) this.raf = requestAnimationFrame(time => this.draw(time));
+    if (this.particles.length) this.raf = requestAnimationFrame(this.drawFrame);
   }
+  private releaseParticles(): void { for (const p of this.particles) this.pool.push(p); this.particles.length = 0; }
   stop(): void {
     this.timers.forEach(clearTimeout); this.timers.clear(); this.animations.forEach(a => a.cancel()); this.animations.clear();
-    this.coins.forEach(c => c.remove()); this.coins = []; this.particles = []; cancelAnimationFrame(this.raf); this.raf = 0;
-    this.canvas.getContext('2d')?.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.coins.forEach(c => c.remove()); this.coins = []; this.releaseParticles(); cancelAnimationFrame(this.raf); this.raf = 0;
+    this.ctx?.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.displayBalance(this.balance); this.reward = 0; this.finishCollect?.(false); this.finishCollect = undefined;
     this.root.dataset.winPhase = 'idle';
     const next = this.root.querySelector<HTMLButtonElement>('.next'); if (next) next.disabled = false;
   }
-  dispose(): void { this.stop(); this.canvas.remove(); }
+  dispose(): void { this.stop(); this.pool.length = 0; this.canvas.remove(); }
 }

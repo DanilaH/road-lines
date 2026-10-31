@@ -3,9 +3,10 @@ import { GameplayActivityCoordinator } from '../vendor/mini-games-kit/src/platfo
 import { StartupTimeline } from '../vendor/mini-games-kit/src/startup/timeline';
 import { getRenderPixelRatio, getBackingStoreSize } from '../vendor/mini-games-kit/src/core/render-density';
 import { BoardScene } from './game/BoardScene';
+import { destroyRenderer } from './platform/destroy-renderer';
 import { installRuntime } from './platform/runtime';
 import { coin, icon, star } from './ui/icons';
-import { boardLayout } from './ui/layout';
+import { layoutReader } from './ui/layout';
 import { levels } from './content/levels';
 import { complete, type MoveBlock } from './core/model';
 import { GameStore, SAVE_KEY } from './services/save';
@@ -60,7 +61,7 @@ async function boot(): Promise<void> {
   let paused = false, disposed = false, saveFailed = false, conflict = false, busy = false, revision = 0;
   let hint: number[] = [], rollback: number | null = null, saveTimer: ReturnType<typeof setTimeout> | undefined;
   let disposeRuntime = (): void => {};
-  let frame = 0, secondFrame = 0, resizeFrame = 0;
+  let frame = 0, secondFrame = 0, resizeFrame = 0, renderFrame = 0;
   const activity = new GameplayActivityCoordinator(() => {}, () => {}), hints = new HintService();
   root.innerHTML = `
     <section class="surface" aria-label="Road Lines"><div class="game-content">
@@ -100,12 +101,20 @@ async function boot(): Promise<void> {
   const initialSize = getBackingStoreSize(host.clientWidth, host.clientHeight, renderRatio);
   const game = new Phaser.Game({ type: Phaser.AUTO, parent: host, width: initialSize.width, height: initialSize.height,
     transparent: true, antialias: true, banner: false, scale: { mode: Phaser.Scale.NONE }, audio: { noAudio: true }, scene, fps: { target: 60 } });
+  scene.setWakeHandler(() => {
+    if (renderFrame || disposed || screen !== 'game' || activity.isBlocked() || !game.loop.started || game.loop.running) return;
+    renderFrame = requestAnimationFrame(() => {
+      renderFrame = 0;
+      if (!disposed && screen === 'game' && !activity.isBlocked() && !game.loop.running) game.loop.wake();
+    });
+  });
   const showBalance = (value: number): void => { shownBalance = value; $('.balance').textContent = String(value); $('.balance').style.fontSize = `${Math.min(19, 78 / Math.max(3, String(value).length))}px`;  $('.wallet').setAttribute('aria-label', `${value} монет`); };
   const motion = new WinMotion(root, feedback, showBalance);
   const screens = new ScreenMotion();
   const wheelView = new WheelView($('.wheel-screen'), feedback);
   root.dataset.winPhase = 'idle';
-  const layout = () => boardLayout(host.clientWidth, host.clientHeight, result, level);
+  const readLayout = layoutReader();
+  const layout = () => readLayout(host.clientWidth, host.clientHeight, result, level);
   function notice(text: string, action = ''): void {
     $('.notice').hidden = !text; $('.notice span').textContent = text;
     $('.notice button').textContent = action; $('.notice button').hidden = !action;
@@ -476,7 +485,7 @@ async function boot(): Promise<void> {
 
   let calendar = localDate();
   const clock = setInterval(() => {
-    if (disposed || document.hidden) return;
+    if (disposed || root.dataset.background === 'true') return;
     if (calendar !== localDate()) { calendar = localDate(); redraw(); }
     if (screen === 'wheel') wheelView.tick(store.state);
   }, 1000);
@@ -496,18 +505,18 @@ async function boot(): Promise<void> {
 
   function dispose(): void {
     if (disposed) return;
-    input.dispose(); flush(); disposed = true; invalidate(); clearTimeout(saveTimer); clearTimeout(rejectionTimer); clearTimeout(deadline);
-    cancelAnimationFrame(frame); cancelAnimationFrame(secondFrame); cancelAnimationFrame(resizeFrame);
+    input.dispose(); flush(); disposed = true; root.dataset.background = 'true'; invalidate(); clearTimeout(saveTimer); clearTimeout(rejectionTimer); clearTimeout(deadline);
+    cancelAnimationFrame(frame); cancelAnimationFrame(secondFrame); cancelAnimationFrame(resizeFrame); cancelAnimationFrame(renderFrame);
     clearInterval(clock); wheelToken++; wheelView.dispose(); wheelService.dispose();
     resize.disconnect(); disposeRuntime(); unsubscribe(); screens.dispose(); motion.dispose(); feedback.dispose(); root.removeEventListener('click', click);
     root.removeEventListener('pointerdown', prime, true); root.removeEventListener('keydown', prime, true);
     window.removeEventListener('resize', onViewportResize); window.removeEventListener('storage', onStorage); window.removeEventListener('pagehide', pagehide);
-    root.removeEventListener('keydown', trapFocus); game.destroy(true); releaseWriter();
+    root.removeEventListener('keydown', trapFocus); destroyRenderer(game, releaseWriter);
   }
   const pagehide = (event: PageTransitionEvent): void => { flush(); if (!event.persisted) dispose(); };
   window.addEventListener('pagehide', pagehide);
   if (import.meta.hot) import.meta.hot.dispose(dispose);
-  try { const dispose = await installRuntime(activity, onBack); if (disposed) dispose(); else { disposeRuntime = dispose; platformReady = true; timeline.mark('platform'); presentable(); } }
+  try { const dispose = await installRuntime(activity, onBack, background => { root.dataset.background = String(background); }); if (disposed) dispose(); else { disposeRuntime = dispose; platformReady = true; timeline.mark('platform'); presentable(); } }
   catch (error) { activity.setBlocked('startup-error', true); clearTimeout(deadline); $('#startup').textContent = 'Не удалось запустить игру. Перезапусти приложение.'; console.error(error); }
 }
 void boot().catch(error => {

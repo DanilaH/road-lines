@@ -98,6 +98,13 @@ export class GameStore {
   acknowledgeGift(): void { if (this.state.giftNotice) this.write({ ...this.state, giftNotice: null }); }
   path(level: Level, path: readonly number[]): void {
     if (!validPath(level, path)) throw Error('Illegal prefix');
+    if (this.state.levelId === level.id && this.state.levelVersion === level.version && path.length === this.state.path.length &&
+      path.every((cell, i) => cell === this.state.path[i]) && (!this.state.offer || complete(level, path))) {
+      // An unchanged ordinary prefix is a no-op, but never bypass writer/conflict recovery.
+      if (this.recoveryRequired) throw Error('Authoritative reload required');
+      if (this.storage.getItem(SAVE_KEY) !== this.baseline) { this.recoveryRequired = true; throw Error('Save changed in another writer'); }
+      return;
+    }
     this.write({ ...this.state, levelId: level.id, levelVersion: level.version, path: [...path],
       offer: level.id !== this.state.levelId || !complete(level, path) ? null : this.state.offer });
   }

@@ -4,17 +4,25 @@ import { GameplayActivityCoordinator, installDocumentVisibilityBlocker } from '.
 export async function installRuntime(
   activity: GameplayActivityCoordinator,
   onBack: () => void,
+  onBackground: (background: boolean) => void = () => {},
 ): Promise<() => void> {
-  const visibility = installDocumentVisibilityBlocker(activity);
+  let documentBackground = false, nativeBackground = false;
+  const setBlocked = (reason: string, value: boolean): void => {
+    if (reason === 'visibility') documentBackground = value;
+    if (reason === 'native-background') nativeBackground = value;
+    onBackground(documentBackground || nativeBackground);
+    activity.setBlocked(reason, value);
+  };
+  const visibility = installDocumentVisibilityBlocker({ setBlocked });
   const onKey = (e: KeyboardEvent): void => { if (e.key === 'Escape') onBack(); };
   window.addEventListener('keydown', onKey);
   const handles: PluginListenerHandle[] = [];
   try {
     if (Capacitor.isNativePlatform()) {
       const { App } = await import('@capacitor/app');
-      handles.push(await App.addListener('appStateChange', ({ isActive }) => activity.setBlocked('native-background', !isActive)));
+      handles.push(await App.addListener('appStateChange', ({ isActive }) => setBlocked('native-background', !isActive)));
       handles.push(await App.addListener('backButton', onBack));
-      activity.setBlocked('native-background', !(await App.getState()).isActive);
+      setBlocked('native-background', !(await App.getState()).isActive);
     }
   } catch (error) {
     visibility(); window.removeEventListener('keydown', onKey);

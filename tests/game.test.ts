@@ -91,6 +91,28 @@ describe('save ownership', () => {
     expect(() => b.path(levels[0]!, [0])).toThrow('another writer');
     expect(new GameStore(storage).state.path).toEqual([0, 1]);
   });
+  it('skips identical ordinary prefixes while retaining conflict and recovery guards', () => {
+    const backing = memory(); let writes = 0;
+    const storage = { getItem: backing.getItem, setItem(k: string, raw: string) { writes++; backing.setItem(k, raw); } };
+    const a = new GameStore(storage), level = levels[0]!;
+    a.path(level, [0, 1]); const before = writes;
+    for (let i = 0; i < 8; i++) a.path(level, [0, 1]);
+    expect(writes).toBe(before);
+    const other = new GameStore(storage); other.finish(level, level.witness);
+    expect(() => a.path(level, [0, 1])).toThrow('another writer');
+    expect(() => a.path(level, [0, 1])).toThrow('reload required');
+    expect(new GameStore(storage).state.coins).toBe(20);
+  });
+  it('still persists clearing an offer for an unchanged unfinished prefix', () => {
+    const storage = memory(), a = new GameStore(storage);
+    for (const level of levels.slice(0, 10)) a.finish(level, level.witness);
+    const level = levels[9]!, prefix = [level.start];
+    a.write({ ...a.state, path: prefix });
+    expect(a.state.offer).not.toBeNull();
+    a.path(level, prefix);
+    expect(new GameStore(storage).state.offer).toBeNull();
+    expect(a.state.coins).toBe(200);
+  });
   it('repairs only invalid transient path and preserves currency', () => {
     const storage = memory(), a = new GameStore(storage); a.finish(levels[0]!, levels[0]!.witness);
     const state = decodeSave(JSON.stringify({ ...a.state, path: [999] }));

@@ -181,3 +181,12 @@ button:focus-visible { outline: 3px solid var(--ribbon); outline-offset: 5px; }
 .instruction.rejected { color: var(--ink); font-weight: 850; }
 
 .recent-result { width: 100%; min-height: 48px; background: none; color: var(--muted); font-size: 12px; font-weight: 750; flex-shrink: 0; }
+
+/* Keep result layout available, but never run its CSS timelines behind another screen. */
+#app:not([data-screen=game]) .game-content *,
+#app:not([data-screen=game]) .game-content *::before,
+#app:not([data-screen=game]) .game-content *::after,
+#app[data-blocked=true] .game-content *,
+#app[data-blocked=true] .game-content *::before,
+#app[data-blocked=true] .game-content *::after,
+#app[data-background=true] *, #app[data-background=true] *::before, #app[data-background=true] *::after { animation-play-state: paused !important; }
