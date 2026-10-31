@@ -20,6 +20,9 @@ export class BoardScene extends Phaser.Scene {
   private sparks: { cell: number; at: number; angle: number; speed: number }[] = [];
   private pulse: { cell: number; at: number } | null = null;
   private winning: { from: BoardLayout; at: number } | null = null;
+  private dirty = true;
+  private rejection: { cell: number; at: number } | null = null;
+  private resumeUntil = 0;
   private reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   constructor() { super('Board'); }
   create(): void {
@@ -29,28 +32,34 @@ export class BoardScene extends Phaser.Scene {
     this.redraw();
   }
   setState(level: Level, route: readonly number[], hint: readonly number[], miniature: boolean): void {
-    if (this.level.id !== level.id) this.sparks = [];
+    if (this.level === level && this.route === route && this.hint === hint && this.miniature === miniature) return;
+    if (this.level.id !== level.id) { this.sparks = []; this.rejection = null; this.resumeUntil = 0; }
     this.level = level; this.route = route; this.hint = hint; this.miniature = miniature; this.redraw();
   }
   open(): void { this.opening = this.reduced ? 0 : performance.now(); this.pulse = null; this.sparks = []; this.redraw(); }
   react(cell: number, reverse = false): void {
-    this.opening = 0; this.pulse = { cell, at: performance.now() };
+    this.opening = 0; this.resumeUntil = 0; this.rejection = null; this.pulse = { cell, at: performance.now() };
     if (!this.reduced && !reverse) for (let i = 0; i < 6 && this.sparks.length < 36; i++)
       this.sparks.push({ cell, at: performance.now(), angle: i * Math.PI / 3 + Math.random() * .4, speed: .45 + Math.random() * .3 });
     this.redraw();
   }
   win(from: BoardLayout): void { this.opening = 0; this.pulse = null; this.winning = { from, at: performance.now() }; this.redraw(); }
-  settle(): void { this.opening = 0; this.pulse = null; this.winning = null; this.sparks = []; this.redraw(); }
+  settle(): void { this.rejection = null; this.resumeUntil = 0; this.opening = 0; this.pulse = null; this.winning = null; this.sparks = []; this.redraw(); }
+  reject(cell: number): void { this.rejection = { cell, at: performance.now() }; this.redraw(); }
+  resumeHead(): void { if (!this.miniature && this.route.length > 1) { this.resumeUntil = performance.now() + 1200; this.redraw(); } }
   update(): void {
-    const now = performance.now(), wasAnimating = Boolean(this.opening || this.pulse || this.winning || this.sparks.length);
+    const now = performance.now(), wasAnimating = Boolean(this.opening || this.pulse || this.winning || this.sparks.length || this.rejection || this.resumeUntil);
     this.sparks = this.sparks.filter(s => now - s.at < 380);
     if (this.opening && now - this.opening > 520) this.opening = 0;
     if (this.pulse && now - this.pulse.at > 160) this.pulse = null;
-    if (wasAnimating) this.redraw();
+    if (this.rejection && now - this.rejection.at > 360) this.rejection = null;
+    if (this.resumeUntil && now > this.resumeUntil) this.resumeUntil = 0;
+    if (wasAnimating || this.dirty) { this.dirty = false; this.renderBoard(); }
   }
-  setTheme(theme: Theme): void { this.theme = theme; this.redraw(); }
-  setRenderRatio(value: number): void { this.renderRatio = value; this.redraw(); }
-  private redraw(): void {
+  setTheme(theme: Theme): void { if (this.theme !== theme) { this.theme = theme; this.redraw(); } }
+  setRenderRatio(value: number): void { if (this.renderRatio !== value) { this.renderRatio = value; this.redraw(); } }
+  private redraw(): void { this.dirty = true; }
+  private renderBoard(): void {
     const g = this.drawing;
     if (!g) return;
     for (const label of this.checkpointLabels) label.setVisible(false);
@@ -160,6 +169,16 @@ export class BoardScene extends Phaser.Scene {
         g.fillStyle(colorNumber(this.theme.ribbon)); g.fillCircle(hx, hy, radius * .4);
       }
     }
+    if (!this.miniature && this.resumeUntil) {
+      const r = rect(this.route[this.route.length - 1]!), t = (1200 - this.resumeUntil + now) / 1200;
+      g.lineStyle(2, colorNumber(this.theme.trail), .55 * (1 - t));
+      g.strokeCircle(r.x + r.width / 2, r.y + r.height / 2, r.width * (.3 + .13 * (this.reduced ? 0 : t)));
+    }
+    if (!this.miniature && this.rejection) {
+      const r = rect(this.rejection.cell), t = Math.min(1, (now - this.rejection.at) / 360);
+      g.lineStyle(Math.max(2, r.width * .045), 0xe08045, 1 - t * .7);
+      g.strokeRoundedRect(r.x - 2, r.y - 2, r.width + 4, r.height + 4, 5);
+    }
     // Rules are drawn over the ribbon so they stay legible during hints and undo.
     if (!this.opening || age > 240) {
       for (const [a, b] of this.level.walls ?? []) {
@@ -187,9 +206,12 @@ export class BoardScene extends Phaser.Scene {
         g.fillStyle(visited ? colorNumber(this.theme.ribbon) : 0xfffcf3); g.fillCircle(x, y, radius);
         g.lineStyle(Math.max(.8, r.width * .025), visited ? 0xfffcf3 : 0x64516e, visited ? .9 : .45); g.strokeCircle(x, y, radius);
         if (!this.miniature) {
-          const label = this.checkpointLabels[i] ?? (this.checkpointLabels[i] = this.add.text(0, 0, '', { fontFamily: 'Nunito, sans-serif', fontStyle: '900' }).setOrigin(.5).setResolution(2));
-          label.setText(String(i + 1)).setFontSize(Math.round(r.width * .34)).setColor(visited ? '#ffffff' : '#362447')
-            .setPosition(x * this.renderRatio, y * this.renderRatio).setScale(this.renderRatio).setVisible(true);
+          const label = this.checkpointLabels[i] ?? (this.checkpointLabels[i] = this.add.text(0, 0, '', { fontFamily: 'Road Nunito, sans-serif', fontStyle: '900' }).setOrigin(.5).setResolution(2));
+          const size = Math.round(r.width * .34), color = visited ? '#ffffff' : '#362447';
+          if (label.text !== String(i + 1)) label.setText(String(i + 1));
+          if (label.style.fontSize !== `${size}px`) label.setFontSize(size);
+          if (label.style.color !== color) label.setColor(color);
+          label.setPosition(x * this.renderRatio, y * this.renderRatio).setScale(this.renderRatio).setVisible(true);
         }
       }
     }

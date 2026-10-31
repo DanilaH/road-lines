@@ -47,9 +47,8 @@ export async function runRewardsSmoke(browser,url,output,root){
  await failure.reload();await ready(failure);await openWheel(failure);assert.equal(await failure.locator('.wheel-spin').isEnabled(),true);await failure.close();
  const text=readFileSync(resolve(root,'src/content/levels.ts'),'utf8'),levels=JSON.parse(text.slice(text.indexOf('= ')+2).trim().replace(/;$/,'')),tenth=levels[9];
  const offer=await seeded(browser,url,{...base,levelId:tenth.id,path:tenth.witness,completed:levels.slice(0,9).map(l=>l.id),coins:180});
- await offer.locator('[data-action=continue]').click();await offer.getByRole('button',{name:'ДАЛЬШЕ',exact:true}).click();await offer.getByRole('dialog',{name:'Новое оформление',exact:true}).waitFor();
- assert.equal((await save(offer)).coins,200);assert.equal((await save(offer)).offer.themeId,'lagoon');assert.equal(await offer.locator('.bonus-video').isDisabled(),true);
- await offer.screenshot({path:resolve(output,'theme-offer.png')});await offer.keyboard.press('Escape');assert.equal(await offer.locator('.result-heading').isVisible(),true);assert.equal((await save(offer)).offer,null);assert.equal((await save(offer)).coins,200);
- await offer.getByRole('button',{name:'ДАЛЬШЕ',exact:true}).click();assert.equal((await save(offer)).levelId,levels[10].id);await offer.close();
- console.log('Rewards: wheel viewports, durable stage/finish/reload, rollback date, Back/background, disk failure, tenth-clear offer passed.');
+ await offer.locator('[data-action=continue]').click();await offer.getByRole('button',{name:'ДАЛЬШЕ',exact:true}).click();
+ await offer.locator('.play').waitFor();assert.equal((await save(offer)).coins,200);assert.equal((await save(offer)).offer,null);
+ assert.equal(await offer.locator('.bonus-overlay').isVisible(),false);assert.equal((await save(offer)).levelId,levels[10].id);await offer.close();
+ console.log('Rewards: wheel viewports, durable stage/finish/reload, rollback date, Back/background, disk failure, unavailable offer skipped on tenth-clear Continue passed.');
 }

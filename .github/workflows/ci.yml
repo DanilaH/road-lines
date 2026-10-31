@@ -18,3 +18,4 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: npm run test:browser
       - run: node tools/browser-smoke.mjs --production
+      - run: node tools/ux-smoke.mjs --run

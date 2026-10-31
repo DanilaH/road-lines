@@ -12,6 +12,16 @@ export const adjacent = (level: Level, a: number, b: number): boolean =>
   Math.abs(a % level.width - b % level.width) + Math.abs(Math.floor(a / level.width) - Math.floor(b / level.width)) === 1;
 export const canCross = (level: Level, a: number, b: number): boolean => adjacent(level, a, b) &&
   !(level.walls ?? []).some(([x, y]) => (x === a && y === b) || (x === b && y === a));
+export type MoveBlock = 'wall' | 'finish' | 'checkpoint';
+/** Only explain a reachable new cell; gaps, old cells and distant taps aren't rule collisions. */
+export function moveBlock(level: Level, path: readonly number[], cell: number): MoveBlock | null {
+  const head = path[path.length - 1]!;
+  if (!level.cells.includes(cell) || path.includes(cell) || !adjacent(level, head, cell)) return null;
+  if (!canCross(level, head, cell)) return 'wall';
+  if (cell === level.finish && path.length !== level.cells.length - 1) return 'finish';
+  if (level.checkpoints?.includes(cell) && level.checkpoints.find(c => !path.includes(c)) !== cell) return 'checkpoint';
+  return null;
+}
 export function canExtend(level: Level, path: readonly number[], cell: number): boolean {
   if (!level.cells.includes(cell) || path.includes(cell) || !canCross(level, path[path.length - 1]!, cell)) return false;
   if (cell === level.finish && path.length !== level.cells.length - 1) return false;

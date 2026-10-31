@@ -177,3 +177,7 @@ button:focus-visible { outline: 3px solid var(--ribbon); outline-offset: 5px; }
 @media(max-width:359px) { .level-grid { gap: 12px 9px; }.theme-grid { gap: 18px 12px; }.theme-card strong { font-size: 16px; }.set-symbol { width: 48px; }.set-copy strong { font-size: 18px; } }
 @media(max-height:650px) { .menu-body:not(.home) > h1 { font-size: 27px; }.menu-caption { margin-bottom: 18px; }.set-card { min-height: 110px; padding: 14px 12px; }.set-symbol { height: 53px; }.wheel-body { height: calc(100% - 68px); padding-top: 0; }.wheel-body h1 { font-size: 25px; }.wheel-caption { margin-bottom: 23px; }.wheel-assembly { width: min(100%,225px); }.wheel-result { margin: 14px 0 8px; font-size: 16px; min-height: 32px; }.wheel-spin { min-height: 52px; font-size: 17px; }.wheel-clock { margin: 16px 0; } }
 @media(prefers-reduced-motion:reduce) { [data-spinning=true] .wheel-pointer { animation: none; } }
+
+.instruction.rejected { color: var(--ink); font-weight: 850; }
+
+.recent-result { width: 100%; min-height: 48px; background: none; color: var(--muted); font-size: 12px; font-weight: 750; flex-shrink: 0; }

@@ -44,11 +44,11 @@ export async function runMechanicsSmoke(browser, url, output, root) {
     } else {
       await drag([0, 1, 2, 5, 8]); assert.deepEqual((await save()).path, [0, 1, 2, 5], 'Number 3 cannot be visited before number 2');
       await page.getByRole('button', { name: 'Начать заново', exact: true }).click();
-      await drag([0, 1, 4]); await page.locator('.instruction').getByText(/следующая точка 3/).waitFor();
-      await drag([4, 1]); await page.locator('.instruction').getByText(/следующая точка 2/).waitFor();
+      await drag([0, 1, 4]); await page.locator('.instruction').getByText(/Следующая точка — 3/).waitFor();
+      await drag([4, 1]); await page.locator('.instruction').getByText(/Следующая точка — 2/).waitFor();
       assert.deepEqual((await save()).path, [0, 1]);
       await page.reload(); await page.locator('#app[data-ready=true]').waitFor(); await page.locator('[data-action=continue]').click();
-      await page.locator('.instruction').getByText(/следующая точка 2/).waitFor();
+      await page.locator('.instruction').getByText(/Следующая точка — 2/).waitFor();
       await page.getByRole('button', { name: 'Подсказка, осталось 3', exact: true }).click();
       await page.getByText('Бледная линия показывает продолжение.', { exact: true }).waitFor(); assert.equal((await save()).hints, 2);
     }

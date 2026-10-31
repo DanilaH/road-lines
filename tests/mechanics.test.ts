@@ -79,3 +79,17 @@ describe('finish, walls and ordered checkpoints', () => {
     expect(store.state.coins).toBe(20);
   });
 });
+
+// The explanation must agree with legality; distant/old-cell taps aren't rule collisions.
+describe('blocked move explanations', () => {
+  it('identifies walls, early finish and future checkpoints without blocking reverse undo', async () => {
+    const { moveBlock } = await import('../src/core/model');
+    const cells = [0,1,2,3,4,5,6,7,8], base = { id: 'feedback', version: 1, width: 3, height: 3, cells, start: 0, witness: cells, tag: '', origin: '' };
+    expect(moveBlock({ ...base, walls: [[7,8]] }, [0,3,6,7], 8)).toBe('wall');
+    expect(moveBlock({ ...base, finish: 8 }, [0,1,2,5], 8)).toBe('finish');
+    expect(moveBlock({ ...base, checkpoints: [0,6,8] }, [0,1,2,5], 8)).toBe('checkpoint');
+    expect(moveBlock(base, [0,1,2,5], 2)).toBeNull();
+    expect(moveBlock({ ...base, walls: [[7,8]] }, [0], 8)).toBeNull();
+    expect(moveBlock({ ...base, finish: 8 }, [0,1,2,5,4,3,6,7], 8)).toBeNull();
+  });
+});

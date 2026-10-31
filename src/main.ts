@@ -7,7 +7,7 @@ import { installRuntime } from './platform/runtime';
 import { coin, icon, star } from './ui/icons';
 import { boardLayout } from './ui/layout';
 import { levels } from './content/levels';
-import { complete } from './core/model';
+import { complete, type MoveBlock } from './core/model';
 import { GameStore, SAVE_KEY } from './services/save';
 import { HintService } from './services/hints';
 import { installRouteInput } from './services/input';
@@ -49,6 +49,10 @@ async function boot(): Promise<void> {
   let themeOrigin: { screen: Screen; paused: boolean } = { screen: 'home', paused: false };
   let pendingTheme: string | null = null;
   let bonus: 'gift' | 'offer' | null = null;
+  let continueAfterBonus = false;
+  let paidHint: { key: string; path: number[] } | null = null;
+  let rejectionText = '', lastReject = -Infinity;
+  let rejectionTimer: ReturnType<typeof setTimeout> | undefined;
   let wheelBusy = false, wheelPreparing = false, wheelToken = 0;
   let wheelCommit: Promise<void> | null = null;
   const feedback = new Feedback();
@@ -73,7 +77,7 @@ async function boot(): Promise<void> {
       <p class="instruction"></p>
       <div class="rewards" hidden>
         <div class="reward-row"><span class="earned"></span><div class="gift-progress"><div class="track"><span></span></div>${rewardArt('gift')}<span class="fraction"></span></div></div>
-        <button class="multiply" disabled>${icon('play')} ЗАБРАТЬ ×5</button>
+        <button class="multiply" disabled hidden>${icon('play')} ЗАБРАТЬ ×5</button>
         <button class="next" data-action="next"><span>ДАЛЬШЕ</span></button>
       </div>
       </div><section class="menu-screen" aria-label="Навигация"></section><section class="wheel-screen" hidden aria-label="Ежедневная награда"></section>
@@ -88,6 +92,7 @@ async function boot(): Promise<void> {
       <div class="notice" hidden role="status"><span></span><button data-action="notice"></button></div>
     </section><div id="startup" role="status">Загрузка…</div>`;
   const $ = <T extends HTMLElement = HTMLElement>(selector: string): T => root.querySelector<T>(selector)!;
+  await document.fonts.load('900 16px "Road Nunito"').catch(() => []);
   const host = $('#board'), scene = new BoardScene();
   let renderRatio = getRenderPixelRatio(2);
   scene.setTheme(getTheme(store.state.themeId));
@@ -105,9 +110,30 @@ async function boot(): Promise<void> {
     $('.notice').hidden = !text; $('.notice span').textContent = text;
     $('.notice button').textContent = action; $('.notice button').hidden = !action;
   }
-  function invalidate(): void { revision++; hints.cancel(); busy = false; hint = []; rollback = null; }
+  function invalidate(): void { revision++; hints.cancel(); busy = false; hint = []; rollback = null;
+    clearTimeout(rejectionTimer); rejectionText = ''; }
+  function updateRouteUI(): void {
+    const nextCheckpoint = level.checkpoints?.findIndex(c => !path.includes(c)) ?? -1;
+    const ruleCopy = [level.checkpoints?.length ? nextCheckpoint < 0 ? 'Номера пройдены — заполни поле' : `Следующая точка — ${nextCheckpoint + 1}` : '',
+      level.finish !== undefined ? 'Пустой ромб — финиш' : '', level.walls?.length ? 'Обходи стенки' : ''].filter(Boolean).join(' · ');
+    const focusCopy = level.checkpoints?.length ? nextCheckpoint < 0 ? 'Номера пройдены — заполни поле' : `Следующая точка — ${nextCheckpoint + 1}` : level.finish !== undefined ? 'Финиш — после всех клеток' : level.walls?.length ? 'Обходи стенки' : '';
+    $('.instruction').textContent = rejectionText || (busy ? 'Ищу продолжение…' : path.length === 1 ? focusCopy || 'Начни со светлого ромба' : focusCopy ? `${focusCopy}. Продолжай с конца линии` : 'Продолжай с конца линии');
+    $('.instruction').classList.toggle('rejected', Boolean(rejectionText));
+    $<HTMLButtonElement>('[data-action=hint]').disabled = busy || result || complete(level, path);
+    $('[data-action=hint]').setAttribute('aria-label', busy ? 'Ищу продолжение' : `Подсказка, осталось ${store.state.hints}`);
+    host.setAttribute('aria-label', `Задача ${levels.indexOf(level) + 1}. Заполнено ${path.length} из ${level.cells.length}. ${ruleCopy ? ruleCopy + '. ' : ''}Стрелки — движение и откат.`);
+    scene.setState(level, path, hint, result);
+    if (inspect) { host.dataset.path = path.join(','); host.dataset.level = level.id; }
+  }
+  function rejectMove(cell: number, reason: MoveBlock): void {
+    if (result || screen !== 'game' || activity.isBlocked() || conflict || performance.now() - lastReject < 380) return;
+    lastReject = performance.now();
+    const next = level.checkpoints?.findIndex(c => !path.includes(c)) ?? -1;
+    rejectionText = reason === 'wall' ? 'Здесь стенка — обойди её' : reason === 'finish' ? 'Финиш — после всех клеток' : `Сначала точка ${next + 1}`;
+    updateRouteUI(); scene.reject(cell); feedback.play('reject');
+    clearTimeout(rejectionTimer); rejectionTimer = setTimeout(() => { rejectionText = ''; if (!disposed) updateRouteUI(); }, 1500);
+  }
   function redraw(): void {
-    const index = levels.indexOf(level);
     const theme = getTheme(store.state.themeId); applyTheme(root, theme); scene.setTheme(theme);
     $('.surface').className = `surface ${result ? 'result' : 'play'}`;
     const ruleCount = Number(level.finish !== undefined) + Number(Boolean(level.walls?.length)) + Number(Boolean(level.checkpoints?.length));
@@ -157,18 +183,13 @@ async function boot(): Promise<void> {
     $<HTMLButtonElement>('[data-action=hint]').setAttribute('aria-label', busy ? 'Ищу продолжение' : `Подсказка, осталось ${store.state.hints}`);
     $('.result-heading').hidden = !result; $('.rewards').hidden = !result; $('#banner-slot').hidden = screen !== 'levels' && (screen !== 'game' || result);
     $('.instruction').hidden = result;
-    const nextCheckpoint = level.checkpoints?.findIndex(c => !path.includes(c)) ?? -1;
-    const ruleCopy = [level.checkpoints?.length ? nextCheckpoint < 0 ? 'Все номера пройдены — заполни оставшиеся клетки' : `Проходи номера по порядку · следующая точка ${nextCheckpoint + 1}` : '',
-      level.finish !== undefined ? 'Пустой ромб — последняя клетка' : '', level.walls?.length ? 'Стенки нужно обходить' : ''].filter(Boolean).join('. ');
-    $('.instruction').textContent = busy ? 'Ищу продолжение…' : ruleCopy || (path.length === 1 ? 'Начни с цветной клетки' : 'Можно отпустить палец и продолжить');
     $('.earned').innerHTML = fixture ? `${coin} +20` : reward ? `${coin} +${reward}` : 'Уже пройдено';
     const giftCount = store.state.completed.length === 0 ? 0 : (store.state.completed.length - 1) % 20 + 1;
     $('.fraction').textContent = `${giftCount}/20`;
     $('.track span').style.width = `${Math.min(100, giftCount * 5)}%`;
     $('.gift-progress').setAttribute('aria-label', `Подарок: ${giftCount} из 20`);
     $('.next span').textContent = !nextInSet(level.id) ? 'К ВЫБОРУ УРОВНЕЙ' : 'ДАЛЬШЕ';
-    host.setAttribute('aria-label', `Задача ${index + 1}. Заполнено ${path.length} из ${level.cells.length}. ${ruleCopy ? ruleCopy + '. ' : ''}Стрелки — движение и откат.`);
-    scene.setState(level, path, hint, result);
+    updateRouteUI();
     activity.setGameplayDesired(screen === 'game' && !result);
     if (inspect) { host.dataset.path = path.join(','); host.dataset.level = level.id; }
     syncSize();
@@ -205,12 +226,12 @@ async function boot(): Promise<void> {
   function change(next: number[]): void {
     if (screen !== 'game' || result || activity.isBlocked() || conflict) return;
     const reverse = next.length < path.length;
-    invalidate(); path = next; notice(''); redraw(); scene.react(path[path.length - 1]!, reverse);
+    invalidate(); path = next; notice(''); updateRouteUI(); scene.react(path[path.length - 1]!, reverse);
     feedback.play(reverse ? 'undo' : 'cell', path.length / level.cells.length);
     if (complete(level, path)) finish();
     else { clearTimeout(saveTimer); saveTimer = setTimeout(flush, 80); }
   }
-  const input = installRouteInput(host, () => ({ level, path, layout: layout(), blocked: screen !== 'game' || result || activity.isBlocked() || conflict || complete(level, path) }), change, () => { if (!complete(level, path)) flush(); });
+  const input = installRouteInput(host, () => ({ level, path, layout: layout(), blocked: screen !== 'game' || result || activity.isBlocked() || conflict || complete(level, path) }), change, () => { if (!complete(level, path)) { flush(); scene.resumeHead(); } }, rejectMove);
   const unsubscribe = activity.onBlockedChange(blocked => {
     root.dataset.blocked = String(blocked);
     feedback.setBlocked(blocked);
@@ -226,7 +247,7 @@ async function boot(): Promise<void> {
     (value ? $('[data-action=resume]') : screen === 'game' ? $('[data-action=pause]') : $('[data-action=menu-settings]')).focus();
   }
   function onBack(): void {
-    if (bonus) { closeBonus(); return; }
+    if (bonus) { closeBonus(false); return; }
     if (pendingTheme) { closeThemePurchase(); return; }
     if (activity.isBlocked() && !paused) return;
     if (paused) setPause(false);
@@ -255,7 +276,7 @@ async function boot(): Promise<void> {
     screen = 'game'; paused = false; $('.pause-overlay').hidden = true;
     activity.setBlocked('pause', false); notice(''); redraw();
     if (!activity.isBlocked()) game.loop.wake();
-    screens.enterGame(root); host.focus();
+    screens.enterGame(root); scene.resumeHead(); host.focus();
   }
   function chooseLevel(id: string): void {
     if (conflict || store.recoveryRequired || !isLevelAvailable(id, store.state.completed)) return;
@@ -307,10 +328,12 @@ async function boot(): Promise<void> {
     if (!flush()) return;
     motion.stop(); showBalance(store.state.coins); bonus = kind; activity.setBlocked('reward-modal', true); redraw(); $('.bonus-close').focus();
   }
-  function closeBonus(): void {
+  function closeBonus(proceed = true): void {
     if (!bonus) return;
     try { if (bonus === 'gift') store.acknowledgeGift(); else store.dismissOffer(); } catch { saveError(); return; }
+    const resume = continueAfterBonus && proceed; continueAfterBonus = false;
     bonus = null; activity.setBlocked('reward-modal', false); redraw(); feedback.play('progress');
+    if (resume && screen === 'game' && result && !activity.isBlocked()) { void goNext(); return; }
     if (screen === 'game') $('.next').focus(); else $('.menu-body h1').focus();
   }
   function cancelWheel(): void {
@@ -345,6 +368,8 @@ async function boot(): Promise<void> {
   }
   async function requestHint(): Promise<void> {
     if (busy || result || activity.isBlocked() || complete(level, path)) return;
+    const key = `${level.id}:${level.version}:${path.join(',')}`;
+    if (paidHint?.key === key) { hint = [...paidHint.path]; notice('Бледная линия показывает продолжение.'); updateRouteUI(); return; }
     if (!store.state.hints) { notice('Подсказки закончились. Можно бесплатно откатить маршрут или начать заново.'); return; }
     input.cancel(); invalidate(); const token = revision;
     busy = true; notice(''); redraw();
@@ -353,7 +378,7 @@ async function boot(): Promise<void> {
     busy = false;
     if (answer.kind === 'FOUND') {
       try { store.write({ ...store.state, levelId: level.id, levelVersion: level.version, path: [...path], hints: store.state.hints - 1 });
-        hint = answer.path.slice(path.length - 1, path.length + 3); notice('Бледная линия показывает продолжение.'); }
+        hint = answer.path.slice(path.length - 1, path.length + 3); paidHint = { key, path: [...hint] }; notice('Бледная линия показывает продолжение.'); }
       catch { saveError(); }
     } else if (answer.kind === 'UNSOLVABLE') {
       rollback = answer.rollbackLength ?? null;
@@ -401,10 +426,11 @@ async function boot(): Promise<void> {
     }
   }
   async function goNext(): Promise<void> {
-    if (!result || collecting) return;
+    if (!result || collecting || screen !== 'game' || activity.isBlocked() || conflict || store.recoveryRequired) return;
     if (fixture) { location.assign(location.pathname); return; }
-    if (store.state.giftNotice) { openBonus('gift'); return; }
-    if (store.state.offer?.levelId === level.id) { openBonus('offer'); return; }
+    if (store.state.giftNotice) { openBonus('gift'); continueAfterBonus = bonus === 'gift'; return; }
+    // Video is intentionally deferred: acknowledge the old offer without interrupting Continue.
+    if (store.state.offer?.levelId === level.id) { try { store.dismissOffer(); } catch { saveError(); return; } }
     collecting = true; $<HTMLButtonElement>('.next').disabled = true;
     const token = revision, done = await motion.collect();
     collecting = false;
@@ -464,7 +490,7 @@ async function boot(): Promise<void> {
 
   function dispose(): void {
     if (disposed) return;
-    input.dispose(); flush(); disposed = true; invalidate(); clearTimeout(saveTimer); clearTimeout(deadline);
+    input.dispose(); flush(); disposed = true; invalidate(); clearTimeout(saveTimer); clearTimeout(rejectionTimer); clearTimeout(deadline);
     cancelAnimationFrame(frame); cancelAnimationFrame(secondFrame); cancelAnimationFrame(resizeFrame);
     clearInterval(clock); wheelToken++; wheelView.dispose(); wheelService.dispose();
     resize.disconnect(); disposeRuntime(); unsubscribe(); screens.dispose(); motion.dispose(); feedback.dispose(); root.removeEventListener('click', click);

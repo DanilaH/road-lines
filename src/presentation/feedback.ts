@@ -1,13 +1,14 @@
 import { Capacitor, registerPlugin } from '@capacitor/core';
 import { getAccumulationPitchMultiplier } from '../../vendor/mini-games-kit/src/audio/pitch';
 
-export type Cue = 'cell' | 'undo' | 'win' | 'star' | 'coin' | 'progress' | 'button';
+export type Cue = 'cell' | 'undo' | 'win' | 'star' | 'coin' | 'progress' | 'button' | 'reject';
 export interface Note { frequency: number; end?: number; delay: number; duration: number; gain: number; type: OscillatorType; }
 export function cueNotes(cue: Cue, progress = 0): Note[] {
   const pitch = getAccumulationPitchMultiplier(progress, { startMultiplier: 0.9, endMultiplier: 1.45 }, 0.5);
   const note = (frequency: number, duration: number, gain: number, delay = 0, type: OscillatorType = 'sine', end?: number): Note => ({ frequency, duration, gain, delay, type, end });
   switch (cue) {
     case 'cell': return [note(400 * pitch, 0.085, 0.075, 0, 'triangle', 310 * pitch), note(950 * pitch, 0.035, 0.018)];
+    case 'reject': return [note(210, 0.065, 0.035, 0, 'sine', 160)];
     case 'undo': return [note(290, 0.08, 0.055, 0, 'triangle', 170)];
     case 'win': return [note(135, 0.18, 0.16, 0, 'sine', 52), ...[523.25, 659.25, 783.99, 1046.5].map((f, i) => note(f, 0.34, 0.055, i * 0.045, 'triangle'))];
     case 'star': { const f = [659.25, 783.99, 1046.5][Math.round(Math.max(0, Math.min(1, progress)) * 2)]!; return [note(f, 0.24, 0.1, 0, 'triangle'), note(f * 2, 0.18, 0.035, 0.03)]; }
@@ -19,7 +20,7 @@ export function cueNotes(cue: Cue, progress = 0): Note[] {
 export class CueGate {
   private last = new Map<Cue, number>();
   accept(cue: Cue, now: number): boolean {
-    const interval = cue === 'cell' || cue === 'undo' ? 45 : cue === 'coin' ? 42 : 20;
+    const interval = cue === 'reject' ? 380 : cue === 'cell' || cue === 'undo' ? 45 : cue === 'coin' ? 42 : 20;
     if (now - (this.last.get(cue) ?? -Infinity) < interval) return false;
     this.last.set(cue, now); return true;
   }

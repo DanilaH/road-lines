@@ -198,7 +198,6 @@ try {
       await gameplay.getByRole('button', { name: nextLabel, exact: true }).click({ clickCount: index === 2 ? 2 : 1 });
       if (await gameplay.locator('.bonus-overlay').isVisible()) {
         await gameplay.locator('[data-action=close-bonus]').click();
-        await gameplay.getByRole('button', { name: nextLabel, exact: true }).click();
       }
       if ((index + 1) % 30 === 0) {
         await gameplay.locator('.bank-complete').waitFor();
@@ -229,7 +228,6 @@ try {
   await gameplay.getByRole('button', { name: 'К ВЫБОРУ УРОВНЕЙ', exact: true }).click();
   if (await gameplay.locator('.bonus-overlay').isVisible()) {
     await gameplay.locator('[data-action=close-bonus]').click();
-    await gameplay.getByRole('button', { name: 'К ВЫБОРУ УРОВНЕЙ', exact: true }).click();
   }
   await gameplay.locator('.bank-complete').waitFor();
   assert.equal(await gameplay.locator('.level-tile.completed').count(), 30);

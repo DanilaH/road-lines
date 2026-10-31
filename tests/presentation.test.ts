@@ -19,6 +19,7 @@ describe('presentation limits', () => {
     const gate = new CueGate();
     expect(gate.accept('cell', 0)).toBe(true); expect(gate.accept('cell', 20)).toBe(false);
     expect(gate.accept('win', 20)).toBe(true); expect(gate.accept('cell', 46)).toBe(true);
+    expect(gate.accept('reject', 0)).toBe(true); expect(gate.accept('reject', 100)).toBe(false); expect(gate.accept('reject', 380)).toBe(true);
     expect(gate.accept('coin', 0)).toBe(true); expect(gate.accept('coin', 10)).toBe(false);
   });
   it('persists sound and vibration independently', () => {
@@ -30,7 +31,7 @@ describe('presentation limits', () => {
     expect(new Feedback(storage).settings).toEqual({ sound: false, vibration: false });
   });
   it('bounds notes and rises across a route/coin sequence', () => {
-    for (const cue of ['cell', 'undo', 'win', 'star', 'coin', 'progress', 'button'] as const) {
+    for (const cue of ['cell', 'undo', 'win', 'star', 'coin', 'progress', 'button', 'reject'] as const) {
       for (const progress of [0, .5, 1]) for (const note of cueNotes(cue, progress)) {
         expect(note.frequency).toBeGreaterThan(40); expect(note.frequency).toBeLessThan(4000);
         expect(note.gain).toBeLessThanOrEqual(.16); expect(note.duration).toBeLessThanOrEqual(.35);

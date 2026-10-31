@@ -1,6 +1,6 @@
 import { diamondPath } from '../presentation/markers';
 import type { Level } from '../core/model';
-import { levelSets, isLevelAvailable, isSetAvailable, levelLabel, type SetId } from '../core/progression';
+import { levelSets, isLevelAvailable, isSetAvailable, levelLabel, getLevelSet, type SetId } from '../core/progression';
 import type { GameSave } from '../services/save';
 import { canSpin } from '../core/rewards';
 import { themes } from '../content/themes';
@@ -42,9 +42,11 @@ export function renderMenu(host: HTMLElement, screen: Exclude<Screen, 'game'>, s
   let content: string;
   if (screen === 'home') {
     const continuing = save.path.length > 1;
+    const currentSet = getLevelSet(save.levelId), setFinished = currentSet.levels.every(l => save.completed.includes(l.id));
     content = `<div class="home-hero"><h1 tabindex="-1">Одной<span>линией</span><i aria-hidden="true">.</i></h1><p>Заполни всё поле</p>${emblem}</div>
-      <div class="home-actions"><button class="primary-action home-play" data-action="continue"><span class="play-glyph">${icon('play')}</span><span class="play-copy"><strong>${save.completed.includes(save.levelId) && continuing ? 'Результат' : continuing ? 'Продолжить' : 'Играть'}</strong><small>Уровень ${levelLabel(save.levelId)}</small></span><span class="play-arrow" aria-hidden="true">${icon('back')}</span></button>
+      <div class="home-actions"><button class="primary-action home-play" data-action="${setFinished ? 'sets' : 'continue'}"><span class="play-glyph">${icon('play')}</span><span class="play-copy"><strong>${setFinished ? bankFinished ? 'Выбрать задачу' : 'Выбрать набор' : save.completed.includes(save.levelId) && continuing ? 'Результат' : continuing ? 'Продолжить' : 'Играть'}</strong><small>${setFinished ? bankFinished ? 'Все 90 задач пройдены' : 'Набор пройден' : `Уровень ${levelLabel(save.levelId)}`}</small></span><span class="play-arrow" aria-hidden="true">${icon('back')}</span></button>
       <button class="secondary-action home-levels" data-action="sets"><span class="nav-art">${icon('grid')}</span><span>Уровни</span></button><button class="secondary-action home-themes" data-action="themes"><span class="nav-art">${icon('palette')}</span><span>Оформление</span></button></div>
+      ${setFinished && continuing ? `<button class="recent-result" data-action="continue">Последний результат · ${levelLabel(save.levelId)}</button>` : ''}
       <button class="daily-entry" data-action="wheel">${rewardArt('medallion')}<span>Ежедневная награда<small>${canSpin(save) ? 'Можно крутить колесо' : 'Сегодня уже получено'}</small></span><b aria-hidden="true">${canSpin(save) ? '→' : '✓'}</b></button>
       ${save.giftNotice ? `<button class="gift-entry" data-action="gift">${rewardArt('gift')} Подарок: +100 монет</button>` : ''}<div class="home-progress"><div><span>Всего пройдено</span><strong>${save.completed.length}<small> / ${bankTotal}</small></strong></div><div class="menu-track"><span style="width:${save.completed.length / bankTotal * 100}%"></span></div></div>`;
   } else if (screen === 'themes') {

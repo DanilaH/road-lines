@@ -52,12 +52,13 @@ export class WinMotion {
       this.after(this.reduced ? 50 + i * 50 : 350 + i * 150, () => this.feedback.play('star', i / 2));
     });
     this.animate(this.query('.rewards'), [{ opacity: 0, transform: 'translateY(24px)' }, { opacity: 1, transform: 'translateY(0)' }],
-      { duration: 220, delay: this.reduced ? 50 : 520, fill: 'backwards', easing: 'ease-out' });
+      { duration: 220, delay: this.reduced ? 50 : 350, fill: 'backwards', easing: 'ease-out' });
     const meter = (n: number) => n === 0 ? 0 : (n - 1) % 20 + 1;
     const fraction = meter(Math.max(0, giftCount - (reward > 0 ? 1 : 0))) / 20;
     this.animate(this.query('.track span'), [{ width: `${fraction * 100}%` }, { width: `${meter(giftCount) * 5}%` }], { duration: 600, delay: 650, fill: 'backwards', easing: 'ease-out' });
     this.feedback.play('win');
-    this.after(this.reduced ? 80 : 650, () => { this.root.dataset.winPhase = 'idle'; settleBoard(); next.disabled = false; });
+    this.after(this.reduced ? 80 : 400, () => { next.disabled = false; });
+    this.after(this.reduced ? 80 : 650, () => { this.root.dataset.winPhase = 'idle'; settleBoard(); });
     this.after(this.reduced ? 100 : 720, () => this.burst(115, 0));
     this.after(this.reduced ? 180 : 1040, () => this.burst(100, -1));
     this.after(this.reduced ? 260 : 1370, () => this.burst(115, 1));
@@ -86,7 +87,7 @@ export class WinMotion {
     if (!this.reward) return Promise.resolve(true);
     this.scatter();
     const target = this.query('.wallet').getBoundingClientRect();
-    const plan = createValueTransferPlan(this.reward, { minDurationMs: 470, maxDurationMs: 560, maxVisualTokens: 16, maxAudioEvents: 7, flightBaseMs: 290, maxFlightDurationMs: 340 });
+    const plan = createValueTransferPlan(this.reward, { minDurationMs: 280, maxDurationMs: 360, maxVisualTokens: 16, maxAudioEvents: 7, flightBaseMs: 180, maxFlightDurationMs: 240 });
     return new Promise(resolve => {
       this.finishCollect = resolve;
       this.coins.forEach((node, i) => {
