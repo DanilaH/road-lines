@@ -3,7 +3,7 @@
 Исходный аудит: `72e6404a2a7bb312a8325ded8dbfb46fb1d94c6b`. Банк, правила, цены и save v3 не менялись.
 
 ## Изменения
-- Один повтор текущего hint для того же id/version/prefix использует оплаченный ответ в памяти. Новый prefix требует обычного solver-запроса; UNKNOWN не оплачивается. Кэш не переживает перезапуск.
+- Повтор текущего hint для того же id/version/prefix использует оплаченный ответ в памяти. Новый prefix требует обычного solver-запроса; UNKNOWN не оплачивается. Кэш не переживает перезапуск.
 - Три механических запрета получают локальный ободок, короткий текст и тихий ограниченный cue. Путь и кошелёк не меняются.
 - Головка выделяется после отпускания; инструкция объясняет продолжение с конца, на механических полях показывает текущую цель.
 - Недоступный offer подтверждается без модального прерывания Continue; x5 скрыт до рекламного этапа. Ledger/cadence сохранён. Подтверждение gift продолжает ровно один переход, Back остаётся на результате; ошибка ack требует восстановления авторитетного сохранения.
@@ -32,3 +32,14 @@ Headless Chromium/CDP touch не подтверждает нативные ощ�
 На `069251b94b51ae1cbbae5dce1831255b1aadc3b4` локальный production прогон успешно провёл все 90 witnesses реальным pointer input, три окончания наборов, gifts и итог 2200 монет. Затем он остановился при попытке повторно открыть задачу в уже завершённом наборе: домашняя primary ошибочно предлагала только наборы и для незавершённого повтора. Ограничение исправлено: выбор набора предлагается только для полного результата последнего уровня, повтор остаётся возобновляемым.
 Дополнительно воспроизведён пустой framebuffer после resize во время sleep на паузе. Теперь resize рисует один кадр без снятия input/audio blockers и снова засыпает. Новый regression проверяет цветные пиксели маршрута за модальным слоем, blocked state и точный prefix после resume.
 После обоих исправлений `npm run check` и production UX smoke прошли: 157 tests, 10 flow groups, 10 viewport/theme combinations. Android debug CI исходного code commit `069251b`: SUCCESS, run `41197273542`; App CI того commit содержит выявленный navigation regression и не считается успешным. Итоговый code commit запускает оба CI заново. Полный tail (touch/worker/menu/themes/rewards) проверяется отдельно после исправления; результаты нельзя выдавать за повтор всех 90 pointer solutions на новом commit.
+
+## Проверенный итог
+Финальный code commit: `7dc8b8b2c05f5c7f76ff0317ce067c86bde5d363`.
+- `npm run check`: 157 / 23 — PASS.
+- Production UX smoke: 10 flow groups и 10 viewport/theme combinations — PASS.
+- После исправления отдельно повторён inspect regression tail на подготовленном completed-bank fixture: пять основных viewport/result fixtures, live resize, prefix hints/UNKNOWN, CDP touch cancel/second finger/exit, writer ownership, mechanics, bank navigation/drafts, menus, все 8 палитр/покупки и reward/wheel failure/recovery — PASS. Этот сокращённый исследовательский сценарий не называется новым полным прохождением 90.
+- Все 90 реальных pointer solutions, окончания наборов и 2200 монет прошли на `069251b`; оставшийся выявленный navigation regression и paused resize исправлены и перепроверены на финальном коде.
+- Android debug build финального кода — SUCCESS: run `41198023370`.
+- App CI `41198023418` повторяет полные inspect/production 90 и UX smoke; на момент этой записи ещё выполняется. Его успех не заявлен.
+
+GIF production демонстраций: `hint-resume.gif` (59 кадров, 855099 bytes), `wall-feedback.gif` (110 кадров, 2810845 bytes), `gift-continue.gif` (32 кадра, 964106 bytes); 360×779, 10 fps. Это записи UX-поведения; физическая Android-приёмка остаётся открытой.
