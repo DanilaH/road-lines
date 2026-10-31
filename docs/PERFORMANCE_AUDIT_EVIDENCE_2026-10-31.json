@@ -1,0 +1,2011 @@
+{
+  "sourceCommit": "30690b531dd54a3cd1e390957b530efa1d8b56e3",
+  "environment": {
+    "headless": true,
+    "viewport": [
+      390,
+      844
+    ],
+    "dpr": 2,
+    "method": "Private production source copy with object exposure only; wrappers add overhead; ablations are diagnostic, not usable game variants.",
+    "gpu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+  },
+  "methodNotes": [
+    "Render wrappers add CPU overhead. SwiftShader headless timings are not physical Android FPS.",
+    "CDP sampling includes objects collected by major/minor GC: estimated allocation churn, not retained RAM.",
+    "Hiding Graphics and suppressing sparks/confetti are diagnostic ablations, not shipping optimizations.",
+    "Supplement WebGL handles tracked through WeakRef; counts do not measure GPU memory in bytes.",
+    "Prepared local saves; 20 presentation-only start/collect/stop stress cycles are separate from real UI cycles.",
+    "Synthetic document.hidden blocker is not an OS background benchmark.",
+    "Probe exposes existing objects only in an isolated production-build source copy. Release src unchanged."
+  ],
+  "render": [
+    {
+      "label": "intro-01-1-idle",
+      "elapsedMs": 1511,
+      "rebuildMs": {
+        "n": 0,
+        "median": 0,
+        "p95": 0,
+        "total": 0,
+        "max": 0
+      },
+      "graphicsSubmissionMs": {
+        "n": 88,
+        "median": 0.4000000022351742,
+        "p95": 1.2000000029802322,
+        "total": 47.30000000447035,
+        "max": 1.800000000745058
+      },
+      "pointerHandlerMs": {
+        "n": 0,
+        "median": 0,
+        "p95": 0,
+        "total": 0,
+        "max": 0
+      },
+      "fillCalls": 1320,
+      "fillCallsPerGraphicsFrame": 15.0,
+      "strokeCalls": 704,
+      "commandBufferEntries": 1037,
+      "maxSparks": 0
+    },
+    {
+      "label": "intro-01-1-hide-graphics",
+      "elapsedMs": 1517,
+      "rebuildMs": {
+        "n": 0,
+        "median": 0,
+        "p95": 0,
+        "total": 0,
+        "max": 0
+      },
+      "graphicsSubmissionMs": {
+        "n": 0,
+        "median": 0,
+        "p95": 0,
+        "total": 0,
+        "max": 0
+      },
+      "pointerHandlerMs": {
+        "n": 0,
+        "median": 0,
+        "p95": 0,
+        "total": 0,
+        "max": 0
+      },
+      "fillCalls": 0,
+      "fillCallsPerGraphicsFrame": 0,
+      "strokeCalls": 0,
+      "commandBufferEntries": 1037,
+      "maxSparks": 0
+    },
+    {
+      "label": "shapes-29-1-idle",
+      "elapsedMs": 1511,
+      "rebuildMs": {
+        "n": 0,
+        "median": 0,
+        "p95": 0,
+        "total": 0,
+        "max": 0
+      },
+      "graphicsSubmissionMs": {
+        "n": 39,
+        "median": 2.899999998509884,
+        "p95": 4.899999998509884,
+        "total": 120.19999999552965,
+        "max": 5.099999997764826
+      },
+      "pointerHandlerMs": {
+        "n": 0,
+        "median": 0,
+        "p95": 0,
+        "total": 0,
+        "max": 0
+      },
+      "fillCalls": 4212,
+      "fillCallsPerGraphicsFrame": 108.0,
+      "strokeCalls": 1755,
+      "commandBufferEntries": 7223,
+      "maxSparks": 0
+    },
+    {
+      "label": "shapes-29-1-hide-graphics",
+      "elapsedMs": 1505,
+      "rebuildMs": {
+        "n": 0,
+        "median": 0,
+        "p95": 0,
+        "total": 0,
+        "max": 0
+      },
+      "graphicsSubmissionMs": {
+        "n": 0,
+        "median": 0,
+        "p95": 0,
+        "total": 0,
+        "max": 0
+      },
+      "pointerHandlerMs": {
+        "n": 0,
+        "median": 0,
+        "p95": 0,
+        "total": 0,
+        "max": 0
+      },
+      "fillCalls": 0,
+      "fillCallsPerGraphicsFrame": 0,
+      "strokeCalls": 0,
+      "commandBufferEntries": 7223,
+      "maxSparks": 0
+    },
+    {
+      "label": "shapes-29-20-idle",
+      "elapsedMs": 1537,
+      "rebuildMs": {
+        "n": 0,
+        "median": 0,
+        "p95": 0,
+        "total": 0,
+        "max": 0
+      },
+      "graphicsSubmissionMs": {
+        "n": 28,
+        "median": 5.399999998509884,
+        "p95": 7.300000000745058,
+        "total": 153.80000000819564,
+        "max": 7.5
+      },
+      "pointerHandlerMs": {
+        "n": 0,
+        "median": 0,
+        "p95": 0,
+        "total": 0,
+        "max": 0
+      },
+      "fillCalls": 10556,
+      "fillCallsPerGraphicsFrame": 377.0,
+      "strokeCalls": 3388,
+      "commandBufferEntries": 16472,
+      "maxSparks": 0
+    },
+    {
+      "label": "shapes-29-20-hide-graphics",
+      "elapsedMs": 1525,
+      "rebuildMs": {
+        "n": 0,
+        "median": 0,
+        "p95": 0,
+        "total": 0,
+        "max": 0
+      },
+      "graphicsSubmissionMs": {
+        "n": 0,
+        "median": 0,
+        "p95": 0,
+        "total": 0,
+        "max": 0
+      },
+      "pointerHandlerMs": {
+        "n": 0,
+        "median": 0,
+        "p95": 0,
+        "total": 0,
+        "max": 0
+      },
+      "fillCalls": 0,
+      "fillCallsPerGraphicsFrame": 0,
+      "strokeCalls": 0,
+      "commandBufferEntries": 16472,
+      "maxSparks": 0
+    },
+    {
+      "label": "shapes-29-20-cpu4",
+      "elapsedMs": 1580,
+      "rebuildMs": {
+        "n": 0,
+        "median": 0,
+        "p95": 0,
+        "total": 0,
+        "max": 0
+      },
+      "graphicsSubmissionMs": {
+        "n": 17,
+        "median": 25.300000000745058,
+        "p95": 36.20000000298023,
+        "total": 458.3999999985099,
+        "max": 36.20000000298023
+      },
+      "pointerHandlerMs": {
+        "n": 0,
+        "median": 0,
+        "p95": 0,
+        "total": 0,
+        "max": 0
+      },
+      "fillCalls": 6409,
+      "fillCallsPerGraphicsFrame": 377.0,
+      "strokeCalls": 2057,
+      "commandBufferEntries": 16472,
+      "maxSparks": 0
+    },
+    {
+      "label": "drag-baseline",
+      "elapsedMs": 6471,
+      "rebuildMs": {
+        "n": 61,
+        "median": 0.6000000014901161,
+        "p95": 5.300000000745058,
+        "total": 77.6000000089407,
+        "max": 7.900000002235174
+      },
+      "graphicsSubmissionMs": {
+        "n": 66,
+        "median": 5.399999998509884,
+        "p95": 31,
+        "total": 695,
+        "max": 192.39999999850988
+      },
+      "pointerHandlerMs": {
+        "n": 22,
+        "median": 0.8000000007450581,
+        "p95": 22,
+        "total": 63.30000000447035,
+        "max": 23.299999997019768
+      },
+      "fillCalls": 12313,
+      "fillCallsPerGraphicsFrame": 186.56060606060606,
+      "strokeCalls": 4339,
+      "commandBufferEntries": 7223,
+      "maxSparks": 18
+    },
+    {
+      "label": "drag-without-sparks",
+      "elapsedMs": 2944,
+      "rebuildMs": {
+        "n": 62,
+        "median": 0.5,
+        "p95": 1,
+        "total": 34.39999997988343,
+        "max": 1.199999999254942
+      },
+      "graphicsSubmissionMs": {
+        "n": 66,
+        "median": 3.699999999254942,
+        "p95": 5.100000001490116,
+        "total": 245.8000000268221,
+        "max": 6.199999999254942
+      },
+      "pointerHandlerMs": {
+        "n": 22,
+        "median": 0.5,
+        "p95": 0.7000000029802322,
+        "total": 10.300000000745058,
+        "max": 0.7999999970197678
+      },
+      "fillCalls": 11833,
+      "fillCallsPerGraphicsFrame": 179.28787878787878,
+      "strokeCalls": 4338,
+      "commandBufferEntries": 7237,
+      "maxSparks": 0
+    }
+  ],
+  "effects": [
+    {
+      "label": "win-baseline",
+      "elapsedMs": 4733,
+      "draw2dMs": {
+        "n": 195,
+        "median": 0.5999999977648258,
+        "p95": 1.4000000022351742,
+        "total": 133.79999999329448,
+        "max": 5.099999997764826
+      },
+      "maxParticles": 330,
+      "graphicsSubmissionMs": {
+        "n": 220,
+        "median": 0.5999999977648258,
+        "p95": 1.7999999970197678,
+        "total": 175.99999998882413,
+        "max": 12.400000002235174
+      }
+    },
+    {
+      "label": "result-settled",
+      "elapsedMs": 1223,
+      "draw2dMs": {
+        "n": 30,
+        "median": 0.09999999776482582,
+        "p95": 0.30000000074505806,
+        "total": 3.699999999254942,
+        "max": 1.5
+      },
+      "maxParticles": 0,
+      "graphicsSubmissionMs": {
+        "n": 59,
+        "median": 0.6999999992549419,
+        "p95": 1.8999999985098839,
+        "total": 51.599999982863665,
+        "max": 3.400000002235174
+      }
+    },
+    {
+      "label": "win-without-confetti",
+      "elapsedMs": 4716,
+      "draw2dMs": {
+        "n": 0,
+        "median": 0,
+        "p95": 0,
+        "total": 0,
+        "max": 0
+      },
+      "maxParticles": 0,
+      "graphicsSubmissionMs": {
+        "n": 266,
+        "median": 0.5,
+        "p95": 1.300000000745058,
+        "total": 159.59999999776483,
+        "max": 6.899999998509884
+      }
+    },
+    {
+      "label": "result-without-confetti",
+      "elapsedMs": 1204,
+      "draw2dMs": {
+        "n": 0,
+        "median": 0,
+        "p95": 0,
+        "total": 0,
+        "max": 0
+      },
+      "maxParticles": 0,
+      "graphicsSubmissionMs": {
+        "n": 72,
+        "median": 0.5,
+        "p95": 1.300000000745058,
+        "total": 43.19999999180436,
+        "max": 2.399999998509884
+      }
+    }
+  ],
+  "saveMicrobenchmark": [
+    {
+      "rich": false,
+      "cpuThrottle": 1,
+      "bytes": 320,
+      "write": {
+        "n": 60,
+        "median": 0.09999999776482582,
+        "p95": 0.5,
+        "total": 5.100000001490116,
+        "max": 0.6000000014901161
+      }
+    },
+    {
+      "rich": false,
+      "cpuThrottle": 4,
+      "bytes": 320,
+      "write": {
+        "n": 60,
+        "median": 0,
+        "p95": 1,
+        "total": 9.900000002235174,
+        "max": 1.5
+      }
+    },
+    {
+      "rich": true,
+      "cpuThrottle": 1,
+      "bytes": 9006,
+      "write": {
+        "n": 60,
+        "median": 0.8000000007450581,
+        "p95": 1.800000000745058,
+        "total": 52.900000002235174,
+        "max": 2
+      }
+    },
+    {
+      "rich": true,
+      "cpuThrottle": 4,
+      "bytes": 9006,
+      "write": {
+        "n": 60,
+        "median": 2.699999999254942,
+        "p95": 4.699999999254942,
+        "total": 180.69999999925494,
+        "max": 7.400000002235174
+      }
+    }
+  ],
+  "uiSoak": [
+    {
+      "label": "UI warmup 6",
+      "heap": {
+        "usedSize": 5660276,
+        "totalSize": 6328320,
+        "embedderHeapUsedSize": 1966160,
+        "backingStorageSize": 8786825
+      },
+      "dom": {
+        "documents": 1,
+        "nodes": 414,
+        "jsEventListeners": 65
+      },
+      "textures": 4,
+      "objects": 1,
+      "queues": {
+        "timers": 0,
+        "animations": 0,
+        "coins": 0,
+        "particles": 0,
+        "sparks": 0,
+        "wheelSparks": 0
+      },
+      "live": {
+        "raf": 0,
+        "timeouts": 0,
+        "intervals": 1,
+        "workers": 0,
+        "audioCreated": 1,
+        "audioClosed": 0,
+        "voices": 0,
+        "peakVoices": 9,
+        "writes": 17
+      }
+    },
+    {
+      "label": "UI cycles 14",
+      "heap": {
+        "usedSize": 5937912,
+        "totalSize": 6852608,
+        "embedderHeapUsedSize": 1951144,
+        "backingStorageSize": 8786825
+      },
+      "dom": {
+        "documents": 1,
+        "nodes": 414,
+        "jsEventListeners": 65
+      },
+      "textures": 4,
+      "objects": 1,
+      "queues": {
+        "timers": 0,
+        "animations": 0,
+        "coins": 0,
+        "particles": 0,
+        "sparks": 0,
+        "wheelSparks": 0
+      },
+      "live": {
+        "raf": 0,
+        "timeouts": 0,
+        "intervals": 1,
+        "workers": 0,
+        "audioCreated": 1,
+        "audioClosed": 0,
+        "voices": 0,
+        "peakVoices": 9,
+        "writes": 41
+      }
+    },
+    {
+      "label": "UI cycles 22",
+      "heap": {
+        "usedSize": 5994876,
+        "totalSize": 7114752,
+        "embedderHeapUsedSize": 1926320,
+        "backingStorageSize": 8786825
+      },
+      "dom": {
+        "documents": 1,
+        "nodes": 414,
+        "jsEventListeners": 65
+      },
+      "textures": 4,
+      "objects": 1,
+      "queues": {
+        "timers": 0,
+        "animations": 0,
+        "coins": 0,
+        "particles": 0,
+        "sparks": 0,
+        "wheelSparks": 0
+      },
+      "live": {
+        "raf": 0,
+        "timeouts": 0,
+        "intervals": 1,
+        "workers": 0,
+        "audioCreated": 1,
+        "audioClosed": 0,
+        "voices": 0,
+        "peakVoices": 9,
+        "writes": 65
+      }
+    },
+    {
+      "label": "UI cycles 30",
+      "heap": {
+        "usedSize": 6119776,
+        "totalSize": 7114752,
+        "embedderHeapUsedSize": 2082096,
+        "backingStorageSize": 8786825
+      },
+      "dom": {
+        "documents": 1,
+        "nodes": 414,
+        "jsEventListeners": 65
+      },
+      "textures": 4,
+      "objects": 1,
+      "queues": {
+        "timers": 0,
+        "animations": 0,
+        "coins": 0,
+        "particles": 0,
+        "sparks": 0,
+        "wheelSparks": 0
+      },
+      "live": {
+        "raf": 0,
+        "timeouts": 0,
+        "intervals": 1,
+        "workers": 0,
+        "audioCreated": 1,
+        "audioClosed": 0,
+        "voices": 0,
+        "peakVoices": 9,
+        "writes": 89
+      }
+    },
+    {
+      "label": "UI cycles 38",
+      "heap": {
+        "usedSize": 6139768,
+        "totalSize": 7114752,
+        "embedderHeapUsedSize": 1900568,
+        "backingStorageSize": 8786825
+      },
+      "dom": {
+        "documents": 1,
+        "nodes": 414,
+        "jsEventListeners": 65
+      },
+      "textures": 4,
+      "objects": 1,
+      "queues": {
+        "timers": 0,
+        "animations": 0,
+        "coins": 0,
+        "particles": 0,
+        "sparks": 0,
+        "wheelSparks": 0
+      },
+      "live": {
+        "raf": 0,
+        "timeouts": 0,
+        "intervals": 1,
+        "workers": 0,
+        "audioCreated": 1,
+        "audioClosed": 0,
+        "voices": 0,
+        "peakVoices": 9,
+        "writes": 113
+      }
+    },
+    {
+      "label": "after 20 presentation stress cycles",
+      "heap": {
+        "usedSize": 6181404,
+        "totalSize": 7114752,
+        "embedderHeapUsedSize": 2004312,
+        "backingStorageSize": 8786964
+      },
+      "dom": {
+        "documents": 1,
+        "nodes": 414,
+        "jsEventListeners": 65
+      },
+      "textures": 4,
+      "objects": 1,
+      "queues": {
+        "timers": 0,
+        "animations": 0,
+        "coins": 0,
+        "particles": 0,
+        "sparks": 0,
+        "wheelSparks": 0
+      },
+      "live": {
+        "raf": 0,
+        "timeouts": 0,
+        "intervals": 1,
+        "workers": 0,
+        "audioCreated": 1,
+        "audioClosed": 0,
+        "voices": 0,
+        "peakVoices": 9,
+        "writes": 113
+      }
+    }
+  ],
+  "longUiSoak": [
+    {
+      "label": "UI warmup 6",
+      "heap": {
+        "usedSize": 5665228,
+        "totalSize": 6328320,
+        "embedderHeapUsedSize": 2053016,
+        "backingStorageSize": 8786825
+      },
+      "dom": {
+        "documents": 1,
+        "nodes": 414,
+        "jsEventListeners": 65
+      },
+      "textures": 4,
+      "objects": 1,
+      "queues": {
+        "timers": 0,
+        "animations": 0,
+        "coins": 0,
+        "particles": 0,
+        "sparks": 0,
+        "wheelSparks": 0
+      },
+      "live": {
+        "raf": 0,
+        "timeouts": 0,
+        "intervals": 1,
+        "workers": 0,
+        "audioCreated": 1,
+        "audioClosed": 0,
+        "voices": 0,
+        "peakVoices": 9,
+        "writes": 17
+      }
+    },
+    {
+      "label": "UI cycles 18",
+      "heap": {
+        "usedSize": 5967508,
+        "totalSize": 6852608,
+        "embedderHeapUsedSize": 2005384,
+        "backingStorageSize": 8786825
+      },
+      "dom": {
+        "documents": 1,
+        "nodes": 414,
+        "jsEventListeners": 65
+      },
+      "textures": 4,
+      "objects": 1,
+      "queues": {
+        "timers": 0,
+        "animations": 0,
+        "coins": 0,
+        "particles": 0,
+        "sparks": 0,
+        "wheelSparks": 0
+      },
+      "live": {
+        "raf": 0,
+        "timeouts": 0,
+        "intervals": 1,
+        "workers": 0,
+        "audioCreated": 1,
+        "audioClosed": 0,
+        "voices": 0,
+        "peakVoices": 9,
+        "writes": 53
+      }
+    },
+    {
+      "label": "UI cycles 30",
+      "heap": {
+        "usedSize": 6050960,
+        "totalSize": 7114752,
+        "embedderHeapUsedSize": 1969880,
+        "backingStorageSize": 8786825
+      },
+      "dom": {
+        "documents": 1,
+        "nodes": 414,
+        "jsEventListeners": 65
+      },
+      "textures": 4,
+      "objects": 1,
+      "queues": {
+        "timers": 0,
+        "animations": 0,
+        "coins": 0,
+        "particles": 0,
+        "sparks": 0,
+        "wheelSparks": 0
+      },
+      "live": {
+        "raf": 0,
+        "timeouts": 0,
+        "intervals": 1,
+        "workers": 0,
+        "audioCreated": 1,
+        "audioClosed": 0,
+        "voices": 0,
+        "peakVoices": 9,
+        "writes": 89
+      }
+    },
+    {
+      "label": "UI cycles 42",
+      "heap": {
+        "usedSize": 6091852,
+        "totalSize": 7114752,
+        "embedderHeapUsedSize": 1935320,
+        "backingStorageSize": 8786825
+      },
+      "dom": {
+        "documents": 1,
+        "nodes": 414,
+        "jsEventListeners": 65
+      },
+      "textures": 4,
+      "objects": 1,
+      "queues": {
+        "timers": 0,
+        "animations": 0,
+        "coins": 0,
+        "particles": 0,
+        "sparks": 0,
+        "wheelSparks": 0
+      },
+      "live": {
+        "raf": 0,
+        "timeouts": 0,
+        "intervals": 1,
+        "workers": 0,
+        "audioCreated": 1,
+        "audioClosed": 0,
+        "voices": 0,
+        "peakVoices": 9,
+        "writes": 125
+      }
+    },
+    {
+      "label": "UI cycles 54",
+      "heap": {
+        "usedSize": 6136328,
+        "totalSize": 7114752,
+        "embedderHeapUsedSize": 1892312,
+        "backingStorageSize": 8786825
+      },
+      "dom": {
+        "documents": 1,
+        "nodes": 414,
+        "jsEventListeners": 65
+      },
+      "textures": 4,
+      "objects": 1,
+      "queues": {
+        "timers": 0,
+        "animations": 0,
+        "coins": 0,
+        "particles": 0,
+        "sparks": 0,
+        "wheelSparks": 0
+      },
+      "live": {
+        "raf": 0,
+        "timeouts": 0,
+        "intervals": 1,
+        "workers": 0,
+        "audioCreated": 1,
+        "audioClosed": 0,
+        "voices": 0,
+        "peakVoices": 9,
+        "writes": 161
+      }
+    },
+    {
+      "label": "UI cycles 66",
+      "heap": {
+        "usedSize": 6189752,
+        "totalSize": 7114752,
+        "embedderHeapUsedSize": 1855040,
+        "backingStorageSize": 8786825
+      },
+      "dom": {
+        "documents": 1,
+        "nodes": 414,
+        "jsEventListeners": 65
+      },
+      "textures": 4,
+      "objects": 1,
+      "queues": {
+        "timers": 0,
+        "animations": 0,
+        "coins": 0,
+        "particles": 0,
+        "sparks": 0,
+        "wheelSparks": 0
+      },
+      "live": {
+        "raf": 0,
+        "timeouts": 0,
+        "intervals": 1,
+        "workers": 0,
+        "audioCreated": 1,
+        "audioClosed": 0,
+        "voices": 0,
+        "peakVoices": 9,
+        "writes": 197
+      }
+    },
+    {
+      "label": "UI cycles 78",
+      "heap": {
+        "usedSize": 6228880,
+        "totalSize": 7114752,
+        "embedderHeapUsedSize": 2100104,
+        "backingStorageSize": 8786825
+      },
+      "dom": {
+        "documents": 1,
+        "nodes": 414,
+        "jsEventListeners": 65
+      },
+      "textures": 4,
+      "objects": 1,
+      "queues": {
+        "timers": 0,
+        "animations": 0,
+        "coins": 0,
+        "particles": 0,
+        "sparks": 0,
+        "wheelSparks": 0
+      },
+      "live": {
+        "raf": 0,
+        "timeouts": 0,
+        "intervals": 1,
+        "workers": 0,
+        "audioCreated": 1,
+        "audioClosed": 0,
+        "voices": 0,
+        "peakVoices": 9,
+        "writes": 233
+      }
+    },
+    {
+      "label": "UI cycles 90",
+      "heap": {
+        "usedSize": 6240100,
+        "totalSize": 7114752,
+        "embedderHeapUsedSize": 1981824,
+        "backingStorageSize": 8786825
+      },
+      "dom": {
+        "documents": 1,
+        "nodes": 414,
+        "jsEventListeners": 65
+      },
+      "textures": 4,
+      "objects": 1,
+      "queues": {
+        "timers": 0,
+        "animations": 0,
+        "coins": 0,
+        "particles": 0,
+        "sparks": 0,
+        "wheelSparks": 0
+      },
+      "live": {
+        "raf": 0,
+        "timeouts": 0,
+        "intervals": 1,
+        "workers": 0,
+        "audioCreated": 1,
+        "audioClosed": 0,
+        "voices": 0,
+        "peakVoices": 9,
+        "writes": 269
+      }
+    },
+    {
+      "label": "UI cycles 102",
+      "heap": {
+        "usedSize": 6242892,
+        "totalSize": 7114752,
+        "embedderHeapUsedSize": 2105512,
+        "backingStorageSize": 8786825
+      },
+      "dom": {
+        "documents": 1,
+        "nodes": 414,
+        "jsEventListeners": 65
+      },
+      "textures": 4,
+      "objects": 1,
+      "queues": {
+        "timers": 0,
+        "animations": 0,
+        "coins": 0,
+        "particles": 0,
+        "sparks": 0,
+        "wheelSparks": 0
+      },
+      "live": {
+        "raf": 0,
+        "timeouts": 0,
+        "intervals": 1,
+        "workers": 0,
+        "audioCreated": 1,
+        "audioClosed": 0,
+        "voices": 0,
+        "peakVoices": 9,
+        "writes": 305
+      }
+    }
+  ],
+  "hiddenResultAnimations": [
+    {
+      "label": "home-after-result",
+      "state": {
+        "state": {
+          "screen": "home",
+          "paused": false,
+          "result": true,
+          "path": [
+            0,
+            1,
+            2
+          ],
+          "disposed": false
+        },
+        "loop": false,
+        "pendingDestroy": false,
+        "renderType": 2,
+        "commands": 1945,
+        "labels": 0,
+        "objects": 1,
+        "textures": 4,
+        "canvases": 2,
+        "ghosts": 0,
+        "coins": 0,
+        "animations": [
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "ambient-drift",
+            "target": "SECTION",
+            "hidden": "visible"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "finished",
+            "name": "victory-ring",
+            "target": "DIV",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "next-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "ambient-drift",
+            "target": "SECTION",
+            "hidden": "visible"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "board-hover",
+            "target": "svg",
+            "hidden": "visible"
+          }
+        ],
+        "queues": {
+          "timers": 0,
+          "animations": 0,
+          "coins": 0,
+          "particles": 0,
+          "sparks": 0,
+          "wheelSparks": 0
+        },
+        "live": {
+          "raf": 0,
+          "timeouts": 0,
+          "intervals": 1,
+          "workers": 0,
+          "audioCreated": 0,
+          "audioClosed": 0,
+          "voices": 0,
+          "peakVoices": 0,
+          "writes": 1
+        }
+      }
+    },
+    {
+      "label": "background-after-result",
+      "state": {
+        "state": {
+          "screen": "home",
+          "paused": false,
+          "result": true,
+          "path": [
+            0,
+            1,
+            2
+          ],
+          "disposed": false
+        },
+        "loop": false,
+        "pendingDestroy": false,
+        "renderType": 2,
+        "commands": 1945,
+        "labels": 0,
+        "objects": 1,
+        "textures": 4,
+        "canvases": 2,
+        "ghosts": 0,
+        "coins": 0,
+        "animations": [
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "ambient-drift",
+            "target": "SECTION",
+            "hidden": "visible"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "finished",
+            "name": "victory-ring",
+            "target": "DIV",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "next-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "ambient-drift",
+            "target": "SECTION",
+            "hidden": "visible"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "board-hover",
+            "target": "svg",
+            "hidden": "visible"
+          }
+        ],
+        "queues": {
+          "timers": 0,
+          "animations": 0,
+          "coins": 0,
+          "particles": 0,
+          "sparks": 0,
+          "wheelSparks": 0
+        },
+        "live": {
+          "raf": 0,
+          "timeouts": 0,
+          "intervals": 1,
+          "workers": 0,
+          "audioCreated": 0,
+          "audioClosed": 0,
+          "voices": 0,
+          "peakVoices": 0,
+          "writes": 1
+        }
+      }
+    },
+    {
+      "label": "background-after-result",
+      "state": {
+        "state": {
+          "screen": "home",
+          "paused": false,
+          "result": true,
+          "path": [
+            0,
+            1,
+            2
+          ],
+          "disposed": false
+        },
+        "loop": false,
+        "pendingDestroy": false,
+        "renderType": 2,
+        "commands": 1945,
+        "labels": 0,
+        "objects": 1,
+        "textures": 4,
+        "canvases": 2,
+        "ghosts": 0,
+        "coins": 0,
+        "animations": [
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "ambient-drift",
+            "target": "SECTION",
+            "hidden": "visible"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "finished",
+            "name": "victory-ring",
+            "target": "DIV",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "next-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "ambient-drift",
+            "target": "SECTION",
+            "hidden": "visible"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "board-hover",
+            "target": "svg",
+            "hidden": "visible"
+          }
+        ],
+        "queues": {
+          "timers": 0,
+          "animations": 0,
+          "coins": 0,
+          "particles": 0,
+          "sparks": 0,
+          "wheelSparks": 0
+        },
+        "live": {
+          "raf": 0,
+          "timeouts": 0,
+          "intervals": 1,
+          "workers": 0,
+          "audioCreated": 0,
+          "audioClosed": 0,
+          "voices": 0,
+          "peakVoices": 0,
+          "writes": 1
+        }
+      }
+    }
+  ],
+  "teardownAndWorkers": [
+    {
+      "label": "worker stress",
+      "found": 10,
+      "cancelled": 10,
+      "workers": 0
+    },
+    {
+      "label": "dispose-while-running",
+      "before": {
+        "state": {
+          "screen": "game",
+          "paused": false,
+          "result": false,
+          "path": [
+            0
+          ],
+          "disposed": false
+        },
+        "loop": true,
+        "pendingDestroy": false,
+        "renderType": 2,
+        "commands": 1037,
+        "labels": 0,
+        "objects": 1,
+        "textures": 4,
+        "canvases": 2,
+        "ghosts": 0,
+        "coins": 0,
+        "animations": [
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "ambient-drift",
+            "target": "SECTION",
+            "hidden": "visible"
+          }
+        ],
+        "queues": {
+          "timers": 0,
+          "animations": 0,
+          "coins": 0,
+          "particles": 0,
+          "sparks": 0,
+          "wheelSparks": 0
+        },
+        "live": {
+          "raf": 1,
+          "timeouts": 0,
+          "intervals": 1,
+          "workers": 0,
+          "audioCreated": 1,
+          "audioClosed": 0,
+          "voices": 0,
+          "peakVoices": 1,
+          "writes": 0
+        }
+      },
+      "after": {
+        "state": {
+          "screen": "game",
+          "paused": false,
+          "result": false,
+          "path": [
+            0
+          ],
+          "disposed": true
+        },
+        "loop": false,
+        "pendingDestroy": false,
+        "renderType": 2,
+        "commands": 0,
+        "labels": 0,
+        "objects": 0,
+        "textures": 0,
+        "canvases": 0,
+        "ghosts": 0,
+        "coins": 0,
+        "animations": [
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "ambient-drift",
+            "target": "SECTION",
+            "hidden": "visible"
+          }
+        ],
+        "queues": {
+          "timers": 0,
+          "animations": 0,
+          "coins": 0,
+          "particles": 0,
+          "sparks": 0,
+          "wheelSparks": 0
+        },
+        "live": {
+          "raf": 0,
+          "timeouts": 0,
+          "intervals": 0,
+          "workers": 0,
+          "audioCreated": 1,
+          "audioClosed": 1,
+          "voices": 0,
+          "peakVoices": 1,
+          "writes": 1
+        }
+      },
+      "afterWake": null
+    },
+    {
+      "label": "dispose-while-sleeping",
+      "before": {
+        "state": {
+          "screen": "home",
+          "paused": false,
+          "result": false,
+          "path": [
+            0
+          ],
+          "disposed": false
+        },
+        "loop": false,
+        "pendingDestroy": false,
+        "renderType": 2,
+        "commands": 1037,
+        "labels": 0,
+        "objects": 1,
+        "textures": 4,
+        "canvases": 2,
+        "ghosts": 0,
+        "coins": 0,
+        "animations": [
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "ambient-drift",
+            "target": "SECTION",
+            "hidden": "visible"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "ambient-drift",
+            "target": "SECTION",
+            "hidden": "visible"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "board-hover",
+            "target": "svg",
+            "hidden": "visible"
+          },
+          {
+            "type": "Animation",
+            "state": "running",
+            "target": "HEADER",
+            "hidden": "visible"
+          },
+          {
+            "type": "Animation",
+            "state": "running",
+            "target": "DIV",
+            "hidden": "visible"
+          }
+        ],
+        "queues": {
+          "timers": 0,
+          "animations": 0,
+          "coins": 0,
+          "particles": 0,
+          "sparks": 0,
+          "wheelSparks": 0
+        },
+        "live": {
+          "raf": 0,
+          "timeouts": 0,
+          "intervals": 1,
+          "workers": 0,
+          "audioCreated": 1,
+          "audioClosed": 0,
+          "voices": 1,
+          "peakVoices": 1,
+          "writes": 2
+        }
+      },
+      "after": {
+        "state": {
+          "screen": "home",
+          "paused": false,
+          "result": false,
+          "path": [
+            0
+          ],
+          "disposed": true
+        },
+        "loop": false,
+        "pendingDestroy": true,
+        "renderType": 2,
+        "commands": 1037,
+        "labels": 0,
+        "objects": 1,
+        "textures": 4,
+        "canvases": 1,
+        "ghosts": 0,
+        "coins": 0,
+        "animations": [
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "ambient-drift",
+            "target": "SECTION",
+            "hidden": "visible"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "ambient-drift",
+            "target": "SECTION",
+            "hidden": "visible"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "board-hover",
+            "target": "svg",
+            "hidden": "visible"
+          }
+        ],
+        "queues": {
+          "timers": 0,
+          "animations": 0,
+          "coins": 0,
+          "particles": 0,
+          "sparks": 0,
+          "wheelSparks": 0
+        },
+        "live": {
+          "raf": 0,
+          "timeouts": 0,
+          "intervals": 0,
+          "workers": 0,
+          "audioCreated": 1,
+          "audioClosed": 1,
+          "voices": 1,
+          "peakVoices": 1,
+          "writes": 3
+        }
+      },
+      "afterWake": {
+        "pendingDestroy": false,
+        "canvases": 0,
+        "glAlive": false,
+        "live": {
+          "raf": 0,
+          "timeouts": 0,
+          "intervals": 0
+        }
+      }
+    }
+  ],
+  "allocationSampling": [
+    {
+      "hidden": false,
+      "elapsedMs": 2488,
+      "sampledBytes": 274863544,
+      "topSelfBytes": [
+        [
+          "e.exports",
+          178510304
+        ],
+        [
+          "run",
+          39170576
+        ],
+        [
+          "n",
+          24428544
+        ],
+        [
+          "batch",
+          23984840
+        ],
+        [
+          "i",
+          8374664
+        ],
+        [
+          "_processUniformRequest",
+          81960
+        ],
+        [
+          "initialize",
+          49216
+        ],
+        [
+          "replaceAddition",
+          32816
+        ],
+        [
+          "window.requestAnimationFrame",
+          32800
+        ],
+        [
+          "slice",
+          32784
+        ]
+      ],
+      "counters": {
+        "graphicsFrames": 48,
+        "fillPaths": 18096
+      }
+    },
+    {
+      "hidden": true,
+      "elapsedMs": 2409,
+      "sampledBytes": 918400,
+      "topSelfBytes": [
+        [
+          "run",
+          163908
+        ],
+        [
+          "e.exports",
+          98404
+        ],
+        [
+          "filter",
+          82020
+        ],
+        [
+          "s.emit",
+          65580
+        ],
+        [
+          "initialize",
+          49200
+        ],
+        [
+          "preRender",
+          49176
+        ],
+        [
+          "translate",
+          49176
+        ],
+        [
+          "replace",
+          32880
+        ],
+        [
+          "slice",
+          32784
+        ],
+        [
+          "bind",
+          32784
+        ]
+      ],
+      "counters": {
+        "graphicsFrames": 0,
+        "fillPaths": 0
+      }
+    }
+  ],
+  "earlierAllocationSampling": {
+    "normal": {
+      "elapsedMs": 2449,
+      "sampledBytes": 102893276,
+      "graphicsFrames": 19
+    },
+    "hideGraphics": {
+      "elapsedMs": 2420,
+      "sampledBytes": 1180592
+    }
+  },
+  "webglResizeSoak": [
+    {
+      "label": "warm",
+      "data": {
+        "Texture": {
+          "created": 15,
+          "deleted": 5,
+          "live": 10
+        },
+        "Buffer": {
+          "created": 9,
+          "deleted": 0,
+          "live": 9
+        },
+        "Program": {
+          "created": 2,
+          "deleted": 0,
+          "live": 2
+        },
+        "Shader": {
+          "created": 4,
+          "deleted": 0,
+          "live": 4
+        }
+      }
+    },
+    {
+      "label": "resizes 10",
+      "data": {
+        "Texture": {
+          "created": 15,
+          "deleted": 5,
+          "live": 10
+        },
+        "Buffer": {
+          "created": 9,
+          "deleted": 0,
+          "live": 9
+        },
+        "Program": {
+          "created": 2,
+          "deleted": 0,
+          "live": 2
+        },
+        "Shader": {
+          "created": 4,
+          "deleted": 0,
+          "live": 4
+        }
+      }
+    },
+    {
+      "label": "resizes 20",
+      "data": {
+        "Texture": {
+          "created": 15,
+          "deleted": 5,
+          "live": 10
+        },
+        "Buffer": {
+          "created": 9,
+          "deleted": 0,
+          "live": 9
+        },
+        "Program": {
+          "created": 2,
+          "deleted": 0,
+          "live": 2
+        },
+        "Shader": {
+          "created": 4,
+          "deleted": 0,
+          "live": 4
+        }
+      }
+    },
+    {
+      "label": "resizes 30",
+      "data": {
+        "Texture": {
+          "created": 15,
+          "deleted": 5,
+          "live": 10
+        },
+        "Buffer": {
+          "created": 9,
+          "deleted": 0,
+          "live": 9
+        },
+        "Program": {
+          "created": 2,
+          "deleted": 0,
+          "live": 2
+        },
+        "Shader": {
+          "created": 4,
+          "deleted": 0,
+          "live": 4
+        }
+      }
+    }
+  ],
+  "noPathChangePauseWrites": 8,
+  "counterbalancedSparksAblation": [
+    {
+      "label": "baseline-0",
+      "warmup": true,
+      "graphicsMs": {
+        "n": 67,
+        "median": 3.800000000745058,
+        "p95": 5.199999999254942,
+        "total": 255.9999999962747,
+        "max": 7
+      },
+      "rebuildMs": {
+        "n": 63,
+        "median": 0.5999999977648258,
+        "p95": 1.0999999977648258,
+        "total": 40.69999999925494,
+        "max": 1.6000000014901161
+      },
+      "peakSparks": 18,
+      "fillsPerFrame": 187.07462686567163
+    },
+    {
+      "label": "no-sparks-1",
+      "warmup": true,
+      "graphicsMs": {
+        "n": 67,
+        "median": 3.800000000745058,
+        "p95": 5.600000001490116,
+        "total": 272.6000000014901,
+        "max": 7.399999998509884
+      },
+      "rebuildMs": {
+        "n": 63,
+        "median": 0.4000000022351742,
+        "p95": 1,
+        "total": 31.900000005960464,
+        "max": 1.1000000014901161
+      },
+      "peakSparks": 0,
+      "fillsPerFrame": 179.1044776119403
+    },
+    {
+      "label": "baseline-2",
+      "warmup": false,
+      "graphicsMs": {
+        "n": 67,
+        "median": 4.199999999254942,
+        "p95": 9,
+        "total": 336.8999999947846,
+        "max": 11.600000001490116
+      },
+      "rebuildMs": {
+        "n": 63,
+        "median": 0.3999999985098839,
+        "p95": 1.3999999985098839,
+        "total": 32.5,
+        "max": 2.099999997764826
+      },
+      "peakSparks": 18,
+      "fillsPerFrame": 186.26865671641792
+    },
+    {
+      "label": "no-sparks-3",
+      "warmup": false,
+      "graphicsMs": {
+        "n": 67,
+        "median": 3.599999997764826,
+        "p95": 5.800000000745058,
+        "total": 276.59999999031425,
+        "max": 25.199999999254942
+      },
+      "rebuildMs": {
+        "n": 63,
+        "median": 0.30000000074505806,
+        "p95": 0.6000000014901161,
+        "total": 20.99999999254942,
+        "max": 0.6999999992549419
+      },
+      "peakSparks": 0,
+      "fillsPerFrame": 179.1044776119403
+    },
+    {
+      "label": "no-sparks-4",
+      "warmup": false,
+      "graphicsMs": {
+        "n": 67,
+        "median": 3.5,
+        "p95": 5.700000002980232,
+        "total": 253.49999999254942,
+        "max": 8
+      },
+      "rebuildMs": {
+        "n": 63,
+        "median": 0.30000000074505806,
+        "p95": 0.7999999970197678,
+        "total": 26.399999998509884,
+        "max": 2.100000001490116
+      },
+      "peakSparks": 0,
+      "fillsPerFrame": 179.1044776119403
+    },
+    {
+      "label": "baseline-5",
+      "warmup": false,
+      "graphicsMs": {
+        "n": 67,
+        "median": 3.800000000745058,
+        "p95": 5,
+        "total": 266.19999999552965,
+        "max": 14.199999999254942
+      },
+      "rebuildMs": {
+        "n": 63,
+        "median": 0.30000000074505806,
+        "p95": 0.7000000029802322,
+        "total": 24.00000000372529,
+        "max": 1.8999999985098839
+      },
+      "peakSparks": 24,
+      "fillsPerFrame": 187.52238805970148
+    }
+  ],
+  "errors": []
+}
