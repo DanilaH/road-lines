@@ -14,7 +14,7 @@
 
 ## Проверено локально
 - `npm run check`: manifest/content validator/typecheck и 157 tests в 23 файлах.
-- `node tools/ux-smoke.mjs --run`: production build; 9 групп сценариев; 320×568 / 360×800 / 390×844 / 412×915 / 576×1280, classic и neon, reduced motion для neon.
+- `node tools/ux-smoke.mjs --run`: production build; 10 групп сценариев; 320×568 / 360×800 / 390×844 / 412×915 / 576×1280, classic и neon, reduced motion для neon.
 - Повтор hint: 3 → 2 → 2 при том же prefix; на изменённом prefix → 1. Отпускание/продолжение, reverse, каждый тип запрета и истечение объяснения.
 - Ноль записей CSS-переменных темы при принятом и отклонённом route update. Это не замер FPS.
 - Десятая победа продолжает без недоступного окна. Gift подтверждается и продолжает один раз; двойной click безопасен; Back не запускает скрытый переход; disk-full не теряет деньги, после reload можно продолжить.
@@ -27,3 +27,8 @@
 Полный browser smoke обновлён под gift Continue и пропуск недоступного предложения; отдельный UX smoke включён в App CI. Полные результаты inspect/production и Android нужно проверять по workflow конкретного code commit; текущий документ не утверждает успех ещё выполняющегося прогона.
 
 Headless Chromium/CDP touch не подтверждает нативные ощущения. Физический Android: проверить быстрый палец и захват головки, время кадра на сложном поле, громкость rejection cue, вибрацию, Back/фон. Реальная реклама, RU/EN и signed release остаются отдельными этапами.
+
+## Дополнительные границы и состояние прогонов
+На `069251b94b51ae1cbbae5dce1831255b1aadc3b4` локальный production прогон успешно провёл все 90 witnesses реальным pointer input, три окончания наборов, gifts и итог 2200 монет. Затем он остановился при попытке повторно открыть задачу в уже завершённом наборе: домашняя primary ошибочно предлагала только наборы и для незавершённого повтора. Ограничение исправлено: выбор набора предлагается только для полного результата последнего уровня, повтор остаётся возобновляемым.
+Дополнительно воспроизведён пустой framebuffer после resize во время sleep на паузе. Теперь resize рисует один кадр без снятия input/audio blockers и снова засыпает. Новый regression проверяет цветные пиксели маршрута за модальным слоем, blocked state и точный prefix после resume.
+После обоих исправлений `npm run check` и production UX smoke прошли: 157 tests, 10 flow groups, 10 viewport/theme combinations. Android debug CI исходного code commit `069251b`: SUCCESS, run `41197273542`; App CI того commit содержит выявленный navigation regression и не считается успешным. Итоговый code commit запускает оба CI заново. Полный tail (touch/worker/menu/themes/rewards) проверяется отдельно после исправления; результаты нельзя выдавать за повтор всех 90 pointer solutions на новом commit.

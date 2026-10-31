@@ -1,5 +1,5 @@
 import { diamondPath } from '../presentation/markers';
-import type { Level } from '../core/model';
+import { complete, type Level } from '../core/model';
 import { levelSets, isLevelAvailable, isSetAvailable, levelLabel, getLevelSet, type SetId } from '../core/progression';
 import type { GameSave } from '../services/save';
 import { canSpin } from '../core/rewards';
@@ -42,7 +42,7 @@ export function renderMenu(host: HTMLElement, screen: Exclude<Screen, 'game'>, s
   let content: string;
   if (screen === 'home') {
     const continuing = save.path.length > 1;
-    const currentSet = getLevelSet(save.levelId), setFinished = currentSet.levels.every(l => save.completed.includes(l.id));
+    const currentSet = getLevelSet(save.levelId), setFinished = currentSet.levels.every(l => save.completed.includes(l.id)) && currentSet.levels.at(-1)?.id === save.levelId && complete(currentSet.levels.at(-1)!, save.path);
     content = `<div class="home-hero"><h1 tabindex="-1">Одной<span>линией</span><i aria-hidden="true">.</i></h1><p>Заполни всё поле</p>${emblem}</div>
       <div class="home-actions"><button class="primary-action home-play" data-action="${setFinished ? 'sets' : 'continue'}"><span class="play-glyph">${icon('play')}</span><span class="play-copy"><strong>${setFinished ? bankFinished ? 'Выбрать задачу' : 'Выбрать набор' : save.completed.includes(save.levelId) && continuing ? 'Результат' : continuing ? 'Продолжить' : 'Играть'}</strong><small>${setFinished ? bankFinished ? 'Все 90 задач пройдены' : 'Набор пройден' : `Уровень ${levelLabel(save.levelId)}`}</small></span><span class="play-arrow" aria-hidden="true">${icon('back')}</span></button>
       <button class="secondary-action home-levels" data-action="sets"><span class="nav-art">${icon('grid')}</span><span>Уровни</span></button><button class="secondary-action home-themes" data-action="themes"><span class="nav-art">${icon('palette')}</span><span>Оформление</span></button></div>

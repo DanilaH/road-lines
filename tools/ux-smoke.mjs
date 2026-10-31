@@ -56,6 +56,15 @@ export async function runUXSmoke(browser,url){
  {
   const l=levels[29],{p,context}=await open(seed(l,{path:l.witness,completed:levels.slice(0,29).map(l=>l.id),coins:680}));await p.locator('.next').click();await p.locator('.bank-complete').waitFor();assert.equal((await save(p)).levelId,l.id);await p.keyboard.press('Escape');await p.keyboard.press('Escape');assert.match(await p.locator('.home-play').textContent(),/Выбрать набор/);await p.locator('.home-play').click();assert.equal(await p.locator('#app').getAttribute('data-screen'),'sets');await context.close();console.log('UX check complete');report.checks.push('Set boundary stays explicit; home primary selects a set');
  }
+ {
+  const l=levels[2],{p,context}=await open(seed(l,{completed:levels.slice(0,30).map(l=>l.id)}));
+  assert.equal((await save(p)).levelId,l.id);await drag(p,l,[0,1]);await p.locator('[data-action=pause]').click();await p.setViewportSize({width:320,height:568});await p.waitForTimeout(350);
+  assert.equal(await p.locator('#app').getAttribute('data-blocked'),'true');
+  await p.locator('.pause-overlay').evaluate(e=>e.hidden=true);
+  const board=await p.locator('#board').boundingBox(), image=(await p.screenshot({clip:board})).toString('base64');
+  const colored=await p.evaluate(async data=>{const img=new Image();img.src='data:image/png;base64,'+data;await img.decode();const c=document.createElement('canvas');c.width=img.width;c.height=img.height;const ctx=c.getContext('2d');ctx.drawImage(img,0,0);const pixels=ctx.getImageData(0,0,c.width,c.height).data;let n=0;for(let i=0;i<pixels.length;i+=4)if(pixels[i+2]>pixels[i]+40&&pixels[i]>pixels[i+1]+20&&pixels[i+1]<150)n++;return n;},image);
+  assert(colored>500,'Sleeping canvas repaints the purple route after resize');await p.locator('.pause-overlay').evaluate(e=>e.hidden=false);await p.keyboard.press('Escape');await p.locator('#board').focus();await p.keyboard.press('ArrowRight');assert.deepEqual((await save(p)).path,[0,1,2]);await context.close();console.log('UX check complete');report.checks.push('Replay remains resumable in a completed set; paused resize paints once and resumes exact prefix');
+ }
  for(const [width,height] of [[320,568],[360,800],[390,844],[412,915],[576,1280]])for(const theme of ['classic','neon']){
   const l=levels[89],data={...seed(l),version:3,themeId:theme,ownedThemes:['classic','mint',...(theme==='neon'?['neon']:[])],drafts:{},giftMilestones:0,giftNotice:null,lastOfferAt:0,offer:null,daily:{lastDate:null,pending:null,last:null}}, {p,context}=await open(data,{width,height,reduced:theme==='neon'});
   const ins=await p.locator('.instruction').boundingBox(),banner=await p.locator('#banner-slot').boundingBox();assert(ins.y+ins.height<=banner.y);await p.screenshot({path:resolve(output,`late-${theme}-${width}.png`)});

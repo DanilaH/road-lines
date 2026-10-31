@@ -200,9 +200,15 @@ async function boot(): Promise<void> {
       if (disposed) return;
       renderRatio = getRenderPixelRatio(2); scene.setRenderRatio(renderRatio);
       const size = getBackingStoreSize(host.clientWidth, host.clientHeight, renderRatio);
-      if (game.scale.width !== size.width || game.scale.height !== size.height) game.scale.resize(size.width, size.height);
+      const resized = game.scale.width !== size.width || game.scale.height !== size.height;
+      if (resized) game.scale.resize(size.width, size.height);
       game.canvas.style.width = `${host.clientWidth}px`; game.canvas.style.height = `${host.clientHeight}px`;
       const l = layout(); $('.instruction').style.top = `${host.offsetTop + l.y + l.height + 24}px`;
+      // A sleeping renderer loses its framebuffer on resize. Paint once without unblocking input/audio.
+      if (resized && game.isBooted && screen === 'game' && !game.loop.running && !document.hidden) {
+        game.events.once('postrender', () => { if (activity.isBlocked() || screen !== 'game') game.loop.sleep(); });
+        game.loop.wake();
+      }
     });
   }
   function saveError(): void { saveFailed = true; notice('Не удалось сохранить прогресс.', 'Повторить'); }
