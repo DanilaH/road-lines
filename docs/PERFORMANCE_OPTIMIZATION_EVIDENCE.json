@@ -1,0 +1,3141 @@
+{
+  "runtimeCommit": "0927d31142e05008b3f8e112d22eb73e175f22a1",
+  "renderCommit": "a1efa0741462857e610438edca42d624c5ef1152",
+  "baselineAuditCommit": "97bc0488e98527fdd77de226417fb8f27907f0b0",
+  "measuredEarlySourceSha256": "a948858fc02e689883ef90986528a0d622517abcf76dde89628972374882673a",
+  "finalProbe": {
+    "sourceCommit": "0927d31142e05008b3f8e112d22eb73e175f22a1",
+    "sourceSha256": "2db00c7c214b6a475dd3709f977e74e5e73b0d0249841360bd7ecd624829ee79",
+    "mode": "main",
+    "probe": "Isolated production source copy; sole source change exposes existing objects. Instrumentation/ablation added at runtime. Normal release globals untouched."
+  },
+  "boundaries": [
+    "Headless Chromium SwiftShader, not physical Android",
+    "Allocation sampling includes collected temporary objects, not retained RAM",
+    "Renderer.render timings exclude cache bakes in update; do not treat as full-frame speedup",
+    "Early soak/supplement precede CSS-dispose stop and canonical-first-save guard; final paired regression and production smoke cover final runtime",
+    "First paired comparison was sequential without competing browser benchmarks"
+  ],
+  "initialPairedComparison": {
+    "errors": [],
+    "checks": [
+      "Idle has no Phaser frames or FillPath work",
+      "Endpoint pulse/sparks render without rebuilding either cached texture",
+      "Hidden result CSS animations are paused",
+      "Background pauses all CSS animation timelines",
+      "Sleeping renderer disposal removes canvases and WebGL context"
+    ],
+    "runs": [
+      {
+        "name": "before",
+        "idle": {
+          "frames": 29,
+          "fills": 10933,
+          "rebuilds": 0,
+          "baseBakes": 0,
+          "routeBakes": 0,
+          "renderer": [
+            9.600000001490116,
+            9.700000002980232,
+            5.600000001490116,
+            6.299999997019768,
+            5.600000001490116,
+            6.600000001490116,
+            6.5999999940395355,
+            5.5,
+            6.5,
+            6.199999995529652,
+            4.399999998509884,
+            5.600000001490116,
+            6.300000004470348,
+            4.699999995529652,
+            5.299999997019768,
+            6.799999997019768,
+            5,
+            5.600000001490116,
+            4.5,
+            6.700000002980232,
+            4.399999998509884,
+            5.899999998509884,
+            6.200000002980232,
+            6.100000001490116,
+            5.100000001490116,
+            5.399999998509884,
+            6.899999998509884,
+            6.399999998509884,
+            6
+          ],
+          "loop": true
+        },
+        "allocation": {
+          "sampledBytes": 264805568,
+          "intervalMs": 2400,
+          "method": "V8 allocation sampling including collected objects, not retained RAM"
+        },
+        "drags": [
+          {
+            "frames": 69,
+            "fills": 22629,
+            "rebuilds": 65,
+            "baseBakes": 0,
+            "routeBakes": 0,
+            "renderer": {
+              "n": 69,
+              "median": 5,
+              "p95": 7.5,
+              "total": 378.3999999985099
+            },
+            "warmup": true
+          },
+          {
+            "frames": 69,
+            "fills": 22653,
+            "rebuilds": 69,
+            "baseBakes": 0,
+            "routeBakes": 0,
+            "renderer": {
+              "n": 69,
+              "median": 5.100000001490116,
+              "p95": 9.5,
+              "total": 406.0999999791384
+            },
+            "warmup": false
+          },
+          {
+            "frames": 69,
+            "fills": 22635,
+            "rebuilds": 69,
+            "baseBakes": 0,
+            "routeBakes": 0,
+            "renderer": {
+              "n": 69,
+              "median": 4.799999997019768,
+              "p95": 9.600000001490116,
+              "total": 401.0999999642372
+            },
+            "warmup": false
+          },
+          {
+            "frames": 69,
+            "fills": 22629,
+            "rebuilds": 69,
+            "baseBakes": 0,
+            "routeBakes": 0,
+            "renderer": {
+              "n": 69,
+              "median": 7.600000001490116,
+              "p95": 9.899999998509884,
+              "total": 541.0999999940395
+            },
+            "warmup": false
+          }
+        ]
+      },
+      {
+        "name": "after",
+        "idle": {
+          "frames": 0,
+          "fills": 0,
+          "rebuilds": 0,
+          "baseBakes": 0,
+          "routeBakes": 0,
+          "renderer": [],
+          "loop": false
+        },
+        "allocation": {
+          "sampledBytes": 0,
+          "intervalMs": 2400,
+          "method": "V8 allocation sampling including collected objects, not retained RAM"
+        },
+        "drags": [
+          {
+            "frames": 69,
+            "fills": 4734,
+            "rebuilds": 18,
+            "baseBakes": 0,
+            "routeBakes": 18,
+            "renderer": {
+              "n": 69,
+              "median": 0.6000000014901161,
+              "p95": 1.3999999985098839,
+              "total": 60.79999999701977
+            },
+            "warmup": true
+          },
+          {
+            "frames": 72,
+            "fills": 4761,
+            "rebuilds": 18,
+            "baseBakes": 0,
+            "routeBakes": 18,
+            "renderer": {
+              "n": 72,
+              "median": 0.3999999985098839,
+              "p95": 1,
+              "total": 32.099999979138374
+            },
+            "warmup": false
+          },
+          {
+            "frames": 73,
+            "fills": 4638,
+            "rebuilds": 18,
+            "baseBakes": 0,
+            "routeBakes": 18,
+            "renderer": {
+              "n": 73,
+              "median": 0.3999999985098839,
+              "p95": 1,
+              "total": 32.299999967217445
+            },
+            "warmup": false
+          },
+          {
+            "frames": 73,
+            "fills": 4728,
+            "rebuilds": 18,
+            "baseBakes": 0,
+            "routeBakes": 18,
+            "renderer": {
+              "n": 73,
+              "median": 0.4000000059604645,
+              "p95": 1.0999999940395355,
+              "total": 35.000000044703484
+            },
+            "warmup": false
+          }
+        ]
+      }
+    ]
+  },
+  "finalPairedRegression": {
+    "errors": [],
+    "checks": [
+      "Idle has no Phaser frames or FillPath work",
+      "Endpoint pulse/sparks render without rebuilding either cached texture",
+      "Hidden result CSS animations are paused",
+      "Background pauses all CSS animation timelines",
+      "Sleeping renderer disposal removes canvases and WebGL context",
+      "Active renderer disposal also completes; disposed screen has no running CSS animations"
+    ],
+    "runs": [
+      {
+        "name": "before",
+        "idle": {
+          "frames": 26,
+          "fills": 9802,
+          "rebuilds": 0,
+          "baseBakes": 0,
+          "routeBakes": 0,
+          "renderer": [
+            6.299999997019768,
+            4.399999998509884,
+            5,
+            6.799999997019768,
+            5.899999998509884,
+            6.700000002980232,
+            5.5,
+            5.5,
+            4.799999997019768,
+            9.200000002980232,
+            10.100000001490116,
+            9.299999997019768,
+            10.899999998509884,
+            9,
+            11.300000004470348,
+            18,
+            9.799999997019768,
+            13.5,
+            8.5,
+            8.699999995529652,
+            12.800000004470348,
+            8.299999997019768,
+            4.300000004470348,
+            5,
+            4.9000000059604645,
+            5.600000001490116
+          ],
+          "loop": true
+        },
+        "allocation": {
+          "sampledBytes": 228921132,
+          "intervalMs": 2400,
+          "method": "V8 allocation sampling including collected objects, not retained RAM"
+        },
+        "drags": [
+          {
+            "frames": 70,
+            "fills": 23024,
+            "rebuilds": 66,
+            "baseBakes": 0,
+            "routeBakes": 0,
+            "renderer": {
+              "n": 70,
+              "median": 5.100000001490116,
+              "p95": 9.299999997019768,
+              "total": 407.799999974668
+            },
+            "warmup": true
+          },
+          {
+            "frames": 68,
+            "fills": 22270,
+            "rebuilds": 68,
+            "baseBakes": 0,
+            "routeBakes": 0,
+            "renderer": {
+              "n": 68,
+              "median": 4.600000001490116,
+              "p95": 7.5,
+              "total": 340.4000000357628
+            },
+            "warmup": false
+          },
+          {
+            "frames": 69,
+            "fills": 22647,
+            "rebuilds": 69,
+            "baseBakes": 0,
+            "routeBakes": 0,
+            "renderer": {
+              "n": 69,
+              "median": 4.600000001490116,
+              "p95": 6.700000002980232,
+              "total": 342.99999998509884
+            },
+            "warmup": false
+          },
+          {
+            "frames": 70,
+            "fills": 23024,
+            "rebuilds": 70,
+            "baseBakes": 0,
+            "routeBakes": 0,
+            "renderer": {
+              "n": 70,
+              "median": 4.600000001490116,
+              "p95": 6.299999997019768,
+              "total": 397.9999999925494
+            },
+            "warmup": false
+          }
+        ]
+      },
+      {
+        "name": "after",
+        "idle": {
+          "frames": 0,
+          "fills": 0,
+          "rebuilds": 0,
+          "baseBakes": 0,
+          "routeBakes": 0,
+          "renderer": [],
+          "loop": false
+        },
+        "allocation": {
+          "sampledBytes": 0,
+          "intervalMs": 2400,
+          "method": "V8 allocation sampling including collected objects, not retained RAM"
+        },
+        "drags": [
+          {
+            "frames": 70,
+            "fills": 4746,
+            "rebuilds": 18,
+            "baseBakes": 0,
+            "routeBakes": 18,
+            "renderer": {
+              "n": 70,
+              "median": 0.6000000014901161,
+              "p95": 1.2000000029802322,
+              "total": 49.1000000089407
+            },
+            "warmup": true
+          },
+          {
+            "frames": 73,
+            "fills": 4758,
+            "rebuilds": 18,
+            "baseBakes": 0,
+            "routeBakes": 18,
+            "renderer": {
+              "n": 73,
+              "median": 0.3999999985098839,
+              "p95": 0.7000000029802322,
+              "total": 29.799999989569187
+            },
+            "warmup": false
+          },
+          {
+            "frames": 73,
+            "fills": 4791,
+            "rebuilds": 18,
+            "baseBakes": 0,
+            "routeBakes": 18,
+            "renderer": {
+              "n": 73,
+              "median": 0.30000000447034836,
+              "p95": 0.7000000029802322,
+              "total": 26.19999998807907
+            },
+            "warmup": false
+          },
+          {
+            "frames": 72,
+            "fills": 4707,
+            "rebuilds": 18,
+            "baseBakes": 0,
+            "routeBakes": 18,
+            "renderer": {
+              "n": 72,
+              "median": 0.3999999985098839,
+              "p95": 0.8999999985098839,
+              "total": 32.79999998956919
+            },
+            "warmup": false
+          }
+        ]
+      }
+    ]
+  },
+  "earlyLongSoakAndAblations": {
+    "source": "97bc0488e98527fdd77de226417fb8f27907f0b0",
+    "environment": {
+      "headless": true,
+      "viewport": [
+        390,
+        844
+      ],
+      "dpr": 2,
+      "method": "Private production source copy with object exposure only; wrappers add overhead; ablations are diagnostic, not usable game variants.",
+      "gpu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+    },
+    "render": [
+      {
+        "label": "intro-01-1-idle",
+        "elapsedMs": 1521,
+        "metrics": {
+          "rebuild": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "graphics": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "graphicsStep": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "confetti": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "renderer": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "pointer": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "fillPaths": 0,
+          "strokePaths": 0,
+          "maxParticles": 0,
+          "maxSparks": 0,
+          "maxCommands": 0
+        },
+        "state": {
+          "state": {
+            "screen": "game",
+            "paused": false,
+            "result": false,
+            "path": [
+              0
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 0,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 0,
+            "writes": 0
+          },
+          "animationStates": {
+            "running": 1,
+            "paused": 0,
+            "finished": 0
+          }
+        }
+      },
+      {
+        "label": "intro-01-1-hide-graphics",
+        "elapsedMs": 1506,
+        "metrics": {
+          "rebuild": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "graphics": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "graphicsStep": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "confetti": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "renderer": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "pointer": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "fillPaths": 0,
+          "strokePaths": 0,
+          "maxParticles": 0,
+          "maxSparks": 0,
+          "maxCommands": 0
+        },
+        "state": {
+          "state": {
+            "screen": "game",
+            "paused": false,
+            "result": false,
+            "path": [
+              0
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 0,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 0,
+            "writes": 0
+          },
+          "animationStates": {
+            "running": 1,
+            "paused": 0,
+            "finished": 0
+          }
+        }
+      },
+      {
+        "label": "shapes-29-1-idle",
+        "elapsedMs": 1505,
+        "metrics": {
+          "rebuild": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "graphics": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "graphicsStep": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "confetti": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "renderer": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "pointer": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "fillPaths": 0,
+          "strokePaths": 0,
+          "maxParticles": 0,
+          "maxSparks": 0,
+          "maxCommands": 0
+        },
+        "state": {
+          "state": {
+            "screen": "game",
+            "paused": false,
+            "result": false,
+            "path": [
+              4
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 6351,
+          "labels": 5,
+          "objects": 9,
+          "textures": 11,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 0,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 0,
+            "writes": 0
+          },
+          "animationStates": {
+            "running": 1,
+            "paused": 0,
+            "finished": 0
+          }
+        }
+      },
+      {
+        "label": "shapes-29-1-hide-graphics",
+        "elapsedMs": 1504,
+        "metrics": {
+          "rebuild": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "graphics": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "graphicsStep": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "confetti": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "renderer": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "pointer": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "fillPaths": 0,
+          "strokePaths": 0,
+          "maxParticles": 0,
+          "maxSparks": 0,
+          "maxCommands": 0
+        },
+        "state": {
+          "state": {
+            "screen": "game",
+            "paused": false,
+            "result": false,
+            "path": [
+              4
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 6351,
+          "labels": 5,
+          "objects": 9,
+          "textures": 11,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 0,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 0,
+            "writes": 0
+          },
+          "animationStates": {
+            "running": 1,
+            "paused": 0,
+            "finished": 0
+          }
+        }
+      },
+      {
+        "label": "shapes-29-20-idle",
+        "elapsedMs": 1505,
+        "metrics": {
+          "rebuild": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "graphics": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "graphicsStep": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "confetti": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "renderer": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "pointer": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "fillPaths": 0,
+          "strokePaths": 0,
+          "maxParticles": 0,
+          "maxSparks": 0,
+          "maxCommands": 0
+        },
+        "state": {
+          "state": {
+            "screen": "game",
+            "paused": false,
+            "result": false,
+            "path": [
+              4,
+              9,
+              8,
+              3,
+              2,
+              7,
+              6,
+              1,
+              0,
+              5,
+              10,
+              15,
+              20,
+              25,
+              26,
+              27,
+              28,
+              29,
+              24,
+              19
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 6351,
+          "labels": 5,
+          "objects": 9,
+          "textures": 11,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 0,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 0,
+            "writes": 0
+          },
+          "animationStates": {
+            "running": 1,
+            "paused": 0,
+            "finished": 0
+          }
+        }
+      },
+      {
+        "label": "shapes-29-20-hide-graphics",
+        "elapsedMs": 1504,
+        "metrics": {
+          "rebuild": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "graphics": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "graphicsStep": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "confetti": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "renderer": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "pointer": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "fillPaths": 0,
+          "strokePaths": 0,
+          "maxParticles": 0,
+          "maxSparks": 0,
+          "maxCommands": 0
+        },
+        "state": {
+          "state": {
+            "screen": "game",
+            "paused": false,
+            "result": false,
+            "path": [
+              4,
+              9,
+              8,
+              3,
+              2,
+              7,
+              6,
+              1,
+              0,
+              5,
+              10,
+              15,
+              20,
+              25,
+              26,
+              27,
+              28,
+              29,
+              24,
+              19
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 6351,
+          "labels": 5,
+          "objects": 9,
+          "textures": 11,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 0,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 0,
+            "writes": 0
+          },
+          "animationStates": {
+            "running": 1,
+            "paused": 0,
+            "finished": 0
+          }
+        }
+      },
+      {
+        "label": "shapes-29-20-cpu4",
+        "elapsedMs": 1519,
+        "metrics": {
+          "rebuild": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "graphics": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "graphicsStep": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "confetti": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "renderer": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "pointer": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "fillPaths": 0,
+          "strokePaths": 0,
+          "maxParticles": 0,
+          "maxSparks": 0,
+          "maxCommands": 0
+        },
+        "state": {
+          "state": {
+            "screen": "game",
+            "paused": false,
+            "result": false,
+            "path": [
+              4,
+              9,
+              8,
+              3,
+              2,
+              7,
+              6,
+              1,
+              0,
+              5,
+              10,
+              15,
+              20,
+              25,
+              26,
+              27,
+              28,
+              29,
+              24,
+              19
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 6351,
+          "labels": 5,
+          "objects": 9,
+          "textures": 11,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 0,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 0,
+            "writes": 0
+          },
+          "animationStates": {
+            "running": 1,
+            "paused": 0,
+            "finished": 0
+          }
+        }
+      },
+      {
+        "label": "drag-baseline",
+        "elapsedMs": 2848,
+        "metrics": {
+          "rebuild": {
+            "n": 20,
+            "median": 3.399999998509884,
+            "p95": 8.200000002980232,
+            "total": 72.50000000745058,
+            "max": 8.200000002980232
+          },
+          "graphics": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "graphicsStep": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "confetti": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "renderer": {
+            "n": 63,
+            "median": 0.6000000014901161,
+            "p95": 1.2999999970197678,
+            "total": 57.400000028312206,
+            "max": 14.5
+          },
+          "pointer": {
+            "n": 22,
+            "median": 0.6000000014901161,
+            "p95": 1.8000000044703484,
+            "total": 15.5,
+            "max": 2
+          },
+          "fillPaths": 2561,
+          "strokePaths": 784,
+          "maxParticles": 0,
+          "maxSparks": 18,
+          "maxCommands": 6351
+        },
+        "state": {
+          "state": {
+            "screen": "game",
+            "paused": false,
+            "result": false,
+            "path": [
+              4
+            ],
+            "disposed": false
+          },
+          "loop": true,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 6351,
+          "labels": 5,
+          "objects": 9,
+          "textures": 11,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 1,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 0,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 0,
+            "writes": 17
+          },
+          "animationStates": {
+            "running": 1,
+            "paused": 0,
+            "finished": 0
+          }
+        }
+      },
+      {
+        "label": "drag-without-sparks",
+        "elapsedMs": 4811,
+        "metrics": {
+          "rebuild": {
+            "n": 20,
+            "median": 3.100000001490116,
+            "p95": 10.200000002980232,
+            "total": 70.30000002682209,
+            "max": 10.200000002980232
+          },
+          "graphics": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "graphicsStep": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "confetti": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "renderer": {
+            "n": 62,
+            "median": 0.30000000447034836,
+            "p95": 2.100000001490116,
+            "total": 60.69999998062849,
+            "max": 28.100000001490116
+          },
+          "pointer": {
+            "n": 22,
+            "median": 0.5,
+            "p95": 2.399999998509884,
+            "total": 19.700000010430813,
+            "max": 3.5
+          },
+          "fillPaths": 2036,
+          "strokePaths": 781,
+          "maxParticles": 0,
+          "maxSparks": 0,
+          "maxCommands": 6351
+        },
+        "state": {
+          "state": {
+            "screen": "game",
+            "paused": false,
+            "result": false,
+            "path": [
+              4
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 6351,
+          "labels": 5,
+          "objects": 9,
+          "textures": 11,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 0,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 0,
+            "writes": 36
+          },
+          "animationStates": {
+            "running": 1,
+            "paused": 0,
+            "finished": 0
+          }
+        }
+      }
+    ],
+    "effects": [
+      {
+        "label": "win-baseline",
+        "elapsedMs": 4713,
+        "metrics": {
+          "rebuild": {
+            "n": 4,
+            "median": 5.700000002980232,
+            "p95": 10.600000001490116,
+            "total": 23.400000005960464,
+            "max": 10.600000001490116
+          },
+          "graphics": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "graphicsStep": {
+            "n": 3,
+            "median": 0.5,
+            "p95": 3.100000001490116,
+            "total": 4,
+            "max": 3.100000001490116
+          },
+          "confetti": {
+            "n": 202,
+            "median": 0.5,
+            "p95": 2.100000001490116,
+            "total": 153.50000004470348,
+            "max": 6.9000000059604645
+          },
+          "renderer": {
+            "n": 10,
+            "median": 0.20000000298023224,
+            "p95": 5.0999999940395355,
+            "total": 6.800000004470348,
+            "max": 5.0999999940395355
+          },
+          "pointer": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "fillPaths": 175,
+          "strokePaths": 61,
+          "maxParticles": 330,
+          "maxSparks": 6,
+          "maxCommands": 657
+        },
+        "state": {
+          "state": {
+            "screen": "game",
+            "paused": false,
+            "result": true,
+            "path": [
+              0,
+              1,
+              2
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 16,
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 16,
+            "particles": 13,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 1,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 0,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 0,
+            "writes": 1
+          },
+          "animationStates": {
+            "running": 12,
+            "paused": 0,
+            "finished": 1
+          }
+        }
+      },
+      {
+        "label": "result-settled",
+        "elapsedMs": 1218,
+        "metrics": {
+          "rebuild": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "graphics": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "graphicsStep": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "confetti": {
+            "n": 17,
+            "median": 0.09999999403953552,
+            "p95": 0.9000000059604645,
+            "total": 1.8999999985098839,
+            "max": 0.9000000059604645
+          },
+          "renderer": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "pointer": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "fillPaths": 0,
+          "strokePaths": 0,
+          "maxParticles": 0,
+          "maxSparks": 0,
+          "maxCommands": 0
+        },
+        "state": {
+          "state": {
+            "screen": "game",
+            "paused": false,
+            "result": true,
+            "path": [
+              0,
+              1,
+              2
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 16,
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 16,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 0,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 0,
+            "writes": 1
+          },
+          "animationStates": {
+            "running": 12,
+            "paused": 0,
+            "finished": 1
+          }
+        }
+      },
+      {
+        "label": "win-without-confetti",
+        "elapsedMs": 4646,
+        "metrics": {
+          "rebuild": {
+            "n": 4,
+            "median": 3.6999999955296516,
+            "p95": 5,
+            "total": 12.299999997019768,
+            "max": 5
+          },
+          "graphics": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "graphicsStep": {
+            "n": 3,
+            "median": 0.3999999985098839,
+            "p95": 2.5,
+            "total": 3.2000000029802322,
+            "max": 2.5
+          },
+          "confetti": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "renderer": {
+            "n": 27,
+            "median": 0.19999999552965164,
+            "p95": 0.29999999701976776,
+            "total": 4.599999986588955,
+            "max": 0.3999999985098839
+          },
+          "pointer": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "fillPaths": 175,
+          "strokePaths": 61,
+          "maxParticles": 0,
+          "maxSparks": 6,
+          "maxCommands": 657
+        },
+        "state": {
+          "state": {
+            "screen": "game",
+            "paused": false,
+            "result": true,
+            "path": [
+              0,
+              1,
+              2
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 16,
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 16,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 0,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 0,
+            "writes": 1
+          },
+          "animationStates": {
+            "running": 12,
+            "paused": 0,
+            "finished": 1
+          }
+        }
+      },
+      {
+        "label": "result-without-confetti",
+        "elapsedMs": 1204,
+        "metrics": {
+          "rebuild": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "graphics": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "graphicsStep": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "confetti": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "renderer": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "pointer": {
+            "n": 0,
+            "median": 0,
+            "p95": 0,
+            "total": 0,
+            "max": 0
+          },
+          "fillPaths": 0,
+          "strokePaths": 0,
+          "maxParticles": 0,
+          "maxSparks": 0,
+          "maxCommands": 0
+        },
+        "state": {
+          "state": {
+            "screen": "game",
+            "paused": false,
+            "result": true,
+            "path": [
+              0,
+              1,
+              2
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 16,
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 16,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 0,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 0,
+            "writes": 1
+          },
+          "animationStates": {
+            "running": 12,
+            "paused": 0,
+            "finished": 1
+          }
+        }
+      }
+    ],
+    "memory": [
+      {
+        "label": "UI warmup 6",
+        "usage": {
+          "usedSize": 5912148,
+          "totalSize": 6590464,
+          "embedderHeapUsedSize": 1500088,
+          "backingStorageSize": 8797483
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 415,
+          "jsEventListeners": 65
+        },
+        "state": {
+          "state": {
+            "screen": "home",
+            "paused": false,
+            "result": true,
+            "path": [
+              0,
+              1,
+              2
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 1,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 9,
+            "writes": 17
+          },
+          "animationStates": {
+            "running": 3,
+            "paused": 12,
+            "finished": 0
+          }
+        }
+      },
+      {
+        "label": "UI cycles 18",
+        "usage": {
+          "usedSize": 6334644,
+          "totalSize": 7376896,
+          "embedderHeapUsedSize": 1539592,
+          "backingStorageSize": 8797483
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 415,
+          "jsEventListeners": 65
+        },
+        "state": {
+          "state": {
+            "screen": "home",
+            "paused": false,
+            "result": true,
+            "path": [
+              0,
+              1,
+              2
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 1,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 9,
+            "writes": 53
+          },
+          "animationStates": {
+            "running": 3,
+            "paused": 12,
+            "finished": 0
+          }
+        }
+      },
+      {
+        "label": "UI cycles 30",
+        "usage": {
+          "usedSize": 6432072,
+          "totalSize": 7376896,
+          "embedderHeapUsedSize": 1565376,
+          "backingStorageSize": 8797483
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 415,
+          "jsEventListeners": 65
+        },
+        "state": {
+          "state": {
+            "screen": "home",
+            "paused": false,
+            "result": true,
+            "path": [
+              0,
+              1,
+              2
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 1,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 9,
+            "writes": 89
+          },
+          "animationStates": {
+            "running": 3,
+            "paused": 12,
+            "finished": 0
+          }
+        }
+      },
+      {
+        "label": "UI cycles 42",
+        "usage": {
+          "usedSize": 6508800,
+          "totalSize": 7376896,
+          "embedderHeapUsedSize": 1578896,
+          "backingStorageSize": 8797483
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 415,
+          "jsEventListeners": 65
+        },
+        "state": {
+          "state": {
+            "screen": "home",
+            "paused": false,
+            "result": true,
+            "path": [
+              0,
+              1,
+              2
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 1,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 9,
+            "writes": 125
+          },
+          "animationStates": {
+            "running": 3,
+            "paused": 12,
+            "finished": 0
+          }
+        }
+      },
+      {
+        "label": "UI cycles 54",
+        "usage": {
+          "usedSize": 6580564,
+          "totalSize": 7376896,
+          "embedderHeapUsedSize": 1608984,
+          "backingStorageSize": 8797483
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 415,
+          "jsEventListeners": 65
+        },
+        "state": {
+          "state": {
+            "screen": "home",
+            "paused": false,
+            "result": true,
+            "path": [
+              0,
+              1,
+              2
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 1,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 9,
+            "writes": 161
+          },
+          "animationStates": {
+            "running": 3,
+            "paused": 12,
+            "finished": 0
+          }
+        }
+      },
+      {
+        "label": "UI cycles 66",
+        "usage": {
+          "usedSize": 6668748,
+          "totalSize": 7376896,
+          "embedderHeapUsedSize": 1613760,
+          "backingStorageSize": 8797483
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 415,
+          "jsEventListeners": 65
+        },
+        "state": {
+          "state": {
+            "screen": "home",
+            "paused": false,
+            "result": true,
+            "path": [
+              0,
+              1,
+              2
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 1,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 9,
+            "writes": 197
+          },
+          "animationStates": {
+            "running": 3,
+            "paused": 12,
+            "finished": 0
+          }
+        }
+      },
+      {
+        "label": "UI cycles 78",
+        "usage": {
+          "usedSize": 6711108,
+          "totalSize": 7376896,
+          "embedderHeapUsedSize": 1647328,
+          "backingStorageSize": 8797483
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 415,
+          "jsEventListeners": 65
+        },
+        "state": {
+          "state": {
+            "screen": "home",
+            "paused": false,
+            "result": true,
+            "path": [
+              0,
+              1,
+              2
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 1,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 9,
+            "writes": 233
+          },
+          "animationStates": {
+            "running": 3,
+            "paused": 12,
+            "finished": 0
+          }
+        }
+      },
+      {
+        "label": "UI cycles 90",
+        "usage": {
+          "usedSize": 6737132,
+          "totalSize": 7901184,
+          "embedderHeapUsedSize": 1631392,
+          "backingStorageSize": 8797483
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 415,
+          "jsEventListeners": 65
+        },
+        "state": {
+          "state": {
+            "screen": "home",
+            "paused": false,
+            "result": true,
+            "path": [
+              0,
+              1,
+              2
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 1,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 9,
+            "writes": 269
+          },
+          "animationStates": {
+            "running": 3,
+            "paused": 12,
+            "finished": 0
+          }
+        }
+      },
+      {
+        "label": "UI cycles 102",
+        "usage": {
+          "usedSize": 6739680,
+          "totalSize": 7639040,
+          "embedderHeapUsedSize": 1712328,
+          "backingStorageSize": 8797483
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 415,
+          "jsEventListeners": 65
+        },
+        "state": {
+          "state": {
+            "screen": "home",
+            "paused": false,
+            "result": true,
+            "path": [
+              0,
+              1,
+              2
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 1,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 9,
+            "writes": 305
+          },
+          "animationStates": {
+            "running": 3,
+            "paused": 12,
+            "finished": 0
+          }
+        }
+      },
+      {
+        "label": "after 20 presentation stress cycles",
+        "usage": {
+          "usedSize": 6777948,
+          "totalSize": 7376896,
+          "embedderHeapUsedSize": 1660344,
+          "backingStorageSize": 8797622
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 415,
+          "jsEventListeners": 65
+        },
+        "state": {
+          "state": {
+            "screen": "home",
+            "paused": false,
+            "result": true,
+            "path": [
+              0,
+              1,
+              2
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 1,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 10,
+            "writes": 305
+          },
+          "animationStates": {
+            "running": 3,
+            "paused": 12,
+            "finished": 0
+          }
+        }
+      }
+    ],
+    "resources": [
+      {
+        "label": "home-after-result",
+        "state": {
+          "state": {
+            "screen": "home",
+            "paused": false,
+            "result": true,
+            "path": [
+              0,
+              1,
+              2
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 0,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 0,
+            "writes": 1
+          },
+          "animationStates": {
+            "running": 3,
+            "paused": 12,
+            "finished": 0
+          }
+        }
+      },
+      {
+        "label": "background-after-result",
+        "state": {
+          "state": {
+            "screen": "home",
+            "paused": false,
+            "result": true,
+            "path": [
+              0,
+              1,
+              2
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 0,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 0,
+            "writes": 1
+          },
+          "animationStates": {
+            "running": 0,
+            "paused": 15,
+            "finished": 0
+          }
+        }
+      },
+      {
+        "label": "home-after-no-confetti",
+        "state": {
+          "state": {
+            "screen": "home",
+            "paused": false,
+            "result": true,
+            "path": [
+              0,
+              1,
+              2
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 0,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 0,
+            "writes": 1
+          },
+          "animationStates": {
+            "running": 3,
+            "paused": 12,
+            "finished": 0
+          }
+        }
+      },
+      {
+        "label": "background-after-result",
+        "state": {
+          "state": {
+            "screen": "home",
+            "paused": false,
+            "result": true,
+            "path": [
+              0,
+              1,
+              2
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 0,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 0,
+            "writes": 1
+          },
+          "animationStates": {
+            "running": 0,
+            "paused": 15,
+            "finished": 0
+          }
+        }
+      },
+      {
+        "label": "worker stress",
+        "found": 10,
+        "cancelled": 10,
+        "workers": 0
+      },
+      {
+        "label": "dispose-while-running",
+        "before": {
+          "state": {
+            "screen": "game",
+            "paused": false,
+            "result": false,
+            "path": [
+              0
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 1,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 1,
+            "writes": 0
+          },
+          "animationStates": {
+            "running": 1,
+            "paused": 0,
+            "finished": 0
+          }
+        },
+        "after": {
+          "state": {
+            "screen": "game",
+            "paused": false,
+            "result": false,
+            "path": [
+              0
+            ],
+            "disposed": true
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 0,
+          "textures": 0,
+          "canvases": 0,
+          "ghosts": 0,
+          "coins": 0,
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 0,
+            "workers": 0,
+            "audioCreated": 1,
+            "audioClosed": 1,
+            "voices": 0,
+            "peakVoices": 1,
+            "writes": 0
+          },
+          "animationStates": {
+            "running": 1,
+            "paused": 0,
+            "finished": 0
+          }
+        },
+        "afterWake": null
+      },
+      {
+        "label": "dispose-while-sleeping",
+        "before": {
+          "state": {
+            "screen": "home",
+            "paused": false,
+            "result": false,
+            "path": [
+              0
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 1,
+            "audioClosed": 0,
+            "voices": 1,
+            "peakVoices": 1,
+            "writes": 0
+          },
+          "animationStates": {
+            "running": 5,
+            "paused": 0,
+            "finished": 0
+          }
+        },
+        "after": {
+          "state": {
+            "screen": "home",
+            "paused": false,
+            "result": false,
+            "path": [
+              0
+            ],
+            "disposed": true
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 0,
+          "textures": 0,
+          "canvases": 0,
+          "ghosts": 0,
+          "coins": 0,
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 0,
+            "workers": 0,
+            "audioCreated": 1,
+            "audioClosed": 1,
+            "voices": 1,
+            "peakVoices": 1,
+            "writes": 0
+          },
+          "animationStates": {
+            "running": 3,
+            "paused": 0,
+            "finished": 0
+          }
+        },
+        "afterWake": null
+      }
+    ],
+    "save": [
+      {
+        "rich": false,
+        "cpuThrottle": 1,
+        "bytes": 283,
+        "write": {
+          "n": 60,
+          "median": 0,
+          "p95": 0.09999999403953552,
+          "total": 0.29999999701976776,
+          "max": 0.10000000149011612
+        }
+      },
+      {
+        "rich": false,
+        "cpuThrottle": 4,
+        "bytes": 283,
+        "write": {
+          "n": 60,
+          "median": 0,
+          "p95": 0.10000000149011612,
+          "total": 0.7000000029802322,
+          "max": 0.5
+        }
+      },
+      {
+        "rich": true,
+        "cpuThrottle": 1,
+        "bytes": 9014,
+        "write": {
+          "n": 60,
+          "median": 0,
+          "p95": 0,
+          "total": 0,
+          "max": 0
+        }
+      },
+      {
+        "rich": true,
+        "cpuThrottle": 4,
+        "bytes": 9014,
+        "write": {
+          "n": 60,
+          "median": 0,
+          "p95": 0.10000000149011612,
+          "total": 0.8000000044703484,
+          "max": 0.6000000014901161
+        }
+      }
+    ],
+    "errors": [],
+    "measurementSourceSha256": "a948858fc02e689883ef90986528a0d622517abcf76dde89628972374882673a",
+    "sourceFieldMeans": "git HEAD at measurement; runtime changes were then uncommitted. Fingerprint identifies actual measured source."
+  },
+  "earlySupplement": {
+    "source": "97bc0488e98527fdd77de226417fb8f27907f0b0",
+    "environment": {
+      "headless": true,
+      "viewport": [
+        390,
+        844
+      ],
+      "dpr": 2,
+      "method": "Private production source copy with object exposure only; wrappers add overhead; ablations are diagnostic, not usable game variants."
+    },
+    "render": [],
+    "effects": [],
+    "memory": [],
+    "resources": [],
+    "save": [],
+    "errors": [],
+    "sampling": [
+      {
+        "hidden": false,
+        "elapsedMs": 2413,
+        "sampledBytes": 0,
+        "topSelfBytes": [
+          [
+            "(root)",
+            0
+          ]
+        ],
+        "counters": {
+          "graphicsFrames": 0,
+          "fillPaths": 0
+        }
+      },
+      {
+        "hidden": true,
+        "elapsedMs": 2411,
+        "sampledBytes": 0,
+        "topSelfBytes": [
+          [
+            "(root)",
+            0
+          ]
+        ],
+        "counters": {
+          "graphicsFrames": 0,
+          "fillPaths": 0
+        }
+      }
+    ],
+    "gl": [
+      {
+        "label": "warm",
+        "data": {
+          "Texture": {
+            "created": 19,
+            "deleted": 5,
+            "live": 14
+          },
+          "Buffer": {
+            "created": 9,
+            "deleted": 0,
+            "live": 9
+          },
+          "Framebuffer": {
+            "created": 4,
+            "deleted": 2,
+            "live": 2
+          },
+          "Renderbuffer": {
+            "created": 4,
+            "deleted": 2,
+            "live": 2
+          },
+          "Program": {
+            "created": 4,
+            "deleted": 0,
+            "live": 4
+          },
+          "Shader": {
+            "created": 8,
+            "deleted": 0,
+            "live": 8
+          }
+        }
+      },
+      {
+        "label": "resizes 10",
+        "data": {
+          "Texture": {
+            "created": 19,
+            "deleted": 5,
+            "live": 14
+          },
+          "Buffer": {
+            "created": 9,
+            "deleted": 0,
+            "live": 9
+          },
+          "Framebuffer": {
+            "created": 24,
+            "deleted": 22,
+            "live": 2
+          },
+          "Renderbuffer": {
+            "created": 24,
+            "deleted": 22,
+            "live": 2
+          },
+          "Program": {
+            "created": 4,
+            "deleted": 0,
+            "live": 4
+          },
+          "Shader": {
+            "created": 8,
+            "deleted": 0,
+            "live": 8
+          }
+        }
+      },
+      {
+        "label": "resizes 20",
+        "data": {
+          "Texture": {
+            "created": 19,
+            "deleted": 5,
+            "live": 14
+          },
+          "Buffer": {
+            "created": 9,
+            "deleted": 0,
+            "live": 9
+          },
+          "Framebuffer": {
+            "created": 44,
+            "deleted": 42,
+            "live": 2
+          },
+          "Renderbuffer": {
+            "created": 44,
+            "deleted": 42,
+            "live": 2
+          },
+          "Program": {
+            "created": 4,
+            "deleted": 0,
+            "live": 4
+          },
+          "Shader": {
+            "created": 8,
+            "deleted": 0,
+            "live": 8
+          }
+        }
+      },
+      {
+        "label": "resizes 30",
+        "data": {
+          "Texture": {
+            "created": 19,
+            "deleted": 5,
+            "live": 14
+          },
+          "Buffer": {
+            "created": 9,
+            "deleted": 0,
+            "live": 9
+          },
+          "Framebuffer": {
+            "created": 64,
+            "deleted": 62,
+            "live": 2
+          },
+          "Renderbuffer": {
+            "created": 64,
+            "deleted": 62,
+            "live": 2
+          },
+          "Program": {
+            "created": 4,
+            "deleted": 0,
+            "live": 4
+          },
+          "Shader": {
+            "created": 8,
+            "deleted": 0,
+            "live": 8
+          }
+        }
+      }
+    ],
+    "identicalPauseWrites": 0,
+    "measurementSourceSha256": "a948858fc02e689883ef90986528a0d622517abcf76dde89628972374882673a",
+    "sourceFieldMeans": "git HEAD at measurement; runtime changes were then uncommitted. Fingerprint identifies actual measured source."
+  },
+  "verification": {
+    "check": "355 tests / 58 files, manifest/content/typecheck passed",
+    "inspect": "Full final-runtime npm run test:browser CI step succeeded in run 41217908083; local final theme/reward tail also passed",
+    "production": {
+      "inspect": false,
+      "results": [
+        {
+          "width": 320,
+          "height": 568,
+          "passed": true
+        },
+        {
+          "width": 360,
+          "height": 800,
+          "passed": true
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "passed": true
+        },
+        {
+          "width": 412,
+          "height": 915,
+          "passed": true
+        },
+        {
+          "width": 576,
+          "height": 1280,
+          "passed": true
+        }
+      ]
+    },
+    "ux": {
+      "errors": [],
+      "checks": [
+        "Same-prefix hint charged once, changed prefix charged independently, release/resume",
+        "finish-01: explanation, unchanged prefix, expiry, legal reverse, zero theme writes",
+        "walls-01: explanation, unchanged prefix, expiry, legal reverse, zero theme writes",
+        "checkpoints-01: explanation, unchanged prefix, expiry, legal reverse, zero theme writes",
+        "Tenth-clear Continue skips unavailable offer",
+        "Gift confirmation continues exactly once",
+        "Back cancels auto-advance intent",
+        "Failed gift acknowledgement retains reward and resumes after authoritative reload",
+        "Set boundary stays explicit; home primary selects a set",
+        "Replay remains resumable in a completed set; paused resize paints once and resumes exact prefix"
+      ],
+      "screens": [
+        {
+          "width": 320,
+          "height": 568,
+          "theme": "classic"
+        },
+        {
+          "width": 320,
+          "height": 568,
+          "theme": "neon"
+        },
+        {
+          "width": 360,
+          "height": 800,
+          "theme": "classic"
+        },
+        {
+          "width": 360,
+          "height": 800,
+          "theme": "neon"
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "theme": "classic"
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "theme": "neon"
+        },
+        {
+          "width": 412,
+          "height": 915,
+          "theme": "classic"
+        },
+        {
+          "width": 412,
+          "height": 915,
+          "theme": "neon"
+        },
+        {
+          "width": 576,
+          "height": 1280,
+          "theme": "classic"
+        },
+        {
+          "width": 576,
+          "height": 1280,
+          "theme": "neon"
+        }
+      ]
+    },
+    "androidSync": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\n\n> road-lines@0.0.0 android:sync\n> npm run build && node tools/android.mjs\n\nnpm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\n\n> road-lines@0.0.0 build\n> vite build\n\nvite v8.3.5 building client environment for production...\ntransforming...\n✓ 48 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                                 0.55 kB │ gzip:   0.36 kB\ndist/assets/hint.worker-sYsRWQ4p.js             1.91 kB\ndist/assets/medallion-CE88QhCA.webp             4.10 kB\ndist/assets/gift-WNYfZjkM.webp                 15.00 kB\ndist/assets/nunito-cyrillic-HmUUwHSj.woff2     72.63 kB\ndist/assets/index-XM8hXm5R.css                 39.89 kB │ gzip:   9.04 kB\ndist/assets/esm-CklVtOaO.js                     0.32 kB │ gzip:   0.23 kB\ndist/assets/web-V_1T8_Yb.js                     0.84 kB │ gzip:   0.40 kB\ndist/assets/index-CcPWRSxK.js               1,499.54 kB │ gzip: 398.71 kB\n\n✓ built in 942ms\n✔ Adding native android project in android in 56.14ms\n✔ add in 56.69ms\n✔ Copying web assets from dist to android/app/src/main/assets/public in 8.34ms\n✔ Creating capacitor.config.json in android/app/src/main/assets in 636.01μs\n✔ copy android in 18.80ms\n✔ Updating Android plugins in 3.73ms\n[info] Found 1 Capacitor plugin for android:\n       @capacitor/app@8.1.2\n✔ update android in 53.28ms\n✔ Syncing Gradle in 244.24μs\n[success] android platform added!\nFollow the Developer Workflow guide to get building:\nhttps://capacitorjs.com/docs/basics/workflow\n✔ Copying web assets from dist to android/app/src/main/assets/public in 8.10ms\n✔ Creating capacitor.config.json in android/app/src/main/assets in 923.91μs\n✔ copy android in 30.89ms\n✔ Updating Android plugins in 2.35ms\n[info] Found 1 Capacitor plugin for android:\n       @capacitor/app@8.1.2\n✔ update android in 32.36ms\n[info] Sync finished in 0.088s\n",
+    "ci": {
+      "checkedAt": "2026-10-31T16:17Z",
+      "source": "0927d31142e05008b3f8e112d22eb73e175f22a1",
+      "runs": [
+        {
+          "id": 41217908083,
+          "name": "App and kit checks",
+          "status": "in_progress",
+          "conclusion": null,
+          "html_url": "https://github.com/DanilaH/road-lines/actions/runs/41217908083"
+        },
+        {
+          "id": 41217908074,
+          "name": "Android debug build",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/DanilaH/road-lines/actions/runs/41217908074"
+        }
+      ],
+      "appSteps": {
+        "npm run check": "success",
+        "npm run test:browser": "success",
+        "node tools/browser-smoke.mjs --production": "in_progress",
+        "node tools/ux-smoke.mjs --run": "pending"
+      }
+    }
+  }
+}

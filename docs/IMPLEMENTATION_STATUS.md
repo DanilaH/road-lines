@@ -64,4 +64,16 @@ UI-проход реализован: настоящие mask thumbnails без 
 
 ## Независимый аудит производительности — 31 октября 2026
 Проверен source `30690b531dd54a3cd1e390957b530efa1d8b56e3` без изменений игрового кода. Подтверждены повторная обработка/триангуляция неподвижного Graphics (377 FillPath/кадр на сложном префиксе) и крупный allocation churn; выявлены активные CSS timelines скрытого результата и незавершённый dispose при спящем Phaser. 38 UI cycles + 20 component FX cycles, отдельный 102-cycle soak, 20 worker requests, 30 WebGL resize cycles и ablations выполнены. DOM/listeners/worker/voice/texture-handle runaway в проверенных обычных сценариях не найден; slow JS heap growth после прогрева почти остановился.
-Результаты, ограничения и порядок исправлений — PERFORMANCE_AUDIT_2026-10-31.md и соответствующий evidence JSON; воспроизводимый private-build harness — tools/performance-audit.mjs. Это аудит, оптимизация по нему ещё не реализована. Android native FPS/RSS/GPU memory не измерены; реклама по-прежнему отложена.
+Результаты, ограничения и порядок исправлений — PERFORMANCE_AUDIT_2026-10-31.md и соответствующий evidence JSON; воспроизводимый private-build harness — tools/performance-audit.mjs. На момент аудита оптимизация ещё не была реализована; последующая реализация и проверка описаны ниже. Android native FPS/RSS/GPU memory не измерены; реклама по-прежнему отложена.
+
+
+## Оптимизация по результатам аудита — 31 октября 2026
+Реализованы три прохода: два кешируемых слоя текущего поля + sleep в покое; корректный deferred destroy и остановка hidden/background CSS; ограниченные пулы частиц, предвычисление геометрии, кеш layout/hit rectangles и пропуск только идентичных канонических prefix snapshots. Первая запись/миграция и проверки конфликта сохранены; награды не объединяются.
+
+Runtime: rendering `a1efa0741462857e610438edca42d624c5ef1152`, финальный migration guard `0927d31142e05008b3f8e112d22eb73e175f22a1`. В покое 0 Phaser frames / FillPath; одинаковый pointer drag после прогрева 22 270–23 024 → 4 707–4 791 FillPath (около −79%). Небольшой фиксированный набор RenderTexture/WebGL ресурсов заменяет постоянную триангуляцию.
+
+102 UI cycles + 20 FX cycles: DOM/listeners стабильны, очереди очищаются, поздний heap выходит на плато (+2548 bytes за последние 12 UI cycles). 30 paused resizes: live GL handles стабильны. Final regression подтверждает отсутствие повторного bake при пульсе/искрах и завершение active/sleeping dispose.
+
+Проверено: 355 tests / 58 files; final production smoke — все 90 pointer solutions, 5 viewport и полный flow tail; полный final inspect smoke в CI + локальный theme/reward tail; final UX — 10 групп / 10 viewport-theme combinations; Android sync. Android debug CI `41217908074` на финальном runtime — SUCCESS; App CI `41217908083` в момент записи выполняется. Это не native FPS/RSS/GPU memory acceptance.
+
+Методика, обмен CPU на ограниченный кеш, точные границы source/evidence и результаты — PERFORMANCE_OPTIMIZATION_VALIDATION.md / PERFORMANCE_OPTIMIZATION_EVIDENCE.json. Внешний вид проверен парными screenshots и свежей production записью. Реклама остаётся отложенной. Следующий обязательный этап производительности — физический Android: палец, FPS/нагрев/память, audio/haptics и lifecycle/process death.
