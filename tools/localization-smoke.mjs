@@ -9,12 +9,12 @@ const report=rulesOnly?JSON.parse(readFileSync(out+'/results.json','utf8')):{err
 const flush=()=>writeFileSync(out+'/results.json',JSON.stringify(report,null,2));
 const seed=(l,extra={})=>({version:3,levelId:l.id,levelVersion:l.version,path:[l.start],completed:[],coins:1000,hints:3,themeId:'classic',ownedThemes:['classic','mint'],drafts:{},giftMilestones:Math.floor((extra.completed?.length??0)/20),giftNotice:null,lastOfferAt:0,offer:null,daily:{lastDate:null,pending:null,last:null},...extra});
 if(spawnSync(process.execPath,['node_modules/vite/bin/vite.js','build'],{stdio:'inherit'}).status!==0)process.exit(1);
-const server=spawn(process.execPath,['node_modules/vite/bin/vite.js','preview','--host','127.0.0.1','--port','4224','--strictPort'],{stdio:'ignore'}),url='http://127.0.0.1:4224';let browser;
+const server=spawn(process.execPath,['node_modules/vite/bin/vite.js','preview','--host','127.0.0.1','--port','4224','--strictPort'],{stdio:'ignore'}),url='http://127.0.0.1:4224';let browser,lastPage;
 const save=p=>p.evaluate(k=>JSON.parse(localStorage.getItem(k)),key);
 async function open(lang,data,width=390,height=844,video=false){
  const context=await browser.newContext({viewport:{width,height},deviceScaleFactor:2,hasTouch:true,isMobile:true,reducedMotion:'reduce',...(video?{recordVideo:{dir:out+'/video',size:{width,height}}}:{})});
  await context.addInitScript(({key,localeKey,lang,data})=>{if(!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify(data));if(!localStorage.getItem(localeKey))localStorage.setItem(localeKey,lang);localStorage.setItem('road-lines.feedback.v1',JSON.stringify({sound:false,vibration:false}));},{key,localeKey,lang,data});
- const p=await context.newPage();p.on('pageerror',e=>report.errors.push(e.message));await p.goto(url);await p.locator('#app[data-ready=true]').waitFor();return{p,context};
+ const p=await context.newPage();lastPage=p;p.on('pageerror',e=>report.errors.push(e.message));await p.goto(url);await p.locator('#app[data-ready=true]').waitFor();return{p,context};
 }
 async function scanEnglish(p){
  const bad=await p.evaluate(()=>{
@@ -68,4 +68,4 @@ try{
   report.checks.push(`Rule caption/rejection ${id} ${lang} ${width}`);await context.close();flush();
  }
  assert.deepEqual(report.errors,[]);console.log('Localization smoke passed:',report.screens.length,'viewport/language combinations,',report.checks.length,'extra flows');
-}catch(e){report.errors.push(e.stack);console.error(e);process.exitCode=1;}finally{flush();await browser?.close();server.kill('SIGTERM');}
+}catch(e){report.errors.push(e.stack);if(lastPage&&!lastPage.isClosed()){await lastPage.screenshot({path:out+'/failure.png'}).catch(()=>{});report.failure=await lastPage.evaluate(()=>({screen:document.querySelector('#app')?.dataset,active:document.activeElement?.outerHTML,save:localStorage.getItem('road-lines.save.v1')})).catch(()=>null);}console.error(e);process.exitCode=1;}finally{flush();await browser?.close();server.kill('SIGTERM');}

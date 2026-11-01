@@ -20,4 +20,14 @@ jobs:
       - run: node tools/browser-smoke.mjs --production
       - run: node tools/ux-smoke.mjs --run
       - run: node tools/balance-smoke.mjs
+      - run: node tools/persistence-smoke.mjs
       - run: node tools/localization-smoke.mjs --run
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: road-lines-reliability-evidence
+          path: |
+            .test-output/persistence/results.json
+            .test-output/localization/results.json
+            .test-output/localization/failure.png
+          if-no-files-found: ignore
