@@ -28,10 +28,22 @@ const javaDir = resolve(app, 'java/com/danilah/roadlines');
 mkdirSync(javaDir, { recursive: true });
 copyFileSync(resolve(root, 'native/android/MainActivity.java'), resolve(javaDir, 'MainActivity.java'));
 copyFileSync(resolve(root, 'native/android/RoadFeedbackPlugin.java'), resolve(javaDir, 'RoadFeedbackPlugin.java'));
+for (const name of ['RoadAnalyticsPlugin.java', 'RoadApplication.java']) copyFileSync(resolve(root, 'native/android', name), resolve(javaDir, name));
+const analyticsKey = process.env.APPMETRICA_API_KEY?.trim() ?? '';
+if (analyticsKey && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(analyticsKey)) throw Error('Invalid AppMetrica API key format');
+const assets = resolve(app, 'assets'); mkdirSync(assets, { recursive: true });
+writeFileSync(resolve(assets, 'road-analytics.json'), JSON.stringify({ apiKey: analyticsKey }));
+console.info(analyticsKey ? 'Native analytics configured.' : 'Native analytics disabled: APPMETRICA_API_KEY is absent.');
+copyFileSync(resolve(root, 'native/android/road-analytics.gradle'), resolve(root, 'android/app/road-analytics.gradle'));
+const gradlePath = resolve(root, 'android/app/build.gradle');
+let gradle = readFileSync(gradlePath, 'utf8');
+if (!gradle.includes("apply from: 'road-analytics.gradle'")) { gradle += "\napply from: 'road-analytics.gradle'\n"; writeFileSync(gradlePath, gradle); }
+
 copyFileSync(resolve(root, 'native/android/road_lines_icon.xml'), resolve(app, 'res/drawable/road_lines_icon.xml'));
 copyFileSync(resolve(root, 'native/android/styles.xml'), resolve(app, 'res/values/styles.xml'));
 const manifestPath = resolve(app, 'AndroidManifest.xml');
 let manifest = readFileSync(manifestPath, 'utf8');
+if (!manifest.includes('android:name=".RoadApplication"')) manifest = manifest.replace('<application', '<application android:name=".RoadApplication"');
 manifest = manifest.replace('android:allowBackup="true"', 'android:allowBackup="false"');
 manifest = manifest.replace(/android:icon="[^"]+"/, 'android:icon="@drawable/road_lines_icon"');
 manifest = manifest.replace(/android:roundIcon="[^"]+"/, 'android:roundIcon="@drawable/road_lines_icon"');

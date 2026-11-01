@@ -26,10 +26,14 @@ import { WheelService } from './services/wheel';
 import { WheelView } from './ui/wheel';
 import { localDate } from './core/rewards';
 import { rewardArt } from './ui/reward-art';
+import { GameAnalytics, levelInfo } from './services/analytics';
+import { createAnalyticsAdapter } from './platform/analytics';
+import { wheelPrizes } from './core/rewards';
 import './style.css';
 import './ui/shell.css';
 try { loadLanguage(localStorage); } catch { setLanguage('ru'); }
 const initialStartup = document.querySelector('#startup'); if (initialStartup) initialStartup.textContent = copy.loading;
+const analytics = new GameAnalytics(createAnalyticsAdapter());
 let releaseWriter = (): void => {}; 
 
 async function boot(): Promise<void> {
@@ -41,7 +45,7 @@ async function boot(): Promise<void> {
   releaseWriter = await acquireSaveOwnership();
   const store = new GameStore(localStorage);
   const wheelService = new WheelService(store);
-  if (store.state.daily.pending) await wheelService.commit();
+  if (store.state.daily.pending) { const spin = store.state.daily.pending; await wheelService.commit(); analytics.event('wheel_reward', { sector: spin.sector, amount: wheelPrizes[spin.sector]!, recovered: true }); }
   applyTheme(root, getTheme(store.state.themeId));
   let level = levels.find(l => l.id === store.state.levelId)!;
   if (inspect && params.has('level')) level = levels[Math.max(0, Math.min(levels.length - 1, Number(params.get('level')) - 1))] ?? level;
@@ -239,7 +243,7 @@ async function boot(): Promise<void> {
       }
     });
   }
-  function saveError(): void { saveFailed = true; notice(() => copy.saveFailed, () => copy.retry); }
+  function saveError(operation = 'write'): void { analytics.saveError(operation); saveFailed = true; notice(() => copy.saveFailed, () => copy.retry); }
   function flush(): boolean {
     clearTimeout(saveTimer);
     if (fixture || conflict || result) return !saveFailed;
@@ -249,7 +253,7 @@ async function boot(): Promise<void> {
     clearTimeout(saveTimer);
     try {
       const from = layout(), oldHost = host.getBoundingClientRect();
-      reward = store.finish(level, path); saveFailed = false; result = true; invalidate(); input.cancel(); notice('');
+      reward = store.finish(level, path); analytics.finish(reward); saveFailed = false; result = true; invalidate(); input.cancel(); notice('');
       motion.start(reward, store.state.coins, store.state.completed.length, () => { scene.settle(); syncSize(); });
       redraw();
       const newHost = host.getBoundingClientRect();
@@ -257,9 +261,10 @@ async function boot(): Promise<void> {
     }
     catch { saveError(); }
   }
-  function change(next: number[]): void {
+  function change(next: number[], kind: 'gesture' | 'reset' | 'rollback' = 'gesture'): void {
     if (screen !== 'game' || result || activity.isBlocked() || conflict) return;
     const reverse = next.length < path.length;
+    analytics.move(path.length, next.length, kind);
     invalidate(); path = next; notice(''); updateRouteUI(); scene.react(path[path.length - 1]!, reverse);
     feedback.play(reverse ? 'undo' : 'cell', path.length / level.cells.length);
     if (complete(level, path)) finish();
@@ -267,7 +272,7 @@ async function boot(): Promise<void> {
   }
   const input = installRouteInput(host, () => ({ level, path, layout: layout(), blocked: screen !== 'game' || result || activity.isBlocked() || conflict || complete(level, path) }), next => { if (next.length < path.length) coach.backtracked = true; change(next); }, () => { if (!complete(level, path)) { if (path.length > 1) coach.released = true; flush(); scene.resumeHead(); updateRouteUI(); } }, rejectMove);
   const unsubscribe = activity.onBlockedChange(blocked => {
-    root.dataset.blocked = String(blocked);
+    root.dataset.blocked = String(blocked); analytics.block(blocked);
     feedback.setBlocked(blocked);
     // Confirmed help still describes the same prefix across lifecycle blockers.
     if (blocked) { screens.stop(); cancelWheel(); invalidate(true); input.cancel(); flush(); motion.stop(); scene.settle(); showBalance(store.state.coins); }
@@ -298,6 +303,7 @@ async function boot(): Promise<void> {
     input.cancel();
     if (screen === 'wheel') cancelWheel();
     if (!flush()) return;
+    analytics.leave('navigation');
     invalidate(); motion.stop(); scene.settle(); showBalance(store.state.coins);
     if (next === 'levels' && screen === 'game') viewSetId = getLevelSet(level.id).id;
     screen = next; paused = false; $('.pause-overlay').hidden = true;
@@ -308,6 +314,7 @@ async function boot(): Promise<void> {
   function showGame(): void {
     if (screen !== 'game' && screen !== 'wheel') screens.leaveMenu($('.menu-screen'));
     else screens.stop();
+    if (!result) analytics.enter(level, path.length, store.state.completed.includes(level.id));
     screen = 'game'; paused = false; $('.pause-overlay').hidden = true;
     activity.setBlocked('pause', false); notice(''); redraw();
     if (!activity.isBlocked()) game.loop.wake();
@@ -319,6 +326,7 @@ async function boot(): Promise<void> {
     const saved = store.state.drafts[id]?.path ?? [selected.start];
     const nextPath = complete(selected, saved) ? [selected.start] : [...saved];
     try { store.path(selected, nextPath); } catch { saveError(); return; }
+    analytics.leave('selection');
     invalidate(); motion.stop(); scene.settle(); input.cancel();
     level = selected; viewSetId = getLevelSet(level.id).id; path = nextPath; result = false; reward = 0; showBalance(store.state.coins);
     showGame(); scene.open();
@@ -347,14 +355,16 @@ async function boot(): Promise<void> {
       ($<HTMLButtonElement>('[data-action=buy-theme]').disabled ? $('[data-action=cancel-theme]') : $('[data-action=buy-theme]')).focus();
       return;
     }
-    try { store.selectTheme(id); } catch { saveError(); return; }
+    try { store.selectTheme(id); analytics.event('theme_selected', { theme: id }); } catch { saveError(); return; }
     showBalance(store.state.coins); redraw(); focusTheme(id);
   }
   function buyTheme(): void {
     if (!pendingTheme || conflict || store.recoveryRequired) return;
     const id = pendingTheme;
     try {
-      if (store.selectTheme(id) === 'insufficient') { redraw(); return; }
+      const purchase = store.selectTheme(id);
+      if (purchase === 'insufficient') { redraw(); return; }
+      if (purchase === 'purchased') analytics.event('theme_purchase', { theme: id, price: getTheme(id).price });
     } catch { saveError(); redraw(); return; }
     showBalance(store.state.coins); closeThemePurchase(); feedback.play('progress');
   }
@@ -381,7 +391,7 @@ async function boot(): Promise<void> {
     if (wheelCommit) return wheelCommit;
     wheelCommit = (async () => {
       try {
-        if (store.state.daily.pending) await wheelService.commit();
+        if (store.state.daily.pending) { const spin = store.state.daily.pending; await wheelService.commit(); analytics.event('wheel_reward', { sector: spin.sector, amount: wheelPrizes[spin.sector]!, recovered: false }); }
         if (disposed) return;
         wheelBusy = false; showBalance(store.state.coins); redraw();
         if (celebrate && screen === 'wheel' && !activity.isBlocked()) wheelView.celebrate();
@@ -404,22 +414,25 @@ async function boot(): Promise<void> {
   async function requestHint(): Promise<void> {
     if (busy || result || activity.isBlocked() || complete(level, path)) return;
     const key = `${level.id}:${level.version}:${path.join(',')}`;
-    if (paidHint?.key === key) { hint = [...paidHint.path]; notice(() => copy.hintShown); updateRouteUI(); return; }
+    if (paidHint?.key === key) { analytics.event('hint_repeat', levelInfo(level)); hint = [...paidHint.path]; notice(() => copy.hintShown); updateRouteUI(); return; }
+    const info = levelInfo(level); analytics.event('hint_request', info);
     input.cancel(); invalidate(); const token = revision;
     busy = true; notice(''); redraw();
     const answer = await hints.request(level, path);
-    if (disposed || token !== revision || !answer || result || activity.isBlocked()) return;
+    if (disposed || token !== revision || !answer || result || activity.isBlocked()) { analytics.event('hint_result', { ...info, outcome: 'cancelled' }); return; }
     busy = false;
     if (answer.kind === 'FOUND') {
-      if (!store.state.hints) { notice(() => copy.noHints); redraw(); return; }
+      if (!store.state.hints) { analytics.event('hint_result', { ...info, outcome: 'no_budget' }); notice(() => copy.noHints); redraw(); return; }
       try { store.write({ ...store.state, levelId: level.id, levelVersion: level.version, path: [...path], hints: store.state.hints - 1 });
+        analytics.event('hint_spent', { ...info, remaining: store.state.hints }); analytics.event('hint_result', { ...info, outcome: 'found' });
         hint = answer.path.slice(path.length - 1, path.length + 3); paidHint = { key, path: [...hint] }; notice(() => copy.hintShown); }
-      catch { saveError(); }
+      catch { analytics.event('hint_result', { ...info, outcome: 'save_failed' }); saveError('hint'); }
     } else if (answer.kind === 'UNSOLVABLE') {
+      analytics.event('hint_result', { ...info, outcome: 'dead_end' });
       rollback = answer.rollbackLength ?? null;
       const count = path.length - (rollback ?? path.length);
       notice(rollback !== null ? () => copy.deadEndReturn(count) : () => copy.deadEnd, rollback !== null ? () => copy.return : '');
-    } else notice(() => copy.unknown);
+    } else { analytics.event('hint_result', { ...info, outcome: 'unknown' }); notice(() => copy.unknown); }
     redraw();
   }
   function click(event: MouseEvent): void {
@@ -446,7 +459,7 @@ async function boot(): Promise<void> {
       case 'menu-settings': setPause(true); break;
       case 'pause': setPause(true); break;
       case 'resume': setPause(false); break;
-      case 'restart': input.cancel(); change([level.start]); flush(); break;
+      case 'restart': input.cancel(); change([level.start], 'reset'); flush(); break;
       case 'hint': void requestHint(); break;
       case 'notice':
         if (conflict || store.recoveryRequired) location.reload();
@@ -454,12 +467,13 @@ async function boot(): Promise<void> {
           try { store.reload(); saveFailed = false; notice(''); redraw(); if (store.state.daily.pending) void settleWheel(); } catch { saveError(); }
         }
         else if (saveFailed) { if (complete(level, path)) finish(); else if (flush()) notice(''); }
-        else if (rollback !== null) { const p = path.slice(0, rollback); change(p); flush(); }
+        else if (rollback !== null) { const p = path.slice(0, rollback); change(p, 'rollback'); flush(); }
         break;
       case 'language': {
         const next = target.dataset.language;
         if (!paused || !isLanguage(next) || (next === language && !languageSaveFailed)) break;
         try { languageSaveFailed = !chooseLanguage(next, localStorage); } catch { setLanguage(next); languageSaveFailed = true; }
+        analytics.event('language_change', { language, saved: !languageSaveFailed });
         redraw(); root.querySelector<HTMLButtonElement>(`[data-action=language][data-language=${language}]`)?.focus(); break;
       }
       case 'sound': feedback.setSetting('sound', !feedback.settings.sound); redraw(); break;
@@ -484,7 +498,7 @@ async function boot(): Promise<void> {
     try { store.path(next, nextPath); } catch { $<HTMLButtonElement>('.next').disabled = false; saveError(); return; }
     motion.stop(); scene.settle(); showBalance(store.state.coins);
     invalidate(); input.cancel(); level = next; path = nextPath; result = false; reward = 0;
-    notice(''); redraw(); scene.open(); screens.stop(); screens.enterGame(root);
+    notice(''); redraw(); analytics.enter(level, path.length, store.state.completed.includes(level.id)); scene.open(); screens.stop(); screens.enterGame(root);
   }
   const prime = (): void => feedback.prime();
   root.addEventListener('pointerdown', prime, true); root.addEventListener('keydown', prime, true);
@@ -500,6 +514,7 @@ async function boot(): Promise<void> {
   const resize = new ResizeObserver(() => { input.cancel(); syncSize(); }); resize.observe(host);
   const onStorage = (event: StorageEvent): void => {
     if (event.key !== SAVE_KEY && event.key !== null) return;
+    if (!conflict) analytics.event('save_conflict', {});
     conflict = true; activity.setBlocked('save-conflict', true);
     notice(() => copy.conflict, () => copy.reload);
   };
@@ -516,37 +531,42 @@ async function boot(): Promise<void> {
     if (calendar !== localDate()) { calendar = localDate(); redraw(); }
     if (screen === 'wheel') wheelView.tick(store.state);
   }, 1000);
-  let rendererReady = false, platformReady = false;
+  let rendererReady = false, platformReady = false, readyReported = false;
   const deadline = setTimeout(() => { const startup = root.querySelector('#startup'); if (startup) startup.textContent = copy.slowStart; }, 15_000);
   function presentable(): void {
     if (!rendererReady || !platformReady || disposed) return;
     frame = requestAnimationFrame(() => { secondFrame = requestAnimationFrame(() => {
       if (disposed) return;
       timeline.mark('ready'); clearTimeout(deadline); root.querySelector('#startup')?.remove(); root.dataset.ready = 'true';
+      if (!readyReported) { readyReported = true; analytics.event('app_ready', { language }); }
       if (inspect) console.info('Road Lines startup', timeline.snapshot({ startToReadyMs: ['start', 'ready'] }));
       if (activity.isBlocked() || screen !== 'game') game.loop.sleep();
     }); });
   }
   game.events.once('postrender', () => { if (!result) scene.open(); rendererReady = true; timeline.mark('renderer'); presentable(); });
   redraw();
+  if (screen === 'game' && !result) analytics.enter(level, path.length, store.state.completed.includes(level.id));
 
   function dispose(): void {
     if (disposed) return;
-    input.dispose(); flush(); disposed = true; root.dataset.background = 'true'; invalidate(); clearTimeout(saveTimer); clearTimeout(rejectionTimer); clearTimeout(deadline);
+    input.dispose(); flush(); analytics.dispose(); disposed = true; root.dataset.background = 'true'; invalidate(); clearTimeout(saveTimer); clearTimeout(rejectionTimer); clearTimeout(deadline);
     cancelAnimationFrame(frame); cancelAnimationFrame(secondFrame); cancelAnimationFrame(resizeFrame); cancelAnimationFrame(renderFrame);
     clearInterval(clock); wheelToken++; wheelView.dispose(); wheelService.dispose();
     resize.disconnect(); disposeRuntime(); unsubscribe(); screens.dispose(); motion.dispose(); feedback.dispose(); root.removeEventListener('click', click);
     root.removeEventListener('pointerdown', prime, true); root.removeEventListener('keydown', prime, true);
-    window.removeEventListener('resize', onViewportResize); window.removeEventListener('storage', onStorage); window.removeEventListener('pagehide', pagehide);
+    window.removeEventListener('resize', onViewportResize); window.removeEventListener('storage', onStorage); window.removeEventListener('pagehide', pagehide); window.removeEventListener('pageshow', pageshow);
     root.removeEventListener('keydown', trapFocus); destroyRenderer(game, releaseWriter);
   }
-  const pagehide = (event: PageTransitionEvent): void => { flush(); if (!event.persisted) dispose(); };
+  const pageshow = (event: PageTransitionEvent): void => { if (event.persisted && screen === 'game' && !result && !disposed) analytics.enter(level, path.length, store.state.completed.includes(level.id)); };
+  window.addEventListener('pageshow', pageshow);
+  const pagehide = (event: PageTransitionEvent): void => { analytics.leave('pagehide'); flush(); if (!event.persisted) dispose(); };
   window.addEventListener('pagehide', pagehide);
   if (import.meta.hot) import.meta.hot.dispose(dispose);
   try { const dispose = await installRuntime(activity, onBack, background => { root.dataset.background = String(background); }); if (disposed) dispose(); else { disposeRuntime = dispose; platformReady = true; timeline.mark('platform'); presentable(); } }
   catch (error) { activity.setBlocked('startup-error', true); clearTimeout(deadline); $('#startup').textContent = copy.failedStart; console.error(error); }
 }
 void boot().catch(error => {
+  analytics.event('startup_error', { reason: error instanceof SaveOwnershipError ? 'ownership' : 'save_or_boot' });
   releaseWriter();
   document.querySelector('#app')!.innerHTML = `<div class="fatal" role="alert"><p>${copy.failedSave}</p><button onclick="location.reload()">${copy.tryAgain}</button></div>`;
   if (error instanceof SaveOwnershipError) document.querySelector('.fatal p')!.textContent = error.message;
