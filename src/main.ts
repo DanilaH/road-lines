@@ -385,19 +385,21 @@ async function boot(): Promise<void> {
     if (busy || result || activity.isBlocked() || complete(level, path)) return;
     const key = `${level.id}:${level.version}:${path.join(',')}`;
     if (paidHint?.key === key) { hint = [...paidHint.path]; notice('Бледная линия показывает продолжение.'); updateRouteUI(); return; }
-    if (!store.state.hints) { notice('Подсказки закончились. Можно бесплатно откатить маршрут или начать заново.'); return; }
     input.cancel(); invalidate(); const token = revision;
     busy = true; notice(''); redraw();
     const answer = await hints.request(level, path);
     if (disposed || token !== revision || !answer || result || activity.isBlocked()) return;
     busy = false;
     if (answer.kind === 'FOUND') {
+      if (!store.state.hints) { notice('Подсказки закончились. Проведи по линии назад или начни заново.'); redraw(); return; }
       try { store.write({ ...store.state, levelId: level.id, levelVersion: level.version, path: [...path], hints: store.state.hints - 1 });
         hint = answer.path.slice(path.length - 1, path.length + 3); paidHint = { key, path: [...hint] }; notice('Бледная линия показывает продолжение.'); }
       catch { saveError(); }
     } else if (answer.kind === 'UNSOLVABLE') {
       rollback = answer.rollbackLength ?? null;
-      notice(rollback !== null ? `Этот маршрут зашёл в тупик. Вернуться на ${path.length - rollback} клеток?` : 'Этот маршрут зашёл в тупик. Попробуй откатить несколько клеток.', rollback !== null ? 'Вернуться' : '');
+      const count = path.length - (rollback ?? path.length), tail = count % 100;
+      const cells = tail >= 11 && tail <= 14 ? 'клеток' : count % 10 === 1 ? 'клетку' : count % 10 >= 2 && count % 10 <= 4 ? 'клетки' : 'клеток';
+      notice(rollback !== null ? `Этот маршрут зашёл в тупик. Вернуться на ${count} ${cells}?` : 'Этот маршрут зашёл в тупик. Попробуй откатить несколько клеток.', rollback !== null ? 'Вернуться' : '');
     } else notice('Сейчас не удалось найти продолжение. Подсказка не потрачена.');
     redraw();
   }

@@ -6,7 +6,7 @@ export const levelSets = [
   { id: 'turns', title: 'Повороты', description: 'Новые фигуры и сочетания правил', color: '#45b7bf', levels: levels.slice(30, 60),
     chapters: [{ at: 0, title: 'Новые фигуры' }, { at: 5, title: 'Точный финиш' }, { at: 10, title: 'Обходы' }, { at: 15, title: 'Порядок точек' }, { at: 20, title: 'Финиш и стенки' }, { at: 25, title: 'Точки и стенки' }] },
   { id: 'shapes', title: 'Сложные фигуры', description: 'Большие поля и маршруты с ограничениями', color: '#a183ce', levels: levels.slice(60, 90),
-    chapters: [{ at: 0, title: 'Развилки' }, { at: 5, title: 'Дальний обход' }, { at: 10, title: 'Точки и финиш' }, { at: 15, title: 'Путь к флажку' }, { at: 20, title: 'Порядок обхода' }, { at: 25, title: 'Все правила вместе' }] },
+    chapters: [{ at: 0, title: 'Развилки' }, { at: 5, title: 'Дальний обход' }, { at: 10, title: 'Точки и финиш' }, { at: 15, title: 'Путь к финишу' }, { at: 20, title: 'Порядок обхода' }, { at: 25, title: 'Все правила вместе' }] },
 ] as const;
 export type SetId = typeof levelSets[number]['id'];
 export const getLevelSet = (id: string) => levelSets.find(s => s.levels.some(l => l.id === id))!;
