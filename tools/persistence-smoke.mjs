@@ -81,4 +81,4 @@ try{
   const replacement=await context.newPage();await replacement.goto(url);await ready(replacement);const s=await save(replacement);assert.equal(s.coins,40+[20,30,50,75,100,150,200,300][spin.sector]);assert.equal(s.daily.pending,null);assert.equal(s.daily.last.id,spin.id);await replacement.reload();await ready(replacement);assert.equal((await save(replacement)).coins,s.coins);await context.close();
  });
  assert.equal(report.crashCount,2);assert.deepEqual(report.errors,[]);console.log('Persistence browser checks:',report.checks.length);
-}catch(e){report.errors.push(e.stack);process.exitCode=1;}finally{writeFileSync(output+'/results.json',JSON.stringify(report,null,2));await browser?.close();server?.kill('SIGTERM');}
+}catch(e){report.errors.push(e.stack);console.error(e);process.exitCode=1;}finally{writeFileSync(output+'/results.json',JSON.stringify(report,null,2));await browser?.close();server?.kill('SIGTERM');}
