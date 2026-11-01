@@ -303,7 +303,7 @@ async function boot(): Promise<void> {
     input.cancel();
     if (screen === 'wheel') cancelWheel();
     if (!flush()) return;
-    analytics.leave('navigation');
+    analytics.leave(next);
     invalidate(); motion.stop(); scene.settle(); showBalance(store.state.coins);
     if (next === 'levels' && screen === 'game') viewSetId = getLevelSet(level.id).id;
     screen = next; paused = false; $('.pause-overlay').hidden = true;
@@ -355,7 +355,7 @@ async function boot(): Promise<void> {
       ($<HTMLButtonElement>('[data-action=buy-theme]').disabled ? $('[data-action=cancel-theme]') : $('[data-action=buy-theme]')).focus();
       return;
     }
-    try { store.selectTheme(id); analytics.event('theme_selected', { theme: id }); } catch { saveError(); return; }
+    try { if (store.selectTheme(id) === 'equipped') analytics.event('theme_selected', { theme: id }); } catch { saveError(); return; }
     showBalance(store.state.coins); redraw(); focusTheme(id);
   }
   function buyTheme(): void {
@@ -537,10 +537,16 @@ async function boot(): Promise<void> {
     if (!rendererReady || !platformReady || disposed) return;
     frame = requestAnimationFrame(() => { secondFrame = requestAnimationFrame(() => {
       if (disposed) return;
-      timeline.mark('ready'); clearTimeout(deadline); root.querySelector('#startup')?.remove(); root.dataset.ready = 'true';
-      if (!readyReported) { readyReported = true; analytics.event('app_ready', { language }); }
-      if (inspect) console.info('Road Lines startup', timeline.snapshot({ startToReadyMs: ['start', 'ready'] }));
+      clearTimeout(deadline); root.querySelector('#startup')?.remove();
       if (activity.isBlocked() || screen !== 'game') game.loop.sleep();
+      // Removing the covering element is not a painted, touch-ready frame yet.
+      // Publish readiness after the uncovered UI has crossed a paint boundary.
+      frame = requestAnimationFrame(() => { secondFrame = requestAnimationFrame(() => {
+        if (disposed) return;
+        timeline.mark('ready'); root.dataset.ready = 'true';
+        if (!readyReported) { readyReported = true; analytics.event('app_ready', { language }); }
+        if (inspect) console.info('Road Lines startup', timeline.snapshot({ startToReadyMs: ['start', 'ready'] }));
+      }); });
     }); });
   }
   game.events.once('postrender', () => { if (!result) scene.open(); rendererReady = true; timeline.mark('renderer'); presentable(); });

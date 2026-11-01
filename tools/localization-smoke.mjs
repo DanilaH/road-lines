@@ -14,6 +14,7 @@ const save=p=>p.evaluate(k=>JSON.parse(localStorage.getItem(k)),key);
 async function open(lang,data,width=390,height=844,video=false){
  const context=await browser.newContext({viewport:{width,height},deviceScaleFactor:2,hasTouch:true,isMobile:true,reducedMotion:'reduce',...(video?{recordVideo:{dir:out+'/video',size:{width,height}}}:{})});
  await context.addInitScript(({key,localeKey,lang,data})=>{if(!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify(data));if(!localStorage.getItem(localeKey))localStorage.setItem(localeKey,lang);localStorage.setItem('road-lines.feedback.v1',JSON.stringify({sound:false,vibration:false}));},{key,localeKey,lang,data});
+ await context.addInitScript(()=>{window.__localeTouches=[];for(const name of ['pointerdown','pointerup','touchstart','touchend','click'])window.addEventListener(name,e=>{const a=window.__localeTouches;a.push({type:name,action:e.target?.closest?.('[data-action]')?.dataset.action,tag:e.target?.tagName,screen:document.querySelector('#app')?.dataset.screen});if(a.length>30)a.shift();},true);});
  const p=await context.newPage();lastPage=p;p.on('pageerror',e=>report.errors.push(e.message));await p.goto(url);await p.locator('#app[data-ready=true]').waitFor();return{p,context};
 }
 async function scanEnglish(p){
@@ -68,4 +69,4 @@ try{
   report.checks.push(`Rule caption/rejection ${id} ${lang} ${width}`);await context.close();flush();
  }
  assert.deepEqual(report.errors,[]);console.log('Localization smoke passed:',report.screens.length,'viewport/language combinations,',report.checks.length,'extra flows');
-}catch(e){report.errors.push(e.stack);if(lastPage&&!lastPage.isClosed()){await lastPage.screenshot({path:out+'/failure.png'}).catch(()=>{});report.failure=await lastPage.evaluate(()=>({screen:document.querySelector('#app')?.dataset,active:document.activeElement?.outerHTML,save:localStorage.getItem('road-lines.save.v1')})).catch(()=>null);}console.error(e);process.exitCode=1;}finally{flush();await browser?.close();server.kill('SIGTERM');}
+}catch(e){report.errors.push(e.stack);if(lastPage&&!lastPage.isClosed()){await lastPage.screenshot({path:out+'/failure.png'}).catch(()=>{});report.failure=await lastPage.evaluate(()=>({touches:window.__localeTouches,screen:document.querySelector('#app')?.dataset,active:document.activeElement?.outerHTML,save:localStorage.getItem('road-lines.save.v1')})).catch(()=>null);}console.error(e);process.exitCode=1;}finally{flush();await browser?.close();server.kill('SIGTERM');}
