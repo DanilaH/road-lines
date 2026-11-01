@@ -102,3 +102,11 @@ When adding the application, add and run actual app build and relevant model/flo
 - Do not ask for routine confirmation to continue already authorised reversible work. Ask only for genuinely missing essential information.
 - Final updates state what changed, what passed and what remains unverified. Keep them concise.
 
+
+
+## Languages and first-gesture coaching
+- All UI/error/ARIA text and theme/set/chapter names come from typed src/i18n.ts. Keep RU and EN complete, including dynamic number forms. Native option names Русский / English intentionally retain their own lang attributes.
+- Russian is the compatibility default. Explicit language choice is a noncritical preference in road-lines.locale.v1; never put it in the valuable game snapshot or mutate economy/progression when translating UI.
+- Language switches preserve confirmed hint/rollback and their semantic messages; keep asynchronous revision/cancellation guards. No renderer recreation or extra frame loop for localization.
+- Intro 1–3 coaching is session-only and nonblocking in the existing instruction line. Completion never requires demonstrating a gesture. Preserve existing level IDs/versions and free undo/reset.
+- Run node tools/localization-smoke.mjs --run for language/layout/gesture/persistence changes. Its default checks the complete matrix; --rules-only only repeats the rule-caption tail on an already validated unchanged runtime.

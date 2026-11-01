@@ -1,0 +1,283 @@
+{
+  "date": "2026-11-01",
+  "runtimeCommit": "dc2d304895fd753545d79e363be209dd0379b5e0",
+  "validationCommit": "05278a714134231a90c18f62d33a4a93c95a4906",
+  "sourceSha256": "d81e8171563fcc557f889a03b77fdad2516f992bcc5083bf7b1683ac9af14cdf",
+  "sourceHashMethod": "Sorted src paths: UTF-8 path + NUL + file bytes + NUL",
+  "defaultLanguage": "ru",
+  "preferenceKey": "road-lines.locale.v1",
+  "gameSaveSchemaChanged": false,
+  "font": {
+    "existingFile": "src/assets/fonts/nunito-cyrillic.woff2",
+    "cmapEntries": 660,
+    "missingAscii32To126": []
+  },
+  "unit": {
+    "tests": 364,
+    "files": 59,
+    "manifestContentTypecheck": "PASS"
+  },
+  "localization": {
+    "errors": [],
+    "checks": [
+      "Actual touch release/resume and reverse coaching ru",
+      "Actual touch release/resume and reverse coaching en",
+      "Confirmed free rollback relocalizes and remains usable across pause/language change",
+      "Paid hint repeat remains free after language change",
+      "Preference I/O failure is nonfatal, does not alter progress, and supports retry",
+      "Startup ownership error is translated",
+      "Corrupt save stays intact and shows translated recovery ru",
+      "Corrupt save stays intact and shows translated recovery en",
+      "Rule caption/rejection finish-01 ru 320",
+      "Rule caption/rejection walls-01 ru 320",
+      "Rule caption/rejection checkpoints-01 ru 320",
+      "Rule caption/rejection shapes-30 ru 320",
+      "Rule caption/rejection finish-01 en 320",
+      "Rule caption/rejection walls-01 en 320",
+      "Rule caption/rejection checkpoints-01 en 320",
+      "Rule caption/rejection shapes-30 en 320",
+      "Rule caption/rejection finish-01 ru 390",
+      "Rule caption/rejection walls-01 ru 390",
+      "Rule caption/rejection checkpoints-01 ru 390",
+      "Rule caption/rejection shapes-30 ru 390",
+      "Rule caption/rejection finish-01 en 390",
+      "Rule caption/rejection walls-01 en 390",
+      "Rule caption/rejection checkpoints-01 en 390",
+      "Rule caption/rejection shapes-30 en 390"
+    ],
+    "screens": [
+      {
+        "width": 320,
+        "height": 568,
+        "lang": "ru"
+      },
+      {
+        "width": 320,
+        "height": 568,
+        "lang": "en"
+      },
+      {
+        "width": 360,
+        "height": 800,
+        "lang": "ru"
+      },
+      {
+        "width": 360,
+        "height": 800,
+        "lang": "en"
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "lang": "ru"
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "lang": "en"
+      },
+      {
+        "width": 412,
+        "height": 915,
+        "lang": "ru"
+      },
+      {
+        "width": 412,
+        "height": 915,
+        "lang": "en"
+      },
+      {
+        "width": 576,
+        "height": 1280,
+        "lang": "ru"
+      },
+      {
+        "width": 576,
+        "height": 1280,
+        "lang": "en"
+      }
+    ]
+  },
+  "legacyUX": {
+    "errors": [],
+    "checks": [
+      "Same-prefix hint charged once, changed prefix charged independently, release/resume",
+      "finish-01: explanation, unchanged prefix, expiry, legal reverse, zero theme writes",
+      "walls-01: explanation, unchanged prefix, expiry, legal reverse, zero theme writes",
+      "checkpoints-01: explanation, unchanged prefix, expiry, legal reverse, zero theme writes",
+      "Tenth-clear Continue skips unavailable offer",
+      "Gift confirmation continues exactly once",
+      "Back cancels auto-advance intent",
+      "Failed gift acknowledgement retains reward and resumes after authoritative reload",
+      "Set boundary stays explicit; home primary selects a set",
+      "Replay remains resumable in a completed set; paused resize paints once and resumes exact prefix"
+    ],
+    "screens": [
+      {
+        "width": 320,
+        "height": 568,
+        "theme": "classic"
+      },
+      {
+        "width": 320,
+        "height": 568,
+        "theme": "neon"
+      },
+      {
+        "width": 360,
+        "height": 800,
+        "theme": "classic"
+      },
+      {
+        "width": 360,
+        "height": 800,
+        "theme": "neon"
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "theme": "classic"
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "theme": "neon"
+      },
+      {
+        "width": 412,
+        "height": 915,
+        "theme": "classic"
+      },
+      {
+        "width": 412,
+        "height": 915,
+        "theme": "neon"
+      },
+      {
+        "width": 576,
+        "height": 1280,
+        "theme": "classic"
+      },
+      {
+        "width": 576,
+        "height": 1280,
+        "theme": "neon"
+      }
+    ]
+  },
+  "workerRegression": {
+    "runs": [
+      {
+        "cpuThrottle": 1,
+        "cases": 587,
+        "unknown": 0,
+        "missingRollback": 0,
+        "oracleMismatches": 0
+      },
+      {
+        "cpuThrottle": 4,
+        "cases": 587,
+        "unknown": 0,
+        "missingRollback": 0,
+        "oracleMismatches": 0
+      }
+    ],
+    "ui": [
+      {
+        "check": "Free zero-budget nearest rollback and reload",
+        "id": "intro-03",
+        "width": 320,
+        "height": 568,
+        "notice": "Этот маршрут зашёл в тупик. Вернуться на 1 клетку?",
+        "rollback": 2
+      },
+      {
+        "check": "Free zero-budget nearest rollback and reload",
+        "id": "shapes-10",
+        "width": 390,
+        "height": 844,
+        "notice": "Этот маршрут зашёл в тупик. Вернуться на 4 клетки?",
+        "rollback": 1
+      },
+      {
+        "check": "Free zero-budget nearest rollback and reload",
+        "id": "shapes-20",
+        "width": 412,
+        "height": 915,
+        "notice": "Этот маршрут зашёл в тупик. Вернуться на 19 клеток?",
+        "rollback": 1
+      },
+      {
+        "check": "Paid last hint becomes zero; same-session repeat is free, reload does not reveal a new paid hint"
+      },
+      {
+        "check": "Unavailable worker at zero budget is UNKNOWN, no false dead-end/charge"
+      },
+      {
+        "check": "Reset cancels an in-flight zero-budget diagnosis; stale rollback is discarded"
+      },
+      {
+        "check": "Confirmed zero-budget rollback survives pause and document background, then still applies"
+      },
+      {
+        "check": "Confirmed paid hint survives pause and repeats for free at zero budget"
+      }
+    ],
+    "errors": []
+  },
+  "productionRegression": {
+    "runtime": "dc2d304895fd753545d79e363be209dd0379b5e0",
+    "execution": "Split: full 90 pointer paths, 5 viewports, touch/worker, mechanics and bank passed; original menu focus assertion expected pre-language controls and failed. Updated menu/theme/reward/UX tail then passed without runtime changes.",
+    "initialLog": "vite v8.3.5 building client environment for production...\ntransforming...\n✓ 50 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                                 0.54 kB │ gzip:   0.33 kB\ndist/assets/hint.worker-sYsRWQ4p.js             1.91 kB\ndist/assets/medallion-CE88QhCA.webp             4.10 kB\ndist/assets/gift-WNYfZjkM.webp                 15.00 kB\ndist/assets/nunito-cyrillic-HmUUwHSj.woff2     72.63 kB\ndist/assets/index-DU-ZXO_t.css                 40.78 kB │ gzip:   9.22 kB\ndist/assets/esm-BiqwwpkJ.js                     0.32 kB │ gzip:   0.23 kB\ndist/assets/web-CT3AJd_Y.js                     0.84 kB │ gzip:   0.40 kB\ndist/assets/index-Djt_IT9_.js               1,511.44 kB │ gzip: 402.89 kB\n\n✓ built in 716ms\nMechanics: real pointer rejection/undo, reload, worker hints, five viewports and dark themes passed.\nBank: independent set unlocks, navigation, per-set counters, cross-set drafts/reload and final-field viewports passed.\nnode:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\n\nAssertionError [ERR_ASSERTION]: Focus cycles through visible settings controls\n+ actual - expected\n\n+ 'language'\n- 'resume'\n\n    at runMenuSmoke (file:///workspace/scratch/3eff112ca2b3/road-lines/tools/menu-smoke.mjs:17:12)\n    at async file:///workspace/scratch/3eff112ca2b3/road-lines/tools/browser-smoke.mjs:296:3 {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: 'language',\n  expected: 'resume',\n  operator: 'strictEqual',\n  diff: 'simple'\n}\n\nNode.js v24.22.1\n",
+    "updatedTailLog": "Menu flow: route drafts, unlocks, repeats, settings, Back, failure/reload passed.\nThemes: 5 catalog viewports, 8 real palettes, purchases/reload/repeat/failure and exact Back origins passed.\nRewards: wheel viewports, durable stage/finish/reload, rollback date, Back/background, disk failure, unavailable offer skipped on tenth-clear Continue passed.\nUX check complete\nUX check complete\nUX check complete\nUX check complete\nUX check complete\nUX check complete\nUX check complete\nUX check complete\nUX check complete\nUX check complete\nUX polish: 10 flow checks, 10 viewport/theme combinations passed.\nUpdated production regression tail PASS\n"
+  },
+  "androidSync": "PASS",
+  "apk": {
+    "source": "dc2d304895fd753545d79e363be209dd0379b5e0",
+    "artifact": 13080478159,
+    "artifactSha256": "e60e7b186324addc1ec38f4093d2b951f2b7f876efbbf5863f434ee1a990bb51",
+    "apkSha256": "f51550dd57e96598e30e6ae70fd5c32806d630aed1a210bb0db084d495301e6f",
+    "apkBytes": 4716596,
+    "bundles": {
+      "assets/public/assets/index-Djt_IT9_.js": "dad136d80af46ca0a5d7a1fd96dfc022825e29e85507429df51f6943a46cc9f5"
+    }
+  },
+  "productionBundle": {
+    "file": "index-Djt_IT9_.js",
+    "sha256": "dad136d80af46ca0a5d7a1fd96dfc022825e29e85507429df51f6943a46cc9f5"
+  },
+  "ci": [
+    {
+      "id": 41300409654,
+      "name": "App and kit checks",
+      "status": "in_progress",
+      "conclusion": null,
+      "url": "https://github.com/DanilaH/road-lines/actions/runs/41300409654"
+    },
+    {
+      "id": 41300409695,
+      "name": "Android debug build",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/DanilaH/road-lines/actions/runs/41300409695"
+    }
+  ],
+  "demo": {
+    "file": "road-lines-ru-en.gif",
+    "bytes": 2413248,
+    "sha256": "7825268bc53f58bb1deee7a5c33b7abb8db2efc3b5141240bf9f784c22f4c084",
+    "size": [
+      320,
+      693
+    ],
+    "fps": 12,
+    "durationSeconds": 12.91,
+    "source": "Production build, real touch events, normal motion. Demonstration only, not device FPS measurement."
+  },
+  "limits": [
+    "No physical Android touch, haptics/audio, thermal, RSS or process-death acceptance",
+    "Debug APK, not signed release or RuStore publication",
+    "Russian remains default; English is chosen explicitly; no automatic browser-language detection",
+    "Native language option names stay Русский / English with per-button lang attributes; visible-English scan excludes the Russian language option"
+  ]
+}

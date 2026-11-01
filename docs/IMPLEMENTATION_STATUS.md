@@ -2,7 +2,7 @@
 
 Обновлено: 2026-11-01.
 
-Актуальный итог: банк 90 (3×30), базовый цикл, темы и колесо реализованы. Реклама отложена по просьбе пользователя. Следом — RU/EN и физическая Android-приёмка. Ниже сохранена история этапов; свежая проверка банка — BANK_VALIDATION.md.
+Актуальный итог: банк 90 (3×30), базовый цикл, темы и колесо реализованы. Реклама отложена по просьбе пользователя. RU/EN и обучение реализованы; следом — физическая Android-приёмка и оставшиеся релизные проверки. Ниже сохранена история этапов; свежая проверка банка — BANK_VALIDATION.md.
 
 ## Готово
 Этапы 0 и 1: Phaser/Vite/Capacitor, 15 задач, ввод/откат/worker hints, сохранения/first-clear. Их CI проверены ранее.
@@ -87,3 +87,15 @@ Runtime: rendering `a1efa0741462857e610438edca42d624c5ef1152`, финальны�
 Code: `fc7b1dab412b5ef4ff6aba90615fe682de0a3eb6` + `e43b837cfd3c9b6e31028befe1c6a9eada75f5de`. 355 tests / 58 files, 8 целевых UI checks, final UX 10 групп / 10 viewport-theme combinations и Android sync прошли. Полный production smoke всех 90 с 5 viewport прошёл на fc7b1dab до последнего lifecycle-help исправления; финальное изменение покрыто целевыми проверками. Android debug CI `41294119342` на финальном коде — SUCCESS; App CI `41294119322` выполняется. Новый corpus/zero-budget/lifecycle regression добавлен в App CI.
 
 Кандидаты на редакторский просмотр ритма — 3–14 и 3–19 (большая доля вынужденных ходов перед более разветвлёнными задачами). Их сложность/интересность человеком не измерены; уровни не заменены на основании одних метрик. Отдельный риск обучения: первые tutorial можно пройти без упражнения reverse/release-resume. Подробности и bounded next pass — LEVEL_BALANCE_AUDIT_2026-11-01.md / LEVEL_BALANCE_AUDIT_EVIDENCE.json. Физический Android и RU/EN остаются открыты; реклама отложена.
+
+
+## RU/EN и первые жесты — 1 ноября 2026
+Реализован typed каталог всех UI/ARIA/error сообщений, названий тем/наборов/глав и числовых форм. Выбор RU/EN доступен в настройках дома и паузы, применяется без reload и сохраняется отдельно в noncritical key. Error/retry не затрагивает ценный GameSave; подтверждённая помощь переводится и остаётся применимой. Существующий self-hosted Nunito поддерживает обе письменности; dependencies/assets не добавлены.
+
+Обучение 1–1/1–2/1–3 использует прежнюю строку инструкции: начало/fill, release/resume и reverse. Только session observation; никакого обязательного упражнения, popup, save field или нового gate. Модель, все 90 записей/версии/порядок, first-clear и экономика сохранены.
+
+Runtime `dc2d304895fd753545d79e363be209dd0379b5e0`; test-only refinement `05278a714134231a90c18f62d33a4a93c95a4906`. 364 tests / 59 files; 10 viewport/language combinations и 24 extra flows прошли. Все 90 pointer solutions и five-viewport/mechanics/bank прошли; после обновления устаревшего focus assertion menu/theme/reward/UX tail повторно прошёл без runtime изменений. Legacy UX 10 групп / 10 viewport-theme, 1174 worker checks + 8 recovery UI checks, Android sync — PASS.
+
+APK runtime build `41299441736` и повторный Android build `41300409695` — SUCCESS. APK 4 716 596 bytes, SHA f51550dd57e96598e30e6ae70fd5c32806d630aed1a210bb0db084d495301e6f; встроенный JS совпадает с проверенным production bundle. App CI `41300409654` в момент записи выполняется. Debug APK и production GIF подготовлены; это не физический плейтест или signed release.
+
+Подробности, provenance и короткий список проверок телефона — LOCALIZATION_GESTURES_VALIDATION.md / LOCALIZATION_GESTURES_EVIDENCE.json. Открыты физический Android (палец/audio/haptics/FPS/нагрев/process death), аналитика и релизная приёмка; реклама по-прежнему отложена.
