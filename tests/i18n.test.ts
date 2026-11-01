@@ -2,6 +2,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { catalogs, chooseLanguage, copy, language, LANGUAGE_KEY, loadLanguage, setLanguage } from '../src/i18n';
 import { instruction } from '../src/ui/instructions';
 import { levels } from '../src/content/levels';
+import { themes } from '../src/content/themes';
+import { levelSets } from '../src/core/progression';
 afterEach(() => { vi.unstubAllGlobals(); setLanguage('ru'); });
 describe('language preferences and copy', () => {
   it('keeps RU for existing users and invalid/missing/unavailable noncritical preference', () => {
@@ -26,6 +28,13 @@ describe('language preferences and copy', () => {
     expect([0,1,2,5,11,14,21,22,111].map(copy.coins)).toEqual(['0 монет','1 монета','2 монеты','5 монет','11 монет','14 монет','21 монета','22 монеты','111 монет']);
     expect(copy.deadEndReturn(1)).toContain('1 клетку'); expect(copy.deadEndReturn(4)).toContain('4 клетки'); expect(copy.deadEndReturn(19)).toContain('19 клеток');
     setLanguage('en'); expect(copy.coins(1)).toBe('1 coin'); expect(copy.coins(21)).toBe('21 coins'); expect(copy.deadEndReturn(2)).toContain('2 cells?');
+  });
+  it('names every shipped theme, set and chapter in both languages', () => {
+    for (const catalog of Object.values(catalogs)) {
+      expect(Object.keys(catalog.themeNames).sort()).toEqual(themes.map(t => t.id).sort());
+      expect(Object.keys(catalog.setNames).sort()).toEqual(levelSets.map(s => s.id).sort());
+      for (const set of levelSets) for (const chapter of set.chapters) expect(catalog.chapters[chapter.key]).toBeTruthy();
+    }
   });
   it('has complete matching catalogs and no Cyrillic left in English strings', () => {
     const visit=(a: object,b: object): void => {expect(Object.keys(a).sort()).toEqual(Object.keys(b).sort()); for(const [key,value] of Object.entries(b)){if(typeof value==='string')expect(value).not.toMatch(/[А-Яа-яЁё]/);else if(typeof value==='object')visit((a as Record<string,object>)[key]!,value);}};

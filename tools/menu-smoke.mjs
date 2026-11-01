@@ -12,9 +12,10 @@ export async function runMenuSmoke(browser, url, output) {
   await page.goto(url); await ready();
   await page.locator('[data-action=menu-settings]').click();
   await page.getByRole('heading', { name: 'Настройки', exact: true }).waitFor();
-  for (const action of ['sound', 'vibration', 'resume', 'sound']) {
+  for (const [action, language] of [['sound', null], ['vibration', null], ['language', 'ru'], ['language', 'en'], ['resume', null], ['sound', null]]) {
     await page.keyboard.press('Tab');
     assert.equal(await page.evaluate(() => document.activeElement?.getAttribute('data-action')), action, 'Focus cycles through visible settings controls');
+    if (language) assert.equal(await page.evaluate(() => document.activeElement?.getAttribute('data-language')), language);
   }
   await page.getByRole('button', { name: 'Звук: вкл', exact: true }).click();
   await page.keyboard.press('Escape');
