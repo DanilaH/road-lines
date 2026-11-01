@@ -65,5 +65,13 @@ try{
  {
   const {p,context}=await open(levels[2],[0,1,4],0);await p.locator('[data-action=hint]').evaluate(b=>b.click());await p.locator('[data-action=restart]').evaluate(b=>b.click());await p.waitForTimeout(400);assert.deepEqual((await save(p)).path,[0]);assert.equal((await save(p)).hints,0);assert.equal(await p.getByRole('button',{name:'Вернуться',exact:true}).isVisible(),false);report.ui.push({check:'Reset cancels an in-flight zero-budget diagnosis; stale rollback is discarded'});await context.close();
  }
+ {
+  const {p,context}=await open(levels[2],[0,1,4],0);await p.locator('[data-action=hint]').tap();await p.getByRole('button',{name:'Вернуться',exact:true}).waitFor();await p.locator('[data-action=pause]').tap();await p.locator('[data-action=resume]').tap();
+  await p.evaluate(()=>{Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'));});await p.evaluate(()=>{Object.defineProperty(document,'hidden',{configurable:true,value:false});document.dispatchEvent(new Event('visibilitychange'));});
+  await p.locator('[data-action=notice]').tap();assert.deepEqual((await save(p)).path,[0,1]);assert.equal((await save(p)).hints,0);report.ui.push({check:'Confirmed zero-budget rollback survives pause and document background, then still applies'});await context.close();
+ }
+ {
+  const {p,context}=await open(levels[2],[0,1],1);await p.locator('[data-action=hint]').tap();await p.getByText('Бледная линия показывает продолжение.',{exact:true}).waitFor();const hint=await p.evaluate(()=>[...__perf.scene.hint]);assert(hint.length>1);await p.locator('[data-action=pause]').tap();await p.locator('[data-action=resume]').tap();assert.deepEqual(await p.evaluate(()=>__perf.scene.hint),hint);await p.locator('[data-action=hint]').tap();assert.equal((await save(p)).hints,0);report.ui.push({check:'Confirmed paid hint survives pause and repeats for free at zero budget'});await context.close();
+ }
  assert.deepEqual(report.errors,[]);console.log('Balance smoke passed',jobs.length,'oracle jobs × 2 CPU rates,',report.ui.length,'UI checks');
 }catch(e){report.errors.push(e.stack);process.exitCode=1;}finally{flush();await browser?.close();server.kill('SIGTERM');}

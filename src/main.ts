@@ -119,7 +119,8 @@ async function boot(): Promise<void> {
     $('.notice').hidden = !text; $('.notice span').textContent = text;
     $('.notice button').textContent = action; $('.notice button').hidden = !action;
   }
-  function invalidate(): void { revision++; hints.cancel(); busy = false; hint = []; rollback = null;
+  function invalidate(keepHelp = false): void { revision++; hints.cancel(); busy = false;
+    if (!keepHelp) { hint = []; rollback = null; }
     clearTimeout(rejectionTimer); rejectionText = ''; }
   function updateRouteUI(): void {
     const nextCheckpoint = level.checkpoints?.findIndex(c => !path.includes(c)) ?? -1;
@@ -250,7 +251,8 @@ async function boot(): Promise<void> {
   const unsubscribe = activity.onBlockedChange(blocked => {
     root.dataset.blocked = String(blocked);
     feedback.setBlocked(blocked);
-    if (blocked) { screens.stop(); cancelWheel(); invalidate(); input.cancel(); flush(); motion.stop(); scene.settle(); showBalance(store.state.coins); }
+    // Confirmed help still describes the same prefix across lifecycle blockers.
+    if (blocked) { screens.stop(); cancelWheel(); invalidate(true); input.cancel(); flush(); motion.stop(); scene.settle(); showBalance(store.state.coins); }
     redraw();
     if (game.isBooted) { if (blocked) game.loop.sleep(); else if (screen === 'game') game.loop.wake(); }
   });
