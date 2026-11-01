@@ -37,3 +37,6 @@
 npm run check проверяет Git blob hashes/манифест, типы и перенесённые regression tests.
 Исходные примеры в focused docs показывают upstream package import paths. В Road Lines импортировать конкретный локальный файл vendor/mini-games-kit/src/... либо явно заведённый project adapter.
 Нельзя импортировать пакетные подмодули, которых snapshot не содержит.
+
+## Аналитика — 1 ноября 2026
+`AnalyticsAdapter` / `AnalyticsParams` из pinned `src/platform/analytics.ts` применены как type-контракт. Donor ConsoleAnalyticsAdapter не включается в production. Typed события/семантика попытки и durable boundaries реализованы локально, native AppMetrica transport — собственный Capacitor plugin. Vendor/manifest/dependencies npm не менялись; pinned Android SDK объявлен отдельно в native Gradle recipe. Подробности — docs/ANALYTICS.md.

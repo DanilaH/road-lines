@@ -1,5 +1,8 @@
 # Статус Road Lines
 
+Актуальный завершённый проход: CI и аналитика — `CI_ANALYTICS_VALIDATION.md` / `ANALYTICS.md`. Финальный runtime 03562ee, App/Android CI SUCCESS; live analytics ждёт debug API key и dashboard/device acceptance.
+
+
 Обновлено: 2026-11-01.
 
 Актуальный итог: банк 90 (3×30), базовый цикл, темы и колесо реализованы. Реклама отложена по просьбе пользователя. RU/EN и обучение реализованы; следом — физическая Android-приёмка и оставшиеся релизные проверки. Ниже сохранена история этапов; свежая проверка банка — BANK_VALIDATION.md.
@@ -108,3 +111,14 @@ Runtime последнего APK сохранён без изменений. 391
 Полная локальная локализация повторно PASS: 10 viewport/language combinations +24 flows. Старый App CI `41300409654` упал на localization `.next.tap()` после reload, при прошедших inspect/production all90/UX/balance; причина единичного CI-сбоя пока не установлена. Добавлены failure screenshot/state и CI artifact, persistence smoke включён в CI. Новый test-only commit `f512ac4bbcf82cd5a6424d2f46095c5af082e0d7`: App `41309825959`, Android `41309825964` в момент записи выполняются. Не заявлять all-CI-green без результата.
 
 Подробности: `RELIABILITY_AUDIT_2026-11-01.md` и `RELIABILITY_AUDIT_EVIDENCE.json`. Runtime/сохранения/экономика/90 уровней/визуал прежние; предыдущий APK актуален. Физический Android, аналитика, release acceptance открыты; реклама отложена.
+
+## CI и аналитика — 1 ноября 2026
+Финальный runtime `03562ee6c0a169c9c648faf0e325e723af31cbcd`. Добавлены typed события старта/первого хода/паузы/сброса/выхода/победы, outcomes подсказок, confirmed spend/purchase/wheel, save diagnostics и смены языка. Active time исключает blockers; restored result и redraw не повторяют победу. Web production — no-op; native AppMetrica SDK 8.5.1, Application/plugin и build-time configuration. Никакого изменения 90 уровней/экономики/save schema/визуального дизайна; реклама отложена.
+
+Исправлена paint readiness после startup cover; отдельный production corpus проверил 60 immediate reload taps при CPU1/4/RU/EN. Crash CI перенесён на Ubuntu 22.04 по upstream ограничению отсутствующего Chromium crash event на 24.04, реальные crash assertions сохранены. Полный App CI `41313807191` на финальном runtime — SUCCESS: kit-baseline inspect/production всех 90, UX, balance и все четыре mobile-flow jobs. Android debug CI `41313807158` — SUCCESS.
+
+Локально: 396 tests / 61 files, 10 analytics browser groups, localization 10 combinations +24 flows, 60 reload touches, 18 persistence scenarios и шесть performance assertions — PASS. Повторный 102 UI /20 FX/20 workers/30 resizes soak — PASS: DOM 432/listeners 66 стабильны, очереди очищаются; за последние 24 UI cycles heap +82 912 bytes, в пределах зафиксированного budget. Это browser evidence, не native SDK RAM/FPS/heat acceptance.
+
+APK `road-lines-03562ee-debug.apk`, 5 823 109 bytes, SHA da347ac94d798e686925a8a9f5fe77a8b190f3017ddf22045ca4986369d694a2. Embedded JS совпадает с проверенным final production bundle. Debug key отсутствует: SDK activation/delivery не заявлены. Для живой debug проверки нужен GitHub secret `APPMETRICA_DEBUG_API_KEY` отдельного тестового проекта, затем проверка в AppMetrica и на устройстве. Signed release/публикация/физический Android остаются открытыми.
+
+Контракт и настройка — `ANALYTICS.md`; результаты/provenance — `CI_ANALYTICS_VALIDATION.md` / `CI_ANALYTICS_EVIDENCE.json`.

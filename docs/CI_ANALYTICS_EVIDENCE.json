@@ -1,0 +1,3082 @@
+{
+  "date": "2026-11-01",
+  "runtimeCommit": "03562ee6c0a169c9c648faf0e325e723af31cbcd",
+  "baselineCommit": "3edec631aa358b1cf25159a07c48328825c89045",
+  "sourceSha256": "76e0df06079abf9088afc69f6db14b6f10fd969595b6b736ecc17b69d60abfef",
+  "unit": {
+    "tests": 396,
+    "files": 61,
+    "command": "npm run check"
+  },
+  "analytics": {
+    "checks": [
+      "visits, first move, resets, pause/background and explicit exit have no redraw duplicates",
+      "confirmed win once, double Continue once, reload of result never repeats completion",
+      "hint cancelled, spent, repeated, and failed write are distinct outcomes",
+      "hint no budget: diagnostic outcome without debit",
+      "hint dead end: diagnostic outcome without debit",
+      "hint worker unavailable: diagnostic outcome without debit",
+      "new daily claim reports once after commit, not again on Back/reload",
+      "purchase reports only after durable grant; selecting owned theme is separate",
+      "pending wheel recovery is attributed once across subsequent reload",
+      "corrupt save emits categorical boot error and leaves raw bytes intact"
+    ],
+    "errors": [],
+    "externalRequests": [],
+    "events": [
+      {
+        "event": "app_ready",
+        "params": {
+          "schema": 1,
+          "language": "ru"
+        }
+      },
+      {
+        "event": "level_start",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "resumed": false,
+          "replay": false
+        }
+      },
+      {
+        "event": "first_move",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "active_ms": 34
+        }
+      },
+      {
+        "event": "level_reset",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1
+        }
+      },
+      {
+        "event": "level_pause",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "active_ms": 180,
+          "filled": 1
+        }
+      },
+      {
+        "event": "language_change",
+        "params": {
+          "schema": 1,
+          "language": "en",
+          "saved": true
+        }
+      },
+      {
+        "event": "level_pause",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "active_ms": 188,
+          "filled": 1
+        }
+      },
+      {
+        "event": "level_pause",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "active_ms": 230,
+          "filled": 1
+        }
+      },
+      {
+        "event": "level_exit",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "active_ms": 230,
+          "reason": "home",
+          "filled": 1,
+          "resets": 1,
+          "undo_cells": 1
+        }
+      },
+      {
+        "event": "level_start",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 2,
+          "resumed": false,
+          "replay": false
+        }
+      },
+      {
+        "event": "app_ready",
+        "params": {
+          "schema": 1,
+          "language": "ru"
+        }
+      },
+      {
+        "event": "level_start",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-01",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 3,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "resumed": true,
+          "replay": false
+        }
+      },
+      {
+        "event": "first_move",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-01",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 3,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "active_ms": 123
+        }
+      },
+      {
+        "event": "level_complete",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-01",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 3,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "active_ms": 124,
+          "first_clear": true,
+          "reward": 20,
+          "resets": 0,
+          "undo_cells": 0
+        }
+      },
+      {
+        "event": "app_ready",
+        "params": {
+          "schema": 1,
+          "language": "ru"
+        }
+      },
+      {
+        "event": "level_start",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-02",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 3,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "resumed": false,
+          "replay": false
+        }
+      },
+      {
+        "event": "app_ready",
+        "params": {
+          "schema": 1,
+          "language": "ru"
+        }
+      },
+      {
+        "event": "level_start",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "resumed": false,
+          "replay": false
+        }
+      },
+      {
+        "event": "hint_request",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false
+        }
+      },
+      {
+        "event": "level_pause",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "active_ms": 33,
+          "filled": 1
+        }
+      },
+      {
+        "event": "hint_result",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "outcome": "cancelled"
+        }
+      },
+      {
+        "event": "hint_request",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false
+        }
+      },
+      {
+        "event": "hint_spent",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "remaining": 2
+        }
+      },
+      {
+        "event": "hint_result",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "outcome": "found"
+        }
+      },
+      {
+        "event": "hint_repeat",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false
+        }
+      },
+      {
+        "event": "first_move",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "active_ms": 233
+        }
+      },
+      {
+        "event": "hint_request",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false
+        }
+      },
+      {
+        "event": "hint_result",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "outcome": "save_failed"
+        }
+      },
+      {
+        "event": "save_error",
+        "params": {
+          "schema": 1,
+          "operation": "hint"
+        }
+      },
+      {
+        "event": "app_ready",
+        "params": {
+          "schema": 1,
+          "language": "ru"
+        }
+      },
+      {
+        "event": "level_start",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "resumed": false,
+          "replay": false
+        }
+      },
+      {
+        "event": "hint_request",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false
+        }
+      },
+      {
+        "event": "hint_result",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "outcome": "no_budget"
+        }
+      },
+      {
+        "event": "app_ready",
+        "params": {
+          "schema": 1,
+          "language": "ru"
+        }
+      },
+      {
+        "event": "level_start",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "resumed": true,
+          "replay": false
+        }
+      },
+      {
+        "event": "hint_request",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false
+        }
+      },
+      {
+        "event": "hint_result",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "outcome": "dead_end"
+        }
+      },
+      {
+        "event": "app_ready",
+        "params": {
+          "schema": 1,
+          "language": "ru"
+        }
+      },
+      {
+        "event": "level_start",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "resumed": false,
+          "replay": false
+        }
+      },
+      {
+        "event": "hint_request",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false
+        }
+      },
+      {
+        "event": "hint_result",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "outcome": "unknown"
+        }
+      },
+      {
+        "event": "app_ready",
+        "params": {
+          "schema": 1,
+          "language": "ru"
+        }
+      },
+      {
+        "event": "wheel_reward",
+        "params": {
+          "schema": 1,
+          "sector": 0,
+          "amount": 20,
+          "recovered": false
+        }
+      },
+      {
+        "event": "app_ready",
+        "params": {
+          "schema": 1,
+          "language": "ru"
+        }
+      },
+      {
+        "event": "app_ready",
+        "params": {
+          "schema": 1,
+          "language": "ru"
+        }
+      },
+      {
+        "event": "theme_purchase",
+        "params": {
+          "schema": 1,
+          "theme": "dusk",
+          "price": 500
+        }
+      },
+      {
+        "event": "theme_selected",
+        "params": {
+          "schema": 1,
+          "theme": "mint"
+        }
+      },
+      {
+        "event": "theme_selected",
+        "params": {
+          "schema": 1,
+          "theme": "dusk"
+        }
+      },
+      {
+        "event": "wheel_reward",
+        "params": {
+          "schema": 1,
+          "sector": 5,
+          "amount": 150,
+          "recovered": true
+        }
+      },
+      {
+        "event": "app_ready",
+        "params": {
+          "schema": 1,
+          "language": "ru"
+        }
+      },
+      {
+        "event": "app_ready",
+        "params": {
+          "schema": 1,
+          "language": "ru"
+        }
+      },
+      {
+        "event": "startup_error",
+        "params": {
+          "schema": 1,
+          "reason": "save_or_boot"
+        }
+      }
+    ]
+  },
+  "localization": {
+    "screens": [
+      {
+        "width": 320,
+        "height": 568,
+        "lang": "ru"
+      },
+      {
+        "width": 320,
+        "height": 568,
+        "lang": "en"
+      },
+      {
+        "width": 360,
+        "height": 800,
+        "lang": "ru"
+      },
+      {
+        "width": 360,
+        "height": 800,
+        "lang": "en"
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "lang": "ru"
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "lang": "en"
+      },
+      {
+        "width": 412,
+        "height": 915,
+        "lang": "ru"
+      },
+      {
+        "width": 412,
+        "height": 915,
+        "lang": "en"
+      },
+      {
+        "width": 576,
+        "height": 1280,
+        "lang": "ru"
+      },
+      {
+        "width": 576,
+        "height": 1280,
+        "lang": "en"
+      }
+    ],
+    "checks": [
+      "Actual touch release/resume and reverse coaching ru",
+      "Actual touch release/resume and reverse coaching en",
+      "Confirmed free rollback relocalizes and remains usable across pause/language change",
+      "Paid hint repeat remains free after language change",
+      "Preference I/O failure is nonfatal, does not alter progress, and supports retry",
+      "Startup ownership error is translated",
+      "Corrupt save stays intact and shows translated recovery ru",
+      "Corrupt save stays intact and shows translated recovery en",
+      "Rule caption/rejection finish-01 ru 320",
+      "Rule caption/rejection walls-01 ru 320",
+      "Rule caption/rejection checkpoints-01 ru 320",
+      "Rule caption/rejection shapes-30 ru 320",
+      "Rule caption/rejection finish-01 en 320",
+      "Rule caption/rejection walls-01 en 320",
+      "Rule caption/rejection checkpoints-01 en 320",
+      "Rule caption/rejection shapes-30 en 320",
+      "Rule caption/rejection finish-01 ru 390",
+      "Rule caption/rejection walls-01 ru 390",
+      "Rule caption/rejection checkpoints-01 ru 390",
+      "Rule caption/rejection shapes-30 ru 390",
+      "Rule caption/rejection finish-01 en 390",
+      "Rule caption/rejection walls-01 en 390",
+      "Rule caption/rejection checkpoints-01 en 390",
+      "Rule caption/rejection shapes-30 en 390"
+    ],
+    "errors": []
+  },
+  "reloadTouch": {
+    "checks": [
+      {
+        "cpu": 1,
+        "lang": "ru",
+        "i": 0
+      },
+      {
+        "cpu": 1,
+        "lang": "ru",
+        "i": 1
+      },
+      {
+        "cpu": 1,
+        "lang": "ru",
+        "i": 2
+      },
+      {
+        "cpu": 1,
+        "lang": "ru",
+        "i": 3
+      },
+      {
+        "cpu": 1,
+        "lang": "ru",
+        "i": 4
+      },
+      {
+        "cpu": 1,
+        "lang": "ru",
+        "i": 5
+      },
+      {
+        "cpu": 1,
+        "lang": "ru",
+        "i": 6
+      },
+      {
+        "cpu": 1,
+        "lang": "ru",
+        "i": 7
+      },
+      {
+        "cpu": 1,
+        "lang": "ru",
+        "i": 8
+      },
+      {
+        "cpu": 1,
+        "lang": "ru",
+        "i": 9
+      },
+      {
+        "cpu": 1,
+        "lang": "ru",
+        "i": 10
+      },
+      {
+        "cpu": 1,
+        "lang": "ru",
+        "i": 11
+      },
+      {
+        "cpu": 1,
+        "lang": "ru",
+        "i": 12
+      },
+      {
+        "cpu": 1,
+        "lang": "ru",
+        "i": 13
+      },
+      {
+        "cpu": 1,
+        "lang": "ru",
+        "i": 14
+      },
+      {
+        "cpu": 1,
+        "lang": "en",
+        "i": 0
+      },
+      {
+        "cpu": 1,
+        "lang": "en",
+        "i": 1
+      },
+      {
+        "cpu": 1,
+        "lang": "en",
+        "i": 2
+      },
+      {
+        "cpu": 1,
+        "lang": "en",
+        "i": 3
+      },
+      {
+        "cpu": 1,
+        "lang": "en",
+        "i": 4
+      },
+      {
+        "cpu": 1,
+        "lang": "en",
+        "i": 5
+      },
+      {
+        "cpu": 1,
+        "lang": "en",
+        "i": 6
+      },
+      {
+        "cpu": 1,
+        "lang": "en",
+        "i": 7
+      },
+      {
+        "cpu": 1,
+        "lang": "en",
+        "i": 8
+      },
+      {
+        "cpu": 1,
+        "lang": "en",
+        "i": 9
+      },
+      {
+        "cpu": 1,
+        "lang": "en",
+        "i": 10
+      },
+      {
+        "cpu": 1,
+        "lang": "en",
+        "i": 11
+      },
+      {
+        "cpu": 1,
+        "lang": "en",
+        "i": 12
+      },
+      {
+        "cpu": 1,
+        "lang": "en",
+        "i": 13
+      },
+      {
+        "cpu": 1,
+        "lang": "en",
+        "i": 14
+      },
+      {
+        "cpu": 4,
+        "lang": "ru",
+        "i": 0
+      },
+      {
+        "cpu": 4,
+        "lang": "ru",
+        "i": 1
+      },
+      {
+        "cpu": 4,
+        "lang": "ru",
+        "i": 2
+      },
+      {
+        "cpu": 4,
+        "lang": "ru",
+        "i": 3
+      },
+      {
+        "cpu": 4,
+        "lang": "ru",
+        "i": 4
+      },
+      {
+        "cpu": 4,
+        "lang": "ru",
+        "i": 5
+      },
+      {
+        "cpu": 4,
+        "lang": "ru",
+        "i": 6
+      },
+      {
+        "cpu": 4,
+        "lang": "ru",
+        "i": 7
+      },
+      {
+        "cpu": 4,
+        "lang": "ru",
+        "i": 8
+      },
+      {
+        "cpu": 4,
+        "lang": "ru",
+        "i": 9
+      },
+      {
+        "cpu": 4,
+        "lang": "ru",
+        "i": 10
+      },
+      {
+        "cpu": 4,
+        "lang": "ru",
+        "i": 11
+      },
+      {
+        "cpu": 4,
+        "lang": "ru",
+        "i": 12
+      },
+      {
+        "cpu": 4,
+        "lang": "ru",
+        "i": 13
+      },
+      {
+        "cpu": 4,
+        "lang": "ru",
+        "i": 14
+      },
+      {
+        "cpu": 4,
+        "lang": "en",
+        "i": 0
+      },
+      {
+        "cpu": 4,
+        "lang": "en",
+        "i": 1
+      },
+      {
+        "cpu": 4,
+        "lang": "en",
+        "i": 2
+      },
+      {
+        "cpu": 4,
+        "lang": "en",
+        "i": 3
+      },
+      {
+        "cpu": 4,
+        "lang": "en",
+        "i": 4
+      },
+      {
+        "cpu": 4,
+        "lang": "en",
+        "i": 5
+      },
+      {
+        "cpu": 4,
+        "lang": "en",
+        "i": 6
+      },
+      {
+        "cpu": 4,
+        "lang": "en",
+        "i": 7
+      },
+      {
+        "cpu": 4,
+        "lang": "en",
+        "i": 8
+      },
+      {
+        "cpu": 4,
+        "lang": "en",
+        "i": 9
+      },
+      {
+        "cpu": 4,
+        "lang": "en",
+        "i": 10
+      },
+      {
+        "cpu": 4,
+        "lang": "en",
+        "i": 11
+      },
+      {
+        "cpu": 4,
+        "lang": "en",
+        "i": 12
+      },
+      {
+        "cpu": 4,
+        "lang": "en",
+        "i": 13
+      },
+      {
+        "cpu": 4,
+        "lang": "en",
+        "i": 14
+      }
+    ],
+    "errors": []
+  },
+  "performanceRegression": {
+    "checks": [
+      "Idle has no Phaser frames or FillPath work",
+      "Endpoint pulse/sparks render without rebuilding either cached texture",
+      "Hidden result CSS animations are paused",
+      "Background pauses all CSS animation timelines",
+      "Sleeping renderer disposal removes canvases and WebGL context",
+      "Active renderer disposal also completes; disposed screen has no running CSS animations"
+    ],
+    "errors": []
+  },
+  "native": {
+    "sync": "PASS",
+    "sdk": "io.appmetrica.analytics:analytics:8.5.1",
+    "debugKeySecret": "APPMETRICA_DEBUG_API_KEY",
+    "keyConfiguredInDownloadedApk": false,
+    "dashboardDeliveryVerified": false,
+    "generatedGradleOccurrences": 1,
+    "generatedApplicationOccurrences": 1
+  },
+  "apk": {
+    "bytes": 5823109,
+    "sha256": "da347ac94d798e686925a8a9f5fe77a8b190f3017ddf22045ca4986369d694a2",
+    "artifactId": 13085479284,
+    "workflow": 41313807158,
+    "runtime": "03562ee6c0a169c9c648faf0e325e723af31cbcd",
+    "bundle": "assets/public/assets/index-BJKdtrct.js",
+    "bundleSha256": "f5f5d9716d25e16e015b348f0e50fff0b5a7927077d3d5d456e05d5be7a860d6",
+    "matchesLocalBundle": true,
+    "analyticsKeyConfigured": false,
+    "outerZipSha256": "8c504d7163e7a2c1df74774813eba97b0f4e31b0f853146e26a8381ec0011c80",
+    "filename": "road-lines-03562ee-debug.apk"
+  },
+  "postAnalyticsSoak": {
+    "sourceSha256": "76e0df06079abf9088afc69f6db14b6f10fd969595b6b736ecc17b69d60abfef",
+    "uiCycles": 102,
+    "fxCycles": 20,
+    "workerRequests": 20,
+    "pausedResizes": 30,
+    "dom": {
+      "documents": 1,
+      "nodes": 432,
+      "jsEventListeners": 66
+    },
+    "firstHeap": 6049856,
+    "lastHeap": 6858004,
+    "late24CycleGrowth": 82912,
+    "totalHeapGrowth": 808148,
+    "glLive": {
+      "Texture": 14,
+      "Buffer": 9,
+      "Framebuffer": 2,
+      "Renderbuffer": 2,
+      "Program": 4,
+      "Shader": 8
+    },
+    "budgets": {
+      "late24Cycles": 524288,
+      "postWarmup": 2097152
+    },
+    "limitations": "Headless Chromium/SwiftShader; bounded scenario/resource budgets, not native RSS/GPU bytes, phone FPS or heat."
+  },
+  "postAnalyticsSoakMemory": [
+    {
+      "label": "UI warmup 6",
+      "usage": {
+        "usedSize": 6049856,
+        "totalSize": 6852608,
+        "embedderHeapUsedSize": 1548504,
+        "backingStorageSize": 8829744
+      },
+      "dom": {
+        "documents": 1,
+        "nodes": 432,
+        "jsEventListeners": 66
+      },
+      "state": {
+        "state": {
+          "screen": "home",
+          "paused": false,
+          "result": true,
+          "path": [
+            0,
+            1,
+            2
+          ],
+          "disposed": false
+        },
+        "loop": false,
+        "pendingDestroy": false,
+        "renderType": 2,
+        "commands": 657,
+        "labels": 0,
+        "objects": 4,
+        "textures": 6,
+        "canvases": 2,
+        "ghosts": 0,
+        "coins": 0,
+        "animations": [
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "ambient-drift",
+            "target": "SECTION",
+            "hidden": "visible"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "victory-ring",
+            "target": "DIV",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "next-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "ambient-drift",
+            "target": "SECTION",
+            "hidden": "visible"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "board-hover",
+            "target": "svg",
+            "hidden": "visible"
+          }
+        ],
+        "queues": {
+          "timers": 0,
+          "animations": 0,
+          "coins": 0,
+          "particles": 0,
+          "sparks": 0,
+          "wheelSparks": 0
+        },
+        "live": {
+          "raf": 0,
+          "timeouts": 0,
+          "intervals": 1,
+          "workers": 0,
+          "audioCreated": 1,
+          "audioClosed": 0,
+          "voices": 0,
+          "peakVoices": 9,
+          "writes": 17
+        }
+      }
+    },
+    {
+      "label": "UI cycles 18",
+      "usage": {
+        "usedSize": 6430120,
+        "totalSize": 7114752,
+        "embedderHeapUsedSize": 1500256,
+        "backingStorageSize": 8829752
+      },
+      "dom": {
+        "documents": 1,
+        "nodes": 432,
+        "jsEventListeners": 66
+      },
+      "state": {
+        "state": {
+          "screen": "home",
+          "paused": false,
+          "result": true,
+          "path": [
+            0,
+            1,
+            2
+          ],
+          "disposed": false
+        },
+        "loop": false,
+        "pendingDestroy": false,
+        "renderType": 2,
+        "commands": 657,
+        "labels": 0,
+        "objects": 4,
+        "textures": 6,
+        "canvases": 2,
+        "ghosts": 0,
+        "coins": 0,
+        "animations": [
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "ambient-drift",
+            "target": "SECTION",
+            "hidden": "visible"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "victory-ring",
+            "target": "DIV",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "next-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "ambient-drift",
+            "target": "SECTION",
+            "hidden": "visible"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "board-hover",
+            "target": "svg",
+            "hidden": "visible"
+          }
+        ],
+        "queues": {
+          "timers": 0,
+          "animations": 0,
+          "coins": 0,
+          "particles": 0,
+          "sparks": 0,
+          "wheelSparks": 0
+        },
+        "live": {
+          "raf": 0,
+          "timeouts": 0,
+          "intervals": 1,
+          "workers": 0,
+          "audioCreated": 1,
+          "audioClosed": 0,
+          "voices": 0,
+          "peakVoices": 9,
+          "writes": 53
+        }
+      }
+    },
+    {
+      "label": "UI cycles 30",
+      "usage": {
+        "usedSize": 6523612,
+        "totalSize": 7114752,
+        "embedderHeapUsedSize": 1513864,
+        "backingStorageSize": 8829752
+      },
+      "dom": {
+        "documents": 1,
+        "nodes": 432,
+        "jsEventListeners": 66
+      },
+      "state": {
+        "state": {
+          "screen": "home",
+          "paused": false,
+          "result": true,
+          "path": [
+            0,
+            1,
+            2
+          ],
+          "disposed": false
+        },
+        "loop": false,
+        "pendingDestroy": false,
+        "renderType": 2,
+        "commands": 657,
+        "labels": 0,
+        "objects": 4,
+        "textures": 6,
+        "canvases": 2,
+        "ghosts": 0,
+        "coins": 0,
+        "animations": [
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "ambient-drift",
+            "target": "SECTION",
+            "hidden": "visible"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "victory-ring",
+            "target": "DIV",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "next-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "ambient-drift",
+            "target": "SECTION",
+            "hidden": "visible"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "board-hover",
+            "target": "svg",
+            "hidden": "visible"
+          }
+        ],
+        "queues": {
+          "timers": 0,
+          "animations": 0,
+          "coins": 0,
+          "particles": 0,
+          "sparks": 0,
+          "wheelSparks": 0
+        },
+        "live": {
+          "raf": 0,
+          "timeouts": 0,
+          "intervals": 1,
+          "workers": 0,
+          "audioCreated": 1,
+          "audioClosed": 0,
+          "voices": 0,
+          "peakVoices": 9,
+          "writes": 89
+        }
+      }
+    },
+    {
+      "label": "UI cycles 42",
+      "usage": {
+        "usedSize": 6607316,
+        "totalSize": 7639040,
+        "embedderHeapUsedSize": 1588256,
+        "backingStorageSize": 8829752
+      },
+      "dom": {
+        "documents": 1,
+        "nodes": 432,
+        "jsEventListeners": 66
+      },
+      "state": {
+        "state": {
+          "screen": "home",
+          "paused": false,
+          "result": true,
+          "path": [
+            0,
+            1,
+            2
+          ],
+          "disposed": false
+        },
+        "loop": false,
+        "pendingDestroy": false,
+        "renderType": 2,
+        "commands": 657,
+        "labels": 0,
+        "objects": 4,
+        "textures": 6,
+        "canvases": 2,
+        "ghosts": 0,
+        "coins": 0,
+        "animations": [
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "ambient-drift",
+            "target": "SECTION",
+            "hidden": "visible"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "victory-ring",
+            "target": "DIV",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "next-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "ambient-drift",
+            "target": "SECTION",
+            "hidden": "visible"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "board-hover",
+            "target": "svg",
+            "hidden": "visible"
+          }
+        ],
+        "queues": {
+          "timers": 0,
+          "animations": 0,
+          "coins": 0,
+          "particles": 0,
+          "sparks": 0,
+          "wheelSparks": 0
+        },
+        "live": {
+          "raf": 0,
+          "timeouts": 0,
+          "intervals": 1,
+          "workers": 0,
+          "audioCreated": 1,
+          "audioClosed": 0,
+          "voices": 0,
+          "peakVoices": 9,
+          "writes": 125
+        }
+      }
+    },
+    {
+      "label": "UI cycles 54",
+      "usage": {
+        "usedSize": 6648772,
+        "totalSize": 7639040,
+        "embedderHeapUsedSize": 1613184,
+        "backingStorageSize": 8829752
+      },
+      "dom": {
+        "documents": 1,
+        "nodes": 432,
+        "jsEventListeners": 66
+      },
+      "state": {
+        "state": {
+          "screen": "home",
+          "paused": false,
+          "result": true,
+          "path": [
+            0,
+            1,
+            2
+          ],
+          "disposed": false
+        },
+        "loop": false,
+        "pendingDestroy": false,
+        "renderType": 2,
+        "commands": 657,
+        "labels": 0,
+        "objects": 4,
+        "textures": 6,
+        "canvases": 2,
+        "ghosts": 0,
+        "coins": 0,
+        "animations": [
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "ambient-drift",
+            "target": "SECTION",
+            "hidden": "visible"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "victory-ring",
+            "target": "DIV",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "next-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "ambient-drift",
+            "target": "SECTION",
+            "hidden": "visible"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "board-hover",
+            "target": "svg",
+            "hidden": "visible"
+          }
+        ],
+        "queues": {
+          "timers": 0,
+          "animations": 0,
+          "coins": 0,
+          "particles": 0,
+          "sparks": 0,
+          "wheelSparks": 0
+        },
+        "live": {
+          "raf": 0,
+          "timeouts": 0,
+          "intervals": 1,
+          "workers": 0,
+          "audioCreated": 1,
+          "audioClosed": 0,
+          "voices": 0,
+          "peakVoices": 9,
+          "writes": 161
+        }
+      }
+    },
+    {
+      "label": "UI cycles 66",
+      "usage": {
+        "usedSize": 6745608,
+        "totalSize": 7639040,
+        "embedderHeapUsedSize": 1620872,
+        "backingStorageSize": 8829752
+      },
+      "dom": {
+        "documents": 1,
+        "nodes": 432,
+        "jsEventListeners": 66
+      },
+      "state": {
+        "state": {
+          "screen": "home",
+          "paused": false,
+          "result": true,
+          "path": [
+            0,
+            1,
+            2
+          ],
+          "disposed": false
+        },
+        "loop": false,
+        "pendingDestroy": false,
+        "renderType": 2,
+        "commands": 657,
+        "labels": 0,
+        "objects": 4,
+        "textures": 6,
+        "canvases": 2,
+        "ghosts": 0,
+        "coins": 0,
+        "animations": [
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "ambient-drift",
+            "target": "SECTION",
+            "hidden": "visible"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "victory-ring",
+            "target": "DIV",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "next-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "ambient-drift",
+            "target": "SECTION",
+            "hidden": "visible"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "board-hover",
+            "target": "svg",
+            "hidden": "visible"
+          }
+        ],
+        "queues": {
+          "timers": 0,
+          "animations": 0,
+          "coins": 0,
+          "particles": 0,
+          "sparks": 0,
+          "wheelSparks": 0
+        },
+        "live": {
+          "raf": 0,
+          "timeouts": 0,
+          "intervals": 1,
+          "workers": 0,
+          "audioCreated": 1,
+          "audioClosed": 0,
+          "voices": 0,
+          "peakVoices": 9,
+          "writes": 197
+        }
+      }
+    },
+    {
+      "label": "UI cycles 78",
+      "usage": {
+        "usedSize": 6775092,
+        "totalSize": 7639040,
+        "embedderHeapUsedSize": 1546784,
+        "backingStorageSize": 8829752
+      },
+      "dom": {
+        "documents": 1,
+        "nodes": 432,
+        "jsEventListeners": 66
+      },
+      "state": {
+        "state": {
+          "screen": "home",
+          "paused": false,
+          "result": true,
+          "path": [
+            0,
+            1,
+            2
+          ],
+          "disposed": false
+        },
+        "loop": false,
+        "pendingDestroy": false,
+        "renderType": 2,
+        "commands": 657,
+        "labels": 0,
+        "objects": 4,
+        "textures": 6,
+        "canvases": 2,
+        "ghosts": 0,
+        "coins": 0,
+        "animations": [
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "ambient-drift",
+            "target": "SECTION",
+            "hidden": "visible"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "victory-ring",
+            "target": "DIV",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "next-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "ambient-drift",
+            "target": "SECTION",
+            "hidden": "visible"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "board-hover",
+            "target": "svg",
+            "hidden": "visible"
+          }
+        ],
+        "queues": {
+          "timers": 0,
+          "animations": 0,
+          "coins": 0,
+          "particles": 0,
+          "sparks": 0,
+          "wheelSparks": 0
+        },
+        "live": {
+          "raf": 0,
+          "timeouts": 0,
+          "intervals": 1,
+          "workers": 0,
+          "audioCreated": 1,
+          "audioClosed": 0,
+          "voices": 0,
+          "peakVoices": 9,
+          "writes": 233
+        }
+      }
+    },
+    {
+      "label": "UI cycles 90",
+      "usage": {
+        "usedSize": 6827580,
+        "totalSize": 7639040,
+        "embedderHeapUsedSize": 1550696,
+        "backingStorageSize": 8829752
+      },
+      "dom": {
+        "documents": 1,
+        "nodes": 432,
+        "jsEventListeners": 66
+      },
+      "state": {
+        "state": {
+          "screen": "home",
+          "paused": false,
+          "result": true,
+          "path": [
+            0,
+            1,
+            2
+          ],
+          "disposed": false
+        },
+        "loop": false,
+        "pendingDestroy": false,
+        "renderType": 2,
+        "commands": 657,
+        "labels": 0,
+        "objects": 4,
+        "textures": 6,
+        "canvases": 2,
+        "ghosts": 0,
+        "coins": 0,
+        "animations": [
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "ambient-drift",
+            "target": "SECTION",
+            "hidden": "visible"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "victory-ring",
+            "target": "DIV",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "next-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "ambient-drift",
+            "target": "SECTION",
+            "hidden": "visible"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "board-hover",
+            "target": "svg",
+            "hidden": "visible"
+          }
+        ],
+        "queues": {
+          "timers": 0,
+          "animations": 0,
+          "coins": 0,
+          "particles": 0,
+          "sparks": 0,
+          "wheelSparks": 0
+        },
+        "live": {
+          "raf": 0,
+          "timeouts": 0,
+          "intervals": 1,
+          "workers": 0,
+          "audioCreated": 1,
+          "audioClosed": 0,
+          "voices": 0,
+          "peakVoices": 9,
+          "writes": 269
+        }
+      }
+    },
+    {
+      "label": "UI cycles 102",
+      "usage": {
+        "usedSize": 6858004,
+        "totalSize": 7639040,
+        "embedderHeapUsedSize": 1551256,
+        "backingStorageSize": 8829752
+      },
+      "dom": {
+        "documents": 1,
+        "nodes": 432,
+        "jsEventListeners": 66
+      },
+      "state": {
+        "state": {
+          "screen": "home",
+          "paused": false,
+          "result": true,
+          "path": [
+            0,
+            1,
+            2
+          ],
+          "disposed": false
+        },
+        "loop": false,
+        "pendingDestroy": false,
+        "renderType": 2,
+        "commands": 657,
+        "labels": 0,
+        "objects": 4,
+        "textures": 6,
+        "canvases": 2,
+        "ghosts": 0,
+        "coins": 0,
+        "animations": [
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "ambient-drift",
+            "target": "SECTION",
+            "hidden": "visible"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "victory-ring",
+            "target": "DIV",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "next-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "ambient-drift",
+            "target": "SECTION",
+            "hidden": "visible"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "board-hover",
+            "target": "svg",
+            "hidden": "visible"
+          }
+        ],
+        "queues": {
+          "timers": 0,
+          "animations": 0,
+          "coins": 0,
+          "particles": 0,
+          "sparks": 0,
+          "wheelSparks": 0
+        },
+        "live": {
+          "raf": 0,
+          "timeouts": 0,
+          "intervals": 1,
+          "workers": 0,
+          "audioCreated": 1,
+          "audioClosed": 0,
+          "voices": 0,
+          "peakVoices": 9,
+          "writes": 305
+        }
+      }
+    },
+    {
+      "label": "after 20 presentation stress cycles",
+      "usage": {
+        "usedSize": 6892444,
+        "totalSize": 7901184,
+        "embedderHeapUsedSize": 1560248,
+        "backingStorageSize": 8829891
+      },
+      "dom": {
+        "documents": 1,
+        "nodes": 432,
+        "jsEventListeners": 66
+      },
+      "state": {
+        "state": {
+          "screen": "home",
+          "paused": false,
+          "result": true,
+          "path": [
+            0,
+            1,
+            2
+          ],
+          "disposed": false
+        },
+        "loop": false,
+        "pendingDestroy": false,
+        "renderType": 2,
+        "commands": 657,
+        "labels": 0,
+        "objects": 4,
+        "textures": 6,
+        "canvases": 2,
+        "ghosts": 0,
+        "coins": 0,
+        "animations": [
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "ambient-drift",
+            "target": "SECTION",
+            "hidden": "visible"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "letter-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "star-idle",
+            "target": "svg",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "victory-ring",
+            "target": "DIV",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "paused",
+            "name": "next-idle",
+            "target": "SPAN",
+            "hidden": "hidden"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "ambient-drift",
+            "target": "SECTION",
+            "hidden": "visible"
+          },
+          {
+            "type": "CSSAnimation",
+            "state": "running",
+            "name": "board-hover",
+            "target": "svg",
+            "hidden": "visible"
+          }
+        ],
+        "queues": {
+          "timers": 0,
+          "animations": 0,
+          "coins": 0,
+          "particles": 0,
+          "sparks": 0,
+          "wheelSparks": 0
+        },
+        "live": {
+          "raf": 0,
+          "timeouts": 0,
+          "intervals": 1,
+          "workers": 0,
+          "audioCreated": 1,
+          "audioClosed": 0,
+          "voices": 0,
+          "peakVoices": 9,
+          "writes": 305
+        }
+      }
+    }
+  ],
+  "productionDiagnosticMarkersAbsent": true,
+  "ci": {
+    "app": {
+      "id": 41313807191,
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-01T13:58:12Z",
+      "updated_at": "2026-11-01T14:15:22Z"
+    },
+    "jobs": [
+      {
+        "name": "kit-baseline",
+        "id": 124869531365,
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run npm ci",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run npm run check",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run npx playwright install --with-deps chromium",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run npm run test:browser",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run node tools/browser-smoke.mjs --production",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run node tools/ux-smoke.mjs --run",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run node tools/balance-smoke.mjs",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "name": "mobile-flows (persistence)",
+        "id": 124869531548,
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run npm ci",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run npx playwright install --with-deps chromium",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run persistence scenarios",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/upload-artifact@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "name": "mobile-flows (reload-touch)",
+        "id": 124869531554,
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run npm ci",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run npx playwright install --with-deps chromium",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run reload-touch scenarios",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/upload-artifact@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "name": "mobile-flows (analytics)",
+        "id": 124869531614,
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run npm ci",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run npx playwright install --with-deps chromium",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run analytics scenarios",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/upload-artifact@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "name": "mobile-flows (localization)",
+        "id": 124869531710,
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run npm ci",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run npx playwright install --with-deps chromium",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run localization scenarios",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/upload-artifact@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      }
+    ],
+    "android": {
+      "id": 41313807158,
+      "status": "completed",
+      "conclusion": "success"
+    }
+  },
+  "previousFailures": {
+    "ubuntu24Crash": "Playwright upstream skips Chromium crash events on Ubuntu24; both real crash cases pass on Ubuntu22. Core limit/full Chromium did not solve it.",
+    "touchObservation": {
+      "run": 41313084161,
+      "artifact": 13085787350,
+      "state": {
+        "screen": "home",
+        "ready": "true",
+        "blocked": "false"
+      },
+      "failure": "Single tap immediately after reload did not open saved result.",
+      "interpretation": "Paint-readiness fix follows observed state/RAF ordering; no claimed deterministic pre-fix local reproduction.",
+      "after": "Two RAF after removing startup cover; no tap retry/force/timeout increase."
+    }
+  },
+  "limits": [
+    "SDK key absent: bridge and native compilation verified, no live delivery or dashboard acceptance.",
+    "Best-effort event capture is not an exactly-once money ledger; no app telemetry outbox.",
+    "Device interaction/audio/haptics/FPS/RSS/thermal/native process death unverified.",
+    "Debug APK is not signed release or RuStore publication.",
+    "Ads remain deferred."
+  ],
+  "sources": {
+    "sdkQuickStart": "https://appmetrica.yandex.com/docs/en/sdk/android/analytics/quick-start",
+    "sdkConfig": "https://github.com/appmetrica/appmetrica-sdk-android/blob/v8.5.1/analytics/src/main/java/io/appmetrica/analytics/AppMetricaConfig.java",
+    "playwrightCrashRestriction": "https://github.com/microsoft/playwright/blob/main/tests/library/page-event-crash.spec.ts"
+  }
+}
