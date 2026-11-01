@@ -21,7 +21,9 @@ jobs:
       - run: node tools/ux-smoke.mjs --run
       - run: node tools/balance-smoke.mjs
   mobile-flows:
-    runs-on: ubuntu-24.04
+    # Upstream Playwright skips crash-event tests on Ubuntu 24.04 (never dispatches).
+    # https://github.com/microsoft/playwright/blob/main/tests/library/page-event-crash.spec.ts
+    runs-on: ${{ matrix.flow == 'persistence' && 'ubuntu-22.04' || 'ubuntu-24.04' }}
     strategy:
       fail-fast: false
       matrix:
