@@ -110,3 +110,8 @@ When adding the application, add and run actual app build and relevant model/flo
 - Language switches preserve confirmed hint/rollback and their semantic messages; keep asynchronous revision/cancellation guards. No renderer recreation or extra frame loop for localization.
 - Intro 1–3 coaching is session-only and nonblocking in the existing instruction line. Completion never requires demonstrating a gesture. Preserve existing level IDs/versions and free undo/reset.
 - Run node tools/localization-smoke.mjs --run for language/layout/gesture/persistence changes. Its default checks the complete matrix; --rules-only only repeats the rule-caption tail on an already validated unchanged runtime.
+
+## Persistence faults and soak verification
+- For save/wheel/reward/ownership changes, run `node tools/persistence-smoke.mjs` and the fault matrix in `tests/persistence-faults.test.ts`; keep old-or-new snapshots, restart idempotence and stale-writer protection.
+- Long diagnostic runs: performance-audit `--long-soak`, then `--supplement`, then `node tools/verify-soak.mjs`; `node tools/large-board-soak.mjs` adds repeated large-prefix pointer input and paused resize/menu cycles. Prepare the private probe first; never ship its globals.
+- Resource budgets and warmup plateaus are bounded evidence, not proof of zero leaks or phone FPS/heat. AudioContext closure and oscillator ended-event counts are different observations. Preserve failure diagnostics; do not call a non-reproduced CI timeout fixed.

@@ -99,3 +99,12 @@ Runtime `dc2d304895fd753545d79e363be209dd0379b5e0`; test-only refinement `05278a
 APK runtime build `41299441736` и повторный Android build `41300409695` — SUCCESS. APK 4 716 596 bytes, SHA f51550dd57e96598e30e6ae70fd5c32806d630aed1a210bb0db084d495301e6f; встроенный JS совпадает с проверенным production bundle. App CI `41300409654` в момент записи выполняется. Debug APK и production GIF подготовлены; это не физический плейтест или signed release.
 
 Подробности, provenance и короткий список проверок телефона — LOCALIZATION_GESTURES_VALIDATION.md / LOCALIZATION_GESTURES_EVIDENCE.json. Открыты физический Android (палец/audio/haptics/FPS/нагрев/process death), аналитика и релизная приёмка; реклама по-прежнему отложена.
+
+## Сохранения и длительный прогон — 1 ноября 2026
+Runtime последнего APK сохранён без изменений. 391 unit tests / 60 files, включая 27 новых fault tests; 18 production UI scenarios с reload в разных фазах победы, отказами записи/readback, покупками, отменой hint, двумя окнами и двумя настоящими browser renderer crashes — PASS. На mixed faults/restores всех 90 clear получается ровно 2200 монет/4 gift milestone.
+
+102 UI + 20 component FX cycles: 432 DOM nodes/65 listeners стабильны, очереди очищаются; heap после GC +79 020 bytes за последние 24 UI cycles. 20 worker requests очищены; 30 paused resizes не увеличивают live GL handles. Шесть performance regression assertions active/idle/background/dispose — PASS. Large-board pointer soak и его итоговые snapshots находятся в новом evidence. Это bounded browser evidence, не native FPS/RSS/thermal acceptance.
+
+Полная локальная локализация повторно PASS: 10 viewport/language combinations +24 flows. Старый App CI `41300409654` упал на localization `.next.tap()` после reload, при прошедших inspect/production all90/UX/balance; причина единичного CI-сбоя пока не установлена. Добавлены failure screenshot/state и CI artifact, persistence smoke включён в CI. Новый test-only commit `f512ac4bbcf82cd5a6424d2f46095c5af082e0d7`: App `41309825959`, Android `41309825964` в момент записи выполняются. Не заявлять all-CI-green без результата.
+
+Подробности: `RELIABILITY_AUDIT_2026-11-01.md` и `RELIABILITY_AUDIT_EVIDENCE.json`. Runtime/сохранения/экономика/90 уровней/визуал прежние; предыдущий APK актуален. Физический Android, аналитика, release acceptance открыты; реклама отложена.

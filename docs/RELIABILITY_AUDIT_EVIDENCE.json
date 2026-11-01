@@ -1,0 +1,2417 @@
+{
+  "date": "2026-11-01",
+  "runtimeCommit": "dc2d304895fd753545d79e363be209dd0379b5e0",
+  "baselineCommit": "cfced4db8adc7de2ed012afcc6ad53b3049237bf",
+  "testCommit": "f512ac4bbcf82cd5a6424d2f46095c5af082e0d7",
+  "sourceSha256": "d81e8171563fcc557f889a03b77fdad2516f992bcc5083bf7b1683ac9af14cdf",
+  "runtimeChanges": false,
+  "productionBundle": {
+    "file": "index-Djt_IT9_.js",
+    "sha256": "dad136d80af46ca0a5d7a1fd96dfc022825e29e85507429df51f6943a46cc9f5"
+  },
+  "unit": {
+    "tests": 391,
+    "files": 60,
+    "newFaultTests": 27,
+    "faultMatrix": "8 operations x before/after/after+unreadable; plus 90-clear mixed restarts, eight wheel sectors, four stale writers"
+  },
+  "browserPersistence": {
+    "checks": [
+      "clear 1: reload at 0ms",
+      "clear 1: reload at 80ms",
+      "clear 1: reload at 400ms",
+      "clear 1: reload at 1200ms",
+      "clear 20: reload at 0ms",
+      "clear 20: reload at 80ms",
+      "clear 20: reload at 400ms",
+      "clear 20: reload at 1200ms",
+      "navigation immediately after durable clear write",
+      "clear write before: recovery and retry",
+      "clear write unreadable: recovery and retry",
+      "theme purchase before: wallet and ownership stay atomic",
+      "theme purchase unreadable: wallet and ownership stay atomic",
+      "hint cancelled by pause never charges; confirmed hint debit survives restart",
+      "second tab cannot write; closing owner transfers lock after reload",
+      "without Web Locks: storage event blocks stale window and preserves reward",
+      "renderer crash with wheel staged: fixed prize once",
+      "renderer crash with wheel committed: fixed prize once"
+    ],
+    "errors": [],
+    "crashCount": 2
+  },
+  "soak": {
+    "summary": {
+      "sourceSha256": "d81e8171563fcc557f889a03b77fdad2516f992bcc5083bf7b1683ac9af14cdf",
+      "uiCycles": 102,
+      "fxCycles": 20,
+      "workerRequests": 20,
+      "pausedResizes": 30,
+      "dom": {
+        "documents": 1,
+        "nodes": 432,
+        "jsEventListeners": 65
+      },
+      "firstHeap": 6010692,
+      "lastHeap": 6863324,
+      "late24CycleGrowth": 79020,
+      "totalHeapGrowth": 852632,
+      "glLive": {
+        "Texture": 14,
+        "Buffer": 9,
+        "Framebuffer": 2,
+        "Renderbuffer": 2,
+        "Program": 4,
+        "Shader": 8
+      },
+      "budgets": {
+        "late24Cycles": 524288,
+        "postWarmup": 2097152
+      },
+      "limitations": "Headless Chromium/SwiftShader; bounded scenario/resource budgets, not native RSS/GPU bytes, phone FPS or heat."
+    },
+    "memory": [
+      {
+        "label": "UI warmup 6",
+        "usage": {
+          "usedSize": 6010692,
+          "totalSize": 7114752,
+          "embedderHeapUsedSize": 1501768,
+          "backingStorageSize": 8822309
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 432,
+          "jsEventListeners": 65
+        },
+        "state": {
+          "state": {
+            "screen": "home",
+            "paused": false,
+            "result": true,
+            "path": [
+              0,
+              1,
+              2
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "animations": [
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "ambient-drift",
+              "target": "SECTION",
+              "hidden": "visible"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "star-idle",
+              "target": "svg",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "star-idle",
+              "target": "svg",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "star-idle",
+              "target": "svg",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "victory-ring",
+              "target": "DIV",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "next-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "ambient-drift",
+              "target": "SECTION",
+              "hidden": "visible"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "board-hover",
+              "target": "svg",
+              "hidden": "visible"
+            }
+          ],
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 1,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 9,
+            "writes": 17
+          }
+        }
+      },
+      {
+        "label": "UI cycles 18",
+        "usage": {
+          "usedSize": 6392180,
+          "totalSize": 7376896,
+          "embedderHeapUsedSize": 1577568,
+          "backingStorageSize": 8822309
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 432,
+          "jsEventListeners": 65
+        },
+        "state": {
+          "state": {
+            "screen": "home",
+            "paused": false,
+            "result": true,
+            "path": [
+              0,
+              1,
+              2
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "animations": [
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "ambient-drift",
+              "target": "SECTION",
+              "hidden": "visible"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "star-idle",
+              "target": "svg",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "star-idle",
+              "target": "svg",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "star-idle",
+              "target": "svg",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "victory-ring",
+              "target": "DIV",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "next-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "ambient-drift",
+              "target": "SECTION",
+              "hidden": "visible"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "board-hover",
+              "target": "svg",
+              "hidden": "visible"
+            }
+          ],
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 1,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 9,
+            "writes": 53
+          }
+        }
+      },
+      {
+        "label": "UI cycles 30",
+        "usage": {
+          "usedSize": 6504936,
+          "totalSize": 7114752,
+          "embedderHeapUsedSize": 1520280,
+          "backingStorageSize": 8822314
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 432,
+          "jsEventListeners": 65
+        },
+        "state": {
+          "state": {
+            "screen": "home",
+            "paused": false,
+            "result": true,
+            "path": [
+              0,
+              1,
+              2
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "animations": [
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "ambient-drift",
+              "target": "SECTION",
+              "hidden": "visible"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "star-idle",
+              "target": "svg",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "star-idle",
+              "target": "svg",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "star-idle",
+              "target": "svg",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "victory-ring",
+              "target": "DIV",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "next-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "ambient-drift",
+              "target": "SECTION",
+              "hidden": "visible"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "board-hover",
+              "target": "svg",
+              "hidden": "visible"
+            }
+          ],
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 1,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 9,
+            "writes": 89
+          }
+        }
+      },
+      {
+        "label": "UI cycles 42",
+        "usage": {
+          "usedSize": 6598400,
+          "totalSize": 7376896,
+          "embedderHeapUsedSize": 1616744,
+          "backingStorageSize": 8822314
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 432,
+          "jsEventListeners": 65
+        },
+        "state": {
+          "state": {
+            "screen": "home",
+            "paused": false,
+            "result": true,
+            "path": [
+              0,
+              1,
+              2
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "animations": [
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "ambient-drift",
+              "target": "SECTION",
+              "hidden": "visible"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "star-idle",
+              "target": "svg",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "star-idle",
+              "target": "svg",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "star-idle",
+              "target": "svg",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "victory-ring",
+              "target": "DIV",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "next-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "ambient-drift",
+              "target": "SECTION",
+              "hidden": "visible"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "board-hover",
+              "target": "svg",
+              "hidden": "visible"
+            }
+          ],
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 1,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 9,
+            "writes": 125
+          }
+        }
+      },
+      {
+        "label": "UI cycles 54",
+        "usage": {
+          "usedSize": 6641524,
+          "totalSize": 7376896,
+          "embedderHeapUsedSize": 1592136,
+          "backingStorageSize": 8822314
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 432,
+          "jsEventListeners": 65
+        },
+        "state": {
+          "state": {
+            "screen": "home",
+            "paused": false,
+            "result": true,
+            "path": [
+              0,
+              1,
+              2
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "animations": [
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "ambient-drift",
+              "target": "SECTION",
+              "hidden": "visible"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "star-idle",
+              "target": "svg",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "star-idle",
+              "target": "svg",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "star-idle",
+              "target": "svg",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "victory-ring",
+              "target": "DIV",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "next-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "ambient-drift",
+              "target": "SECTION",
+              "hidden": "visible"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "board-hover",
+              "target": "svg",
+              "hidden": "visible"
+            }
+          ],
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 1,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 9,
+            "writes": 161
+          }
+        }
+      },
+      {
+        "label": "UI cycles 66",
+        "usage": {
+          "usedSize": 6733396,
+          "totalSize": 7376896,
+          "embedderHeapUsedSize": 1600496,
+          "backingStorageSize": 8822314
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 432,
+          "jsEventListeners": 65
+        },
+        "state": {
+          "state": {
+            "screen": "home",
+            "paused": false,
+            "result": true,
+            "path": [
+              0,
+              1,
+              2
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "animations": [
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "ambient-drift",
+              "target": "SECTION",
+              "hidden": "visible"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "star-idle",
+              "target": "svg",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "star-idle",
+              "target": "svg",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "star-idle",
+              "target": "svg",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "victory-ring",
+              "target": "DIV",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "next-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "ambient-drift",
+              "target": "SECTION",
+              "hidden": "visible"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "board-hover",
+              "target": "svg",
+              "hidden": "visible"
+            }
+          ],
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 1,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 9,
+            "writes": 197
+          }
+        }
+      },
+      {
+        "label": "UI cycles 78",
+        "usage": {
+          "usedSize": 6784304,
+          "totalSize": 7639040,
+          "embedderHeapUsedSize": 1688560,
+          "backingStorageSize": 8822314
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 432,
+          "jsEventListeners": 65
+        },
+        "state": {
+          "state": {
+            "screen": "home",
+            "paused": false,
+            "result": true,
+            "path": [
+              0,
+              1,
+              2
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "animations": [
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "ambient-drift",
+              "target": "SECTION",
+              "hidden": "visible"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "star-idle",
+              "target": "svg",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "star-idle",
+              "target": "svg",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "star-idle",
+              "target": "svg",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "victory-ring",
+              "target": "DIV",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "next-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "ambient-drift",
+              "target": "SECTION",
+              "hidden": "visible"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "board-hover",
+              "target": "svg",
+              "hidden": "visible"
+            }
+          ],
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 1,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 9,
+            "writes": 233
+          }
+        }
+      },
+      {
+        "label": "UI cycles 90",
+        "usage": {
+          "usedSize": 6812504,
+          "totalSize": 7901184,
+          "embedderHeapUsedSize": 1695072,
+          "backingStorageSize": 8822314
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 432,
+          "jsEventListeners": 65
+        },
+        "state": {
+          "state": {
+            "screen": "home",
+            "paused": false,
+            "result": true,
+            "path": [
+              0,
+              1,
+              2
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "animations": [
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "ambient-drift",
+              "target": "SECTION",
+              "hidden": "visible"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "star-idle",
+              "target": "svg",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "star-idle",
+              "target": "svg",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "star-idle",
+              "target": "svg",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "victory-ring",
+              "target": "DIV",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "next-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "ambient-drift",
+              "target": "SECTION",
+              "hidden": "visible"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "board-hover",
+              "target": "svg",
+              "hidden": "visible"
+            }
+          ],
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 1,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 9,
+            "writes": 269
+          }
+        }
+      },
+      {
+        "label": "UI cycles 102",
+        "usage": {
+          "usedSize": 6863324,
+          "totalSize": 7639040,
+          "embedderHeapUsedSize": 1616984,
+          "backingStorageSize": 8822314
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 432,
+          "jsEventListeners": 65
+        },
+        "state": {
+          "state": {
+            "screen": "home",
+            "paused": false,
+            "result": true,
+            "path": [
+              0,
+              1,
+              2
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "animations": [
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "ambient-drift",
+              "target": "SECTION",
+              "hidden": "visible"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "star-idle",
+              "target": "svg",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "star-idle",
+              "target": "svg",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "star-idle",
+              "target": "svg",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "victory-ring",
+              "target": "DIV",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "next-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "ambient-drift",
+              "target": "SECTION",
+              "hidden": "visible"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "board-hover",
+              "target": "svg",
+              "hidden": "visible"
+            }
+          ],
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 1,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 11,
+            "writes": 305
+          }
+        }
+      },
+      {
+        "label": "after 20 presentation stress cycles",
+        "usage": {
+          "usedSize": 6873316,
+          "totalSize": 7901184,
+          "embedderHeapUsedSize": 1632696,
+          "backingStorageSize": 8822453
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 432,
+          "jsEventListeners": 65
+        },
+        "state": {
+          "state": {
+            "screen": "home",
+            "paused": false,
+            "result": true,
+            "path": [
+              0,
+              1,
+              2
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "animations": [
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "ambient-drift",
+              "target": "SECTION",
+              "hidden": "visible"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "letter-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "star-idle",
+              "target": "svg",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "star-idle",
+              "target": "svg",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "star-idle",
+              "target": "svg",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "victory-ring",
+              "target": "DIV",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "next-idle",
+              "target": "SPAN",
+              "hidden": "hidden"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "ambient-drift",
+              "target": "SECTION",
+              "hidden": "visible"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "board-hover",
+              "target": "svg",
+              "hidden": "visible"
+            }
+          ],
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 1,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 11,
+            "writes": 305
+          }
+        }
+      }
+    ],
+    "workerStress": [
+      {
+        "label": "worker stress",
+        "found": 10,
+        "cancelled": 10,
+        "workers": 0
+      }
+    ],
+    "dispose": [
+      {
+        "label": "dispose-while-running",
+        "before": {
+          "state": {
+            "screen": "game",
+            "paused": false,
+            "result": false,
+            "path": [
+              0
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "animations": [
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "ambient-drift",
+              "target": "SECTION",
+              "hidden": "visible"
+            }
+          ],
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 1,
+            "audioClosed": 0,
+            "voices": 0,
+            "peakVoices": 1,
+            "writes": 0
+          }
+        },
+        "after": {
+          "state": {
+            "screen": "game",
+            "paused": false,
+            "result": false,
+            "path": [
+              0
+            ],
+            "disposed": true
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 0,
+          "textures": 0,
+          "canvases": 0,
+          "ghosts": 0,
+          "coins": 0,
+          "animations": [
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "ambient-drift",
+              "target": "SECTION",
+              "hidden": "visible"
+            }
+          ],
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 0,
+            "workers": 0,
+            "audioCreated": 1,
+            "audioClosed": 1,
+            "voices": 0,
+            "peakVoices": 1,
+            "writes": 1
+          }
+        },
+        "afterWake": null
+      },
+      {
+        "label": "dispose-while-sleeping",
+        "before": {
+          "state": {
+            "screen": "home",
+            "paused": false,
+            "result": false,
+            "path": [
+              0
+            ],
+            "disposed": false
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 4,
+          "textures": 6,
+          "canvases": 2,
+          "ghosts": 0,
+          "coins": 0,
+          "animations": [
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "ambient-drift",
+              "target": "SECTION",
+              "hidden": "visible"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "ambient-drift",
+              "target": "SECTION",
+              "hidden": "visible"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "running",
+              "name": "board-hover",
+              "target": "svg",
+              "hidden": "visible"
+            },
+            {
+              "type": "Animation",
+              "state": "running",
+              "target": "HEADER",
+              "hidden": "visible"
+            },
+            {
+              "type": "Animation",
+              "state": "running",
+              "target": "DIV",
+              "hidden": "visible"
+            }
+          ],
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 1,
+            "workers": 0,
+            "audioCreated": 1,
+            "audioClosed": 0,
+            "voices": 1,
+            "peakVoices": 1,
+            "writes": 1
+          }
+        },
+        "after": {
+          "state": {
+            "screen": "home",
+            "paused": false,
+            "result": false,
+            "path": [
+              0
+            ],
+            "disposed": true
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 0,
+          "textures": 0,
+          "canvases": 0,
+          "ghosts": 0,
+          "coins": 0,
+          "animations": [
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "ambient-drift",
+              "target": "SECTION",
+              "hidden": "visible"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "ambient-drift",
+              "target": "SECTION",
+              "hidden": "visible"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "board-hover",
+              "target": "svg",
+              "hidden": "visible"
+            }
+          ],
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 0,
+            "workers": 0,
+            "audioCreated": 1,
+            "audioClosed": 1,
+            "voices": 1,
+            "peakVoices": 1,
+            "writes": 1
+          }
+        },
+        "afterWake": null
+      }
+    ],
+    "audioCounterNote": "Oscillator ended callbacks need not arrive after closing AudioContext. All contexts close; do not interpret a pending ended-event counter as an active audio source."
+  },
+  "gl": {
+    "samples": [
+      {
+        "label": "warm",
+        "data": {
+          "Texture": {
+            "created": 19,
+            "deleted": 5,
+            "live": 14
+          },
+          "Buffer": {
+            "created": 9,
+            "deleted": 0,
+            "live": 9
+          },
+          "Framebuffer": {
+            "created": 4,
+            "deleted": 2,
+            "live": 2
+          },
+          "Renderbuffer": {
+            "created": 4,
+            "deleted": 2,
+            "live": 2
+          },
+          "Program": {
+            "created": 4,
+            "deleted": 0,
+            "live": 4
+          },
+          "Shader": {
+            "created": 8,
+            "deleted": 0,
+            "live": 8
+          }
+        }
+      },
+      {
+        "label": "resizes 10",
+        "data": {
+          "Texture": {
+            "created": 19,
+            "deleted": 5,
+            "live": 14
+          },
+          "Buffer": {
+            "created": 9,
+            "deleted": 0,
+            "live": 9
+          },
+          "Framebuffer": {
+            "created": 24,
+            "deleted": 22,
+            "live": 2
+          },
+          "Renderbuffer": {
+            "created": 24,
+            "deleted": 22,
+            "live": 2
+          },
+          "Program": {
+            "created": 4,
+            "deleted": 0,
+            "live": 4
+          },
+          "Shader": {
+            "created": 8,
+            "deleted": 0,
+            "live": 8
+          }
+        }
+      },
+      {
+        "label": "resizes 20",
+        "data": {
+          "Texture": {
+            "created": 19,
+            "deleted": 5,
+            "live": 14
+          },
+          "Buffer": {
+            "created": 9,
+            "deleted": 0,
+            "live": 9
+          },
+          "Framebuffer": {
+            "created": 44,
+            "deleted": 42,
+            "live": 2
+          },
+          "Renderbuffer": {
+            "created": 44,
+            "deleted": 42,
+            "live": 2
+          },
+          "Program": {
+            "created": 4,
+            "deleted": 0,
+            "live": 4
+          },
+          "Shader": {
+            "created": 8,
+            "deleted": 0,
+            "live": 8
+          }
+        }
+      },
+      {
+        "label": "resizes 30",
+        "data": {
+          "Texture": {
+            "created": 19,
+            "deleted": 5,
+            "live": 14
+          },
+          "Buffer": {
+            "created": 9,
+            "deleted": 0,
+            "live": 9
+          },
+          "Framebuffer": {
+            "created": 64,
+            "deleted": 62,
+            "live": 2
+          },
+          "Renderbuffer": {
+            "created": 64,
+            "deleted": 62,
+            "live": 2
+          },
+          "Program": {
+            "created": 4,
+            "deleted": 0,
+            "live": 4
+          },
+          "Shader": {
+            "created": 8,
+            "deleted": 0,
+            "live": 8
+          }
+        }
+      }
+    ],
+    "identicalPauseWrites": 0
+  },
+  "largeBoard": {
+    "provenance": {
+      "sourceCommit": "cfced4db8adc7de2ed012afcc6ad53b3049237bf",
+      "sourceSha256": "d81e8171563fcc557f889a03b77fdad2516f992bcc5083bf7b1683ac9af14cdf",
+      "mode": "supplement",
+      "probe": "Isolated production source copy; sole source change exposes existing objects. Instrumentation/ablation added at runtime. Normal release globals untouched."
+    },
+    "cycles": 66,
+    "memory": [
+      {
+        "label": "warmup 6",
+        "usage": {
+          "usedSize": 6804280,
+          "totalSize": 7639040,
+          "embedderHeapUsedSize": 1630760,
+          "backingStorageSize": 8822576
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 433,
+          "jsEventListeners": 64
+        },
+        "state": {
+          "path": [
+            4,
+            9,
+            8,
+            3,
+            2,
+            7,
+            6,
+            1,
+            0,
+            5,
+            10,
+            15,
+            20,
+            25,
+            26,
+            27,
+            28,
+            29,
+            24,
+            19
+          ],
+          "loop": false,
+          "objects": 9,
+          "labels": 5,
+          "textures": 11,
+          "canvases": 2,
+          "particles": 0,
+          "timers": 0,
+          "animations": 0,
+          "voices": 0
+        }
+      },
+      {
+        "label": "cycles 26",
+        "usage": {
+          "usedSize": 6600000,
+          "totalSize": 7639040,
+          "embedderHeapUsedSize": 1651000,
+          "backingStorageSize": 8821978
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 435,
+          "jsEventListeners": 64
+        },
+        "state": {
+          "path": [
+            4,
+            9,
+            8,
+            3,
+            2,
+            7,
+            6,
+            1,
+            0,
+            5,
+            10,
+            15,
+            20,
+            25,
+            26,
+            27,
+            28,
+            29,
+            24,
+            19
+          ],
+          "loop": false,
+          "objects": 9,
+          "labels": 5,
+          "textures": 11,
+          "canvases": 2,
+          "particles": 0,
+          "timers": 0,
+          "animations": 0,
+          "voices": 0
+        }
+      },
+      {
+        "label": "cycles 46",
+        "usage": {
+          "usedSize": 6712300,
+          "totalSize": 7901184,
+          "embedderHeapUsedSize": 1675824,
+          "backingStorageSize": 8821978
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 435,
+          "jsEventListeners": 64
+        },
+        "state": {
+          "path": [
+            4,
+            9,
+            8,
+            3,
+            2,
+            7,
+            6,
+            1,
+            0,
+            5,
+            10,
+            15,
+            20,
+            25,
+            26,
+            27,
+            28,
+            29,
+            24,
+            19
+          ],
+          "loop": false,
+          "objects": 9,
+          "labels": 5,
+          "textures": 11,
+          "canvases": 2,
+          "particles": 0,
+          "timers": 0,
+          "animations": 0,
+          "voices": 0
+        }
+      },
+      {
+        "label": "cycles 66",
+        "usage": {
+          "usedSize": 6754472,
+          "totalSize": 7901184,
+          "embedderHeapUsedSize": 1685728,
+          "backingStorageSize": 8821946
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 435,
+          "jsEventListeners": 64
+        },
+        "state": {
+          "path": [
+            4,
+            9,
+            8,
+            3,
+            2,
+            7,
+            6,
+            1,
+            0,
+            5,
+            10,
+            15,
+            20,
+            25,
+            26,
+            27,
+            28,
+            29,
+            24,
+            19
+          ],
+          "loop": false,
+          "objects": 9,
+          "labels": 5,
+          "textures": 11,
+          "canvases": 2,
+          "particles": 0,
+          "timers": 0,
+          "animations": 0,
+          "voices": 0
+        }
+      }
+    ],
+    "errors": [],
+    "late20CycleHeapGrowth": 42172
+  },
+  "performanceRegression": [
+    "Idle has no Phaser frames or FillPath work",
+    "Endpoint pulse/sparks render without rebuilding either cached texture",
+    "Hidden result CSS animations are paused",
+    "Background pauses all CSS animation timelines",
+    "Sleeping renderer disposal removes canvases and WebGL context",
+    "Active renderer disposal also completes; disposed screen has no running CSS animations"
+  ],
+  "localization": {
+    "screens": [
+      {
+        "width": 320,
+        "height": 568,
+        "lang": "ru"
+      },
+      {
+        "width": 320,
+        "height": 568,
+        "lang": "en"
+      },
+      {
+        "width": 360,
+        "height": 800,
+        "lang": "ru"
+      },
+      {
+        "width": 360,
+        "height": 800,
+        "lang": "en"
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "lang": "ru"
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "lang": "en"
+      },
+      {
+        "width": 412,
+        "height": 915,
+        "lang": "ru"
+      },
+      {
+        "width": 412,
+        "height": 915,
+        "lang": "en"
+      },
+      {
+        "width": 576,
+        "height": 1280,
+        "lang": "ru"
+      },
+      {
+        "width": 576,
+        "height": 1280,
+        "lang": "en"
+      }
+    ],
+    "checks": [
+      "Actual touch release/resume and reverse coaching ru",
+      "Actual touch release/resume and reverse coaching en",
+      "Confirmed free rollback relocalizes and remains usable across pause/language change",
+      "Paid hint repeat remains free after language change",
+      "Preference I/O failure is nonfatal, does not alter progress, and supports retry",
+      "Startup ownership error is translated",
+      "Corrupt save stays intact and shows translated recovery ru",
+      "Corrupt save stays intact and shows translated recovery en",
+      "Rule caption/rejection finish-01 ru 320",
+      "Rule caption/rejection walls-01 ru 320",
+      "Rule caption/rejection checkpoints-01 ru 320",
+      "Rule caption/rejection shapes-30 ru 320",
+      "Rule caption/rejection finish-01 en 320",
+      "Rule caption/rejection walls-01 en 320",
+      "Rule caption/rejection checkpoints-01 en 320",
+      "Rule caption/rejection shapes-30 en 320",
+      "Rule caption/rejection finish-01 ru 390",
+      "Rule caption/rejection walls-01 ru 390",
+      "Rule caption/rejection checkpoints-01 ru 390",
+      "Rule caption/rejection shapes-30 ru 390",
+      "Rule caption/rejection finish-01 en 390",
+      "Rule caption/rejection walls-01 en 390",
+      "Rule caption/rejection checkpoints-01 en 390",
+      "Rule caption/rejection shapes-30 en 390"
+    ],
+    "errors": []
+  },
+  "ci": {
+    "previousRun": 41300409654,
+    "conclusion": "failure",
+    "passed": [
+      "unit",
+      "inspect all90",
+      "production all90",
+      "UX",
+      "balance"
+    ],
+    "failed": "localization .next tap timeout after reload; no failure screenshot in old harness",
+    "currentLocalLocalization": "full 10 viewport/language combinations +24 flows PASS, no runtime changes",
+    "followup": "failure screenshot/state collection and always-upload evidence added; new code CI pending, no unverified fix claimed"
+  },
+  "limits": [
+    "Headless Chromium/SwiftShader and private performance probe, not physical Android FPS/RSS/GPU memory/thermal acceptance.",
+    "Some diagnostic processes ran concurrently: timing metrics are not used to claim speedups.",
+    "Soaks have explicit retained-JS budgets; bounded samples are not a mathematical proof of no leaks.",
+    "Fallback without Web Locks tests sequential storage-event conflict; it does not provide atomic cross-process compare-and-swap.",
+    "Native app process death and OS persistence durability not established by browser renderer crash.",
+    "Ads remain deferred."
+  ]
+}
