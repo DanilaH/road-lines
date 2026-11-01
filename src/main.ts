@@ -1,3 +1,5 @@
+import { copy, language, loadLanguage, setLanguage, chooseLanguage, isLanguage, translateMarkup, themeName } from './i18n';
+import { instruction, type GestureCoach } from './ui/instructions';
 import Phaser from 'phaser';
 import { GameplayActivityCoordinator } from '../vendor/mini-games-kit/src/platform/activity';
 import { StartupTimeline } from '../vendor/mini-games-kit/src/startup/timeline';
@@ -26,6 +28,8 @@ import { localDate } from './core/rewards';
 import { rewardArt } from './ui/reward-art';
 import './style.css';
 import './ui/shell.css';
+try { loadLanguage(localStorage); } catch { setLanguage('ru'); }
+const initialStartup = document.querySelector('#startup'); if (initialStartup) initialStartup.textContent = copy.loading;
 let releaseWriter = (): void => {}; 
 
 async function boot(): Promise<void> {
@@ -52,7 +56,9 @@ async function boot(): Promise<void> {
   let bonus: 'gift' | 'offer' | null = null;
   let continueAfterBonus = false;
   let paidHint: { key: string; path: number[] } | null = null;
-  let rejectionText = '', lastReject = -Infinity;
+  let rejectionReason: MoveBlock | null = null, lastReject = -Infinity;
+  const coach: GestureCoach = { released: false, backtracked: false };
+  let coachLevel = level.id, languageSaveFailed = false;
   let rejectionTimer: ReturnType<typeof setTimeout> | undefined;
   let wheelBusy = false, wheelPreparing = false, wheelToken = 0;
   let wheelCommit: Promise<void> | null = null;
@@ -66,32 +72,32 @@ async function boot(): Promise<void> {
   root.innerHTML = `
     <section class="surface" aria-label="Road Lines"><div class="game-content">
       <header class="hud"><span class="level"></span><div class="tools">
-        <button class="tool result-theme" data-action="themes" aria-label="Темы" hidden>${icon('palette')}</button>
-        <button class="tool result-menu" data-action="home" aria-label="Главное меню" hidden>${icon('home')}</button>
-        <button class="tool" data-action="restart" aria-label="Начать заново">${icon('restart')}</button>
+        <button class="tool result-theme" data-action="themes" data-i18n-aria="themes" aria-label="${copy.themes}" hidden>${icon('palette')}</button>
+        <button class="tool result-menu" data-action="home" data-i18n-aria="home" aria-label="${copy.home}" hidden>${icon('home')}</button>
+        <button class="tool" data-action="restart" data-i18n-aria="restart" aria-label="${copy.restart}">${icon('restart')}</button>
         <span class="wallet">${coin}<span class="balance"></span></span>
-        <button class="tool hint" data-action="hint" aria-label="Подсказка">${icon('hint')}<small class="hint-count"></small></button>
-        <button class="tool" data-action="pause" aria-label="Пауза">${icon('pause')}</button>
+        <button class="tool hint" data-action="hint" data-i18n-aria="hint" aria-label="${copy.hint}">${icon('hint')}<small class="hint-count"></small></button>
+        <button class="tool" data-action="pause" data-i18n-aria="pause" aria-label="${copy.pause}">${icon('pause')}</button>
       </div></header>
-      <div class="result-heading" hidden><h1><span style="--letter:0">Г</span><span style="--letter:1">О</span><span style="--letter:2">Т</span><span style="--letter:3">О</span><span style="--letter:4">В</span><span style="--letter:5">О</span><span style="--letter:6">!</span></h1><div class="stars" aria-label="Три звезды">${[0, 1, 2].map(star).join('')}</div></div>
-      <div id="board" tabindex="0" role="group" aria-label="Поле"></div>
+      <div class="result-heading" hidden><h1 data-language="${language}" aria-label="${copy.won}">${[...copy.won].map((letter, i) => `<span style="--letter:${i}" aria-hidden="true">${letter}</span>`).join('')}</h1><div class="stars" data-i18n-aria="threeStars" aria-label="${copy.threeStars}">${[0, 1, 2].map(star).join('')}</div></div>
+      <div id="board" tabindex="0" role="group" data-i18n-aria="board" aria-label="${copy.board}"></div>
       <p class="instruction"></p>
       <div class="rewards" hidden>
         <div class="reward-row"><span class="earned"></span><div class="gift-progress"><div class="track"><span></span></div>${rewardArt('gift')}<span class="fraction"></span></div></div>
-        <button class="multiply" disabled hidden>${icon('play')} ЗАБРАТЬ ×5</button>
-        <button class="next" data-action="next"><span>ДАЛЬШЕ</span></button>
+        <button class="multiply" disabled hidden>${icon('play')} <span data-i18n="multiply">${copy.multiply}</span></button>
+        <button class="next" data-action="next"><span data-i18n="next">${copy.next}</span></button>
       </div>
-      </div><section class="menu-screen" aria-label="Навигация"></section><section class="wheel-screen" hidden aria-label="Ежедневная награда"></section>
+      </div><section class="menu-screen" data-i18n-aria="navigation" aria-label="${copy.navigation}"></section><section class="wheel-screen" hidden data-i18n-aria="daily" aria-label="${copy.daily}"></section>
       <div id="banner-slot" aria-hidden="true"></div>
-      <section class="pause-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="pause-title"><div class="pause-card"><h2 id="pause-title">Пауза</h2><button data-action="resume" class="resume">ПРОДОЛЖИТЬ</button><div class="pause-navigation"><button data-action="sets">ВЫБОР УРОВНЕЙ</button><button data-action="home">ГЛАВНОЕ МЕНЮ</button><button data-action="themes">ТЕМЫ</button></div><div class="settings"><button data-action="sound" aria-pressed="true"></button><button data-action="vibration" aria-pressed="true"></button></div></div></section>
+      <section class="pause-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="pause-title"><div class="pause-card"><h2 id="pause-title">${copy.pause}</h2><button data-action="resume" class="resume">${copy.resume}</button><div class="pause-navigation"><button data-action="sets" data-i18n="levelSelection">${copy.levelSelection}</button><button data-action="home" data-i18n="homeCaps">${copy.homeCaps}</button><button data-action="themes" data-i18n="themesCaps">${copy.themesCaps}</button></div><div class="settings"><button data-action="sound" aria-pressed="true"></button><button data-action="vibration" aria-pressed="true"></button></div><div class="language-setting"><span data-i18n="language">${copy.language}</span><div role="group" data-i18n-aria="language" aria-label="${copy.language}"><button data-action="language" data-language="ru" lang="ru" aria-pressed="true">Русский</button><button data-action="language" data-language="en" lang="en" aria-pressed="false">English</button></div><small class="language-status" role="status"></small></div></div></section>
       <section class="theme-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="theme-title"><div class="theme-purchase">
-        <button class="tool purchase-close" data-action="cancel-theme" aria-label="Закрыть покупку">${icon('close')}</button>
+        <button class="tool purchase-close" data-action="cancel-theme" data-i18n-aria="closePurchase" aria-label="${copy.closePurchase}">${icon('close')}</button>
         <h2 id="theme-title"></h2><div class="purchase-preview"></div><p class="purchase-balance"></p>
         <button class="primary-action" data-action="buy-theme"></button><p class="purchase-shortage" role="status"></p>
       </div></section>
-      <section class="bonus-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="bonus-title"><div class="bonus-card"><h2 id="bonus-title"></h2><div class="bonus-art"></div><p class="bonus-copy"></p><button class="bonus-video" disabled>${icon('play')} ОТКРЫТЬ ЗА ВИДЕО</button><p class="bonus-video-note">Видео пока недоступно</p><button class="bonus-close" data-action="close-bonus"></button></div></section>
+      <section class="bonus-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="bonus-title"><div class="bonus-card"><h2 id="bonus-title"></h2><div class="bonus-art"></div><p class="bonus-copy"></p><button class="bonus-video" disabled>${icon('play')} <span data-i18n="openVideo">${copy.openVideo}</span></button><p class="bonus-video-note" data-i18n="videoUnavailable">${copy.videoUnavailable}</p><button class="bonus-close" data-action="close-bonus"></button></div></section>
       <div class="notice" hidden role="status"><span></span><button data-action="notice"></button></div>
-    </section><div id="startup" role="status">Загрузка…</div>`;
+    </section><div id="startup" role="status">${copy.loading}</div>`;
   const $ = <T extends HTMLElement = HTMLElement>(selector: string): T => root.querySelector<T>(selector)!;
   await document.fonts.load('900 16px "Road Nunito"').catch(() => []);
   const host = $('#board'), scene = new BoardScene();
@@ -108,42 +114,54 @@ async function boot(): Promise<void> {
       if (!disposed && screen === 'game' && !activity.isBlocked() && !game.loop.running) game.loop.wake();
     });
   });
-  const showBalance = (value: number): void => { shownBalance = value; $('.balance').textContent = String(value); $('.balance').style.fontSize = `${Math.min(19, 78 / Math.max(3, String(value).length))}px`;  $('.wallet').setAttribute('aria-label', `${value} монет`); };
+  const showBalance = (value: number): void => { shownBalance = value; $('.balance').textContent = String(value); $('.balance').style.fontSize = `${Math.min(19, 78 / Math.max(3, String(value).length))}px`;  $('.wallet').setAttribute('aria-label', copy.coins(value)); };
   const motion = new WinMotion(root, feedback, showBalance);
   const screens = new ScreenMotion();
   const wheelView = new WheelView($('.wheel-screen'), feedback);
   root.dataset.winPhase = 'idle';
   const readLayout = layoutReader();
   const layout = () => readLayout(host.clientWidth, host.clientHeight, result, level);
-  function notice(text: string, action = ''): void {
+  let noticeState: { text: string | (() => string); action: string | (() => string) } = { text: '', action: '' };
+  function refreshNotice(): void {
+    const text = typeof noticeState.text === 'function' ? noticeState.text() : noticeState.text;
+    const action = typeof noticeState.action === 'function' ? noticeState.action() : noticeState.action;
     $('.notice').hidden = !text; $('.notice span').textContent = text;
     $('.notice button').textContent = action; $('.notice button').hidden = !action;
   }
+  function notice(text: string | (() => string), action: string | (() => string) = ''): void { noticeState = { text, action }; refreshNotice(); }
   function invalidate(keepHelp = false): void { revision++; hints.cancel(); busy = false;
     if (!keepHelp) { hint = []; rollback = null; }
-    clearTimeout(rejectionTimer); rejectionText = ''; }
+    clearTimeout(rejectionTimer); rejectionReason = null; }
   function updateRouteUI(): void {
     const nextCheckpoint = level.checkpoints?.findIndex(c => !path.includes(c)) ?? -1;
-    const ruleCopy = [level.checkpoints?.length ? nextCheckpoint < 0 ? 'Номера пройдены — заполни поле' : `Следующая точка — ${nextCheckpoint + 1}` : '',
-      level.finish !== undefined ? 'Пустой ромб — финиш' : '', level.walls?.length ? 'Обходи стенки' : ''].filter(Boolean).join(' · ');
-    const focusCopy = level.checkpoints?.length ? nextCheckpoint < 0 ? 'Номера пройдены — заполни поле' : `Следующая точка — ${nextCheckpoint + 1}` : level.finish !== undefined ? 'Финиш — после всех клеток' : level.walls?.length ? 'Обходи стенки' : '';
-    $('.instruction').textContent = rejectionText || (busy ? 'Ищу продолжение…' : path.length === 1 ? focusCopy || 'Начни со светлого ромба' : focusCopy ? `${focusCopy}. Продолжай с конца линии` : 'Продолжай с конца линии');
+    if (coachLevel !== level.id) { coach.released = false; coach.backtracked = false; coachLevel = level.id; }
+    const ruleCopy = [level.checkpoints?.length ? nextCheckpoint < 0 ? copy.pointsDone : copy.nextPoint(nextCheckpoint + 1) : '',
+      level.finish !== undefined ? copy.finishMarker : '', level.walls?.length ? copy.avoidWalls : ''].filter(Boolean).join(' · ');
+    const rejectionText = rejectionReason === 'wall' ? copy.wallRejected : rejectionReason === 'finish' ? copy.finishLast : rejectionReason === 'checkpoint' ? copy.pointRejected(nextCheckpoint + 1) : '';
+    $('.instruction').textContent = rejectionText || (busy ? copy.search : instruction(level, path, store.state.completed, coach));
     $('.instruction').classList.toggle('rejected', Boolean(rejectionText));
     $<HTMLButtonElement>('[data-action=hint]').disabled = busy || result || complete(level, path);
-    $('[data-action=hint]').setAttribute('aria-label', busy ? 'Ищу продолжение' : `Подсказка, осталось ${store.state.hints}`);
-    host.setAttribute('aria-label', `Задача ${levels.indexOf(level) + 1}. Заполнено ${path.length} из ${level.cells.length}. ${ruleCopy ? ruleCopy + '. ' : ''}Стрелки — движение и откат.`);
+    $('[data-action=hint]').setAttribute('aria-label', busy ? copy.searchAria : copy.hintAria(store.state.hints));
+    host.setAttribute('aria-label', copy.boardAria(levels.indexOf(level) + 1, path.length, level.cells.length, ruleCopy));
     scene.setState(level, path, hint, result);
     if (inspect) { host.dataset.path = path.join(','); host.dataset.level = level.id; }
   }
   function rejectMove(cell: number, reason: MoveBlock): void {
     if (result || screen !== 'game' || activity.isBlocked() || conflict || performance.now() - lastReject < 380) return;
     lastReject = performance.now();
-    const next = level.checkpoints?.findIndex(c => !path.includes(c)) ?? -1;
-    rejectionText = reason === 'wall' ? 'Здесь стенка — обойди её' : reason === 'finish' ? 'Финиш — после всех клеток' : `Сначала точка ${next + 1}`;
+    rejectionReason = reason;
     updateRouteUI(); scene.reject(cell); feedback.play('reject');
-    clearTimeout(rejectionTimer); rejectionTimer = setTimeout(() => { rejectionText = ''; if (!disposed) updateRouteUI(); }, 1500);
+    clearTimeout(rejectionTimer); rejectionTimer = setTimeout(() => { rejectionReason = null; if (!disposed) updateRouteUI(); }, 1500);
   }
   function redraw(): void {
+    translateMarkup(root); refreshNotice();
+    const title = $('.result-heading h1');
+    if (title.dataset.language !== language) {
+      title.innerHTML = [...copy.won].map((letter, i) => `<span style="--letter:${i}" aria-hidden="true">${letter}</span>`).join('');
+      title.dataset.language = language; title.setAttribute('aria-label', copy.won);
+    }
+    for (const button of root.querySelectorAll<HTMLElement>('[data-action=language]')) button.setAttribute('aria-pressed', String(button.dataset.language === language));
+    $('.language-status').textContent = languageSaveFailed ? copy.languageUnsaved : '';
     const theme = getTheme(store.state.themeId); applyTheme(root, theme); scene.setTheme(theme);
     $('.surface').className = `surface ${result ? 'result' : 'play'}`;
     const ruleCount = Number(level.finish !== undefined) + Number(Boolean(level.walls?.length)) + Number(Boolean(level.checkpoints?.length));
@@ -159,46 +177,46 @@ async function boot(): Promise<void> {
     $('.menu-screen').inert = paused || pendingTheme !== null || bonus !== null;
     if (screen !== 'game' && screen !== 'wheel') renderMenu($('.menu-screen'), screen, store.state, viewSetId);
     $('.pause-navigation').hidden = screen !== 'game';
-    $('#pause-title').textContent = screen === 'game' ? 'Пауза' : 'Настройки';
-    $('[data-action=resume]').textContent = screen === 'game' ? 'ПРОДОЛЖИТЬ' : 'ГОТОВО';
+    $('#pause-title').textContent = screen === 'game' ? copy.pause : copy.settings;
+    $('[data-action=resume]').textContent = screen === 'game' ? copy.resume : copy.done;
     $('.result-menu').hidden = !result; $('.result-theme').hidden = !result;
     $('.theme-overlay').hidden = pendingTheme === null;
     if (pendingTheme) {
       const item = getTheme(pendingTheme);
-      $('#theme-title').textContent = item.name;
+      $('#theme-title').textContent = themeName(item.id);
       $('.purchase-preview').innerHTML = themePreview(item);
-      $('.purchase-balance').textContent = `Баланс: ${store.state.coins} монет`;
-      $('[data-action=buy-theme]').textContent = `КУПИТЬ ЗА ${item.price}`;
+      $('.purchase-balance').textContent = copy.balance(store.state.coins);
+      $('[data-action=buy-theme]').textContent = copy.buyFor(item.price);
       $<HTMLButtonElement>('[data-action=buy-theme]').disabled = store.state.coins < item.price || conflict || store.recoveryRequired;
-      $('.purchase-shortage').textContent = store.state.coins < item.price ? `Не хватает монет: ${item.price - store.state.coins}.` : 'Покупка за игровые монеты';
+      $('.purchase-shortage').textContent = store.state.coins < item.price ? copy.shortage(item.price - store.state.coins) : copy.coinPurchase;
     }
     $('.bonus-overlay').hidden = bonus === null; $('.bonus-overlay').dataset.kind = bonus ?? '';
     if (bonus) {
       const offer = store.state.offer;
-      $('#bonus-title').textContent = bonus === 'gift' ? 'Подарок!' : 'Новое оформление';
+      $('#bonus-title').textContent = bonus === 'gift' ? copy.gift : copy.newTheme;
       $('.bonus-art').innerHTML = bonus === 'gift' ? rewardArt('gift', true) : offer ? themePreview(getTheme(offer.themeId)) : '';
-      $('.bonus-copy').textContent = bonus === 'gift' ? '+100 монет за 20 новых задач' : offer ? getTheme(offer.themeId).name : '';
+      $('.bonus-copy').textContent = bonus === 'gift' ? copy.giftReward : offer ? themeName(offer.themeId) : '';
       $('.bonus-video').hidden = bonus === 'gift'; $('.bonus-video-note').hidden = bonus === 'gift';
-      $('.bonus-close').textContent = bonus === 'gift' ? 'ПРОДОЛЖИТЬ' : 'НЕ СЕЙЧАС';
+      $('.bonus-close').textContent = bonus === 'gift' ? copy.resume : copy.notNow;
     }
-    $('.level').innerHTML = `<small>Уровень</small><strong>${levelLabel(level.id)}</strong>`;
+    $('.level').innerHTML = `<small>${copy.level}</small><strong>${levelLabel(level.id)}</strong>`;
     showBalance(shownBalance);
-    $('[data-action=sound]').textContent = `Звук: ${feedback.settings.sound ? 'вкл' : 'выкл'}`;
+    $('[data-action=sound]').textContent = copy.sound(feedback.settings.sound);
     $('[data-action=sound]').setAttribute('aria-pressed', String(feedback.settings.sound));
-    $('[data-action=vibration]').textContent = `Вибрация: ${feedback.settings.vibration ? 'вкл' : 'выкл'}`;
+    $('[data-action=vibration]').textContent = copy.vibration(feedback.settings.vibration);
     $('[data-action=vibration]').setAttribute('aria-pressed', String(feedback.settings.vibration));
     $('.hint-count').textContent = String(store.state.hints);
     $<HTMLButtonElement>('[data-action=hint]').disabled = busy || result || complete(level, path);
     $<HTMLButtonElement>('[data-action=restart]').disabled = !result && complete(level, path);
-    $<HTMLButtonElement>('[data-action=hint]').setAttribute('aria-label', busy ? 'Ищу продолжение' : `Подсказка, осталось ${store.state.hints}`);
+    $<HTMLButtonElement>('[data-action=hint]').setAttribute('aria-label', busy ? copy.searchAria : copy.hintAria(store.state.hints));
     $('.result-heading').hidden = !result; $('.rewards').hidden = !result; $('#banner-slot').hidden = screen !== 'levels' && (screen !== 'game' || result);
     $('.instruction').hidden = result;
-    $('.earned').innerHTML = fixture ? `${coin} +20` : reward ? `${coin} +${reward}` : 'Уже пройдено';
+    $('.earned').innerHTML = fixture ? `${coin} +20` : reward ? `${coin} +${reward}` : copy.alreadyCompleted;
     const giftCount = store.state.completed.length === 0 ? 0 : (store.state.completed.length - 1) % 20 + 1;
     $('.fraction').textContent = `${giftCount}/20`;
     $('.track span').style.width = `${Math.min(100, giftCount * 5)}%`;
-    $('.gift-progress').setAttribute('aria-label', `Подарок: ${giftCount} из 20`);
-    $('.next span').textContent = !nextInSet(level.id) ? 'К ВЫБОРУ УРОВНЕЙ' : 'ДАЛЬШЕ';
+    $('.gift-progress').setAttribute('aria-label', copy.giftProgress(giftCount));
+    $('.next span').textContent = !nextInSet(level.id) ? copy.toLevels : copy.next;
     updateRouteUI();
     activity.setGameplayDesired(screen === 'game' && !result);
     if (inspect) { host.dataset.path = path.join(','); host.dataset.level = level.id; }
@@ -221,7 +239,7 @@ async function boot(): Promise<void> {
       }
     });
   }
-  function saveError(): void { saveFailed = true; notice('Не удалось сохранить прогресс.', 'Повторить'); }
+  function saveError(): void { saveFailed = true; notice(() => copy.saveFailed, () => copy.retry); }
   function flush(): boolean {
     clearTimeout(saveTimer);
     if (fixture || conflict || result) return !saveFailed;
@@ -247,7 +265,7 @@ async function boot(): Promise<void> {
     if (complete(level, path)) finish();
     else { clearTimeout(saveTimer); saveTimer = setTimeout(flush, 80); }
   }
-  const input = installRouteInput(host, () => ({ level, path, layout: layout(), blocked: screen !== 'game' || result || activity.isBlocked() || conflict || complete(level, path) }), change, () => { if (!complete(level, path)) { flush(); scene.resumeHead(); } }, rejectMove);
+  const input = installRouteInput(host, () => ({ level, path, layout: layout(), blocked: screen !== 'game' || result || activity.isBlocked() || conflict || complete(level, path) }), next => { if (next.length < path.length) coach.backtracked = true; change(next); }, () => { if (!complete(level, path)) { if (path.length > 1) coach.released = true; flush(); scene.resumeHead(); updateRouteUI(); } }, rejectMove);
   const unsubscribe = activity.onBlockedChange(blocked => {
     root.dataset.blocked = String(blocked);
     feedback.setBlocked(blocked);
@@ -276,7 +294,7 @@ async function boot(): Promise<void> {
     else if (screen === 'game') setPause(true);
   }
   function navigate(next: Exclude<Screen, 'game'>): void {
-    if (conflict || store.recoveryRequired) { notice('Нужно заново открыть сохранение.', 'Перезагрузить'); return; }
+    if (conflict || store.recoveryRequired) { notice(() => copy.needReload, () => copy.reload); return; }
     input.cancel();
     if (screen === 'wheel') cancelWheel();
     if (!flush()) return;
@@ -386,28 +404,27 @@ async function boot(): Promise<void> {
   async function requestHint(): Promise<void> {
     if (busy || result || activity.isBlocked() || complete(level, path)) return;
     const key = `${level.id}:${level.version}:${path.join(',')}`;
-    if (paidHint?.key === key) { hint = [...paidHint.path]; notice('Бледная линия показывает продолжение.'); updateRouteUI(); return; }
+    if (paidHint?.key === key) { hint = [...paidHint.path]; notice(() => copy.hintShown); updateRouteUI(); return; }
     input.cancel(); invalidate(); const token = revision;
     busy = true; notice(''); redraw();
     const answer = await hints.request(level, path);
     if (disposed || token !== revision || !answer || result || activity.isBlocked()) return;
     busy = false;
     if (answer.kind === 'FOUND') {
-      if (!store.state.hints) { notice('Подсказки закончились. Проведи по линии назад или начни заново.'); redraw(); return; }
+      if (!store.state.hints) { notice(() => copy.noHints); redraw(); return; }
       try { store.write({ ...store.state, levelId: level.id, levelVersion: level.version, path: [...path], hints: store.state.hints - 1 });
-        hint = answer.path.slice(path.length - 1, path.length + 3); paidHint = { key, path: [...hint] }; notice('Бледная линия показывает продолжение.'); }
+        hint = answer.path.slice(path.length - 1, path.length + 3); paidHint = { key, path: [...hint] }; notice(() => copy.hintShown); }
       catch { saveError(); }
     } else if (answer.kind === 'UNSOLVABLE') {
       rollback = answer.rollbackLength ?? null;
-      const count = path.length - (rollback ?? path.length), tail = count % 100;
-      const cells = tail >= 11 && tail <= 14 ? 'клеток' : count % 10 === 1 ? 'клетку' : count % 10 >= 2 && count % 10 <= 4 ? 'клетки' : 'клеток';
-      notice(rollback !== null ? `Этот маршрут зашёл в тупик. Вернуться на ${count} ${cells}?` : 'Этот маршрут зашёл в тупик. Попробуй откатить несколько клеток.', rollback !== null ? 'Вернуться' : '');
-    } else notice('Сейчас не удалось найти продолжение. Подсказка не потрачена.');
+      const count = path.length - (rollback ?? path.length);
+      notice(rollback !== null ? () => copy.deadEndReturn(count) : () => copy.deadEnd, rollback !== null ? () => copy.return : '');
+    } else notice(() => copy.unknown);
     redraw();
   }
   function click(event: MouseEvent): void {
     const target = (event.target as Element).closest<HTMLButtonElement>('button[data-action]');
-    if (!target || target.disabled || (activity.isBlocked() && target.dataset.action !== 'resume' && target.dataset.action !== 'notice' && target.dataset.action !== 'sound' && target.dataset.action !== 'vibration' && !(bonus && target.dataset.action === 'close-bonus') && !(pendingTheme && (target.dataset.action === 'buy-theme' || target.dataset.action === 'cancel-theme')) && !(paused && (target.dataset.action === 'sets' || target.dataset.action === 'home' || target.dataset.action === 'themes')))) return;
+    if (!target || target.disabled || (activity.isBlocked() && target.dataset.action !== 'resume' && target.dataset.action !== 'notice' && target.dataset.action !== 'sound' && target.dataset.action !== 'vibration' && !(bonus && target.dataset.action === 'close-bonus') && !(pendingTheme && (target.dataset.action === 'buy-theme' || target.dataset.action === 'cancel-theme')) && !(paused && (target.dataset.action === 'sets' || target.dataset.action === 'home' || target.dataset.action === 'themes' || target.dataset.action === 'language')))) return;
     feedback.play('button');
     switch (target.dataset.action) {
       case 'wheel': navigate('wheel'); break;
@@ -439,6 +456,12 @@ async function boot(): Promise<void> {
         else if (saveFailed) { if (complete(level, path)) finish(); else if (flush()) notice(''); }
         else if (rollback !== null) { const p = path.slice(0, rollback); change(p); flush(); }
         break;
+      case 'language': {
+        const next = target.dataset.language;
+        if (!paused || !isLanguage(next) || (next === language && !languageSaveFailed)) break;
+        try { languageSaveFailed = !chooseLanguage(next, localStorage); } catch { setLanguage(next); languageSaveFailed = true; }
+        redraw(); root.querySelector<HTMLButtonElement>(`[data-action=language][data-language=${language}]`)?.focus(); break;
+      }
       case 'sound': feedback.setSetting('sound', !feedback.settings.sound); redraw(); break;
       case 'vibration': feedback.setSetting('vibration', !feedback.settings.vibration); redraw(); break;
       case 'next': void goNext(); break;
@@ -478,7 +501,7 @@ async function boot(): Promise<void> {
   const onStorage = (event: StorageEvent): void => {
     if (event.key !== SAVE_KEY && event.key !== null) return;
     conflict = true; activity.setBlocked('save-conflict', true);
-    notice('Прогресс изменён в другой вкладке. Открой его заново.', 'Перезагрузить');
+    notice(() => copy.conflict, () => copy.reload);
   };
   window.addEventListener('storage', onStorage);
   const onViewportResize = (): void => {
@@ -494,7 +517,7 @@ async function boot(): Promise<void> {
     if (screen === 'wheel') wheelView.tick(store.state);
   }, 1000);
   let rendererReady = false, platformReady = false;
-  const deadline = setTimeout(() => { const startup = root.querySelector('#startup'); if (startup) startup.textContent = 'Запуск занимает слишком много времени. Перезапусти приложение.'; }, 15_000);
+  const deadline = setTimeout(() => { const startup = root.querySelector('#startup'); if (startup) startup.textContent = copy.slowStart; }, 15_000);
   function presentable(): void {
     if (!rendererReady || !platformReady || disposed) return;
     frame = requestAnimationFrame(() => { secondFrame = requestAnimationFrame(() => {
@@ -521,11 +544,11 @@ async function boot(): Promise<void> {
   window.addEventListener('pagehide', pagehide);
   if (import.meta.hot) import.meta.hot.dispose(dispose);
   try { const dispose = await installRuntime(activity, onBack, background => { root.dataset.background = String(background); }); if (disposed) dispose(); else { disposeRuntime = dispose; platformReady = true; timeline.mark('platform'); presentable(); } }
-  catch (error) { activity.setBlocked('startup-error', true); clearTimeout(deadline); $('#startup').textContent = 'Не удалось запустить игру. Перезапусти приложение.'; console.error(error); }
+  catch (error) { activity.setBlocked('startup-error', true); clearTimeout(deadline); $('#startup').textContent = copy.failedStart; console.error(error); }
 }
 void boot().catch(error => {
   releaseWriter();
-  document.querySelector('#app')!.innerHTML = '<div class="fatal" role="alert"><p>Не удалось прочитать сохранение. Прогресс не сброшен.</p><button onclick="location.reload()">Попробовать снова</button></div>';
+  document.querySelector('#app')!.innerHTML = `<div class="fatal" role="alert"><p>${copy.failedSave}</p><button onclick="location.reload()">${copy.tryAgain}</button></div>`;
   if (error instanceof SaveOwnershipError) document.querySelector('.fatal p')!.textContent = error.message;
   console.error('Startup failed', error);
 });

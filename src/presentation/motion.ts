@@ -1,3 +1,4 @@
+import { copy, language } from '../i18n';
 import { createValueTransferPlan, valueAfterVisualArrival, valueTransferEmissionDelay, shouldPlayValueTransferCue } from '../../vendor/mini-games-kit/src/core/value-transfer';
 import type { Feedback } from './feedback';
 
@@ -43,9 +44,10 @@ export class WinMotion {
     this.stop(); this.balance = balance; this.reward = reward; this.displayBalance(balance - reward);
     this.root.dataset.winPhase = 'building';
     const next = this.query('.next') as HTMLButtonElement; next.disabled = true;
-    const title = this.query('.result-heading h1'); title.replaceChildren(...[...'ГОТОВО!'].map((letter, i) => {
-      const span = document.createElement('span'); span.textContent = letter; span.style.setProperty('--letter', String(i)); return span;
+    const title = this.query('.result-heading h1'); title.replaceChildren(...[...copy.won].map((letter, i) => {
+      const span = document.createElement('span'); span.textContent = letter; span.setAttribute('aria-hidden', 'true'); span.style.setProperty('--letter', String(i)); return span;
     }));
+    title.dataset.language = language; title.setAttribute('aria-label', copy.won);
     const letters = [...title.children];
     letters.forEach((el, i) => this.animate(el, [
       { opacity: 0, transform: 'translateY(22px) scale(.4) rotate(-12deg)' },

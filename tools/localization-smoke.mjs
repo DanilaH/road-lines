@@ -1,0 +1,71 @@
+import assert from 'node:assert/strict';
+import{chromium}from'@playwright/test';
+import{spawn,spawnSync}from'node:child_process';
+import{readFileSync,writeFileSync,mkdirSync}from'node:fs';
+const out='.test-output/localization';mkdirSync(out,{recursive:true});
+const raw=readFileSync('src/content/levels.ts','utf8'),levels=JSON.parse(raw.slice(raw.indexOf('= ')+2).trim().replace(/;$/,'')),key='road-lines.save.v1',localeKey='road-lines.locale.v1';
+const rulesOnly=process.argv.includes('--rules-only');
+const report=rulesOnly?JSON.parse(readFileSync(out+'/results.json','utf8')):{errors:[],checks:[],screens:[]};
+const flush=()=>writeFileSync(out+'/results.json',JSON.stringify(report,null,2));
+const seed=(l,extra={})=>({version:3,levelId:l.id,levelVersion:l.version,path:[l.start],completed:[],coins:1000,hints:3,themeId:'classic',ownedThemes:['classic','mint'],drafts:{},giftMilestones:Math.floor((extra.completed?.length??0)/20),giftNotice:null,lastOfferAt:0,offer:null,daily:{lastDate:null,pending:null,last:null},...extra});
+if(spawnSync(process.execPath,['node_modules/vite/bin/vite.js','build'],{stdio:'inherit'}).status!==0)process.exit(1);
+const server=spawn(process.execPath,['node_modules/vite/bin/vite.js','preview','--host','127.0.0.1','--port','4224','--strictPort'],{stdio:'ignore'}),url='http://127.0.0.1:4224';let browser;
+const save=p=>p.evaluate(k=>JSON.parse(localStorage.getItem(k)),key);
+async function open(lang,data,width=390,height=844,video=false){
+ const context=await browser.newContext({viewport:{width,height},deviceScaleFactor:2,hasTouch:true,isMobile:true,reducedMotion:'reduce',...(video?{recordVideo:{dir:out+'/video',size:{width,height}}}:{})});
+ await context.addInitScript(({key,localeKey,lang,data})=>{if(!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify(data));if(!localStorage.getItem(localeKey))localStorage.setItem(localeKey,lang);localStorage.setItem('road-lines.feedback.v1',JSON.stringify({sound:false,vibration:false}));},{key,localeKey,lang,data});
+ const p=await context.newPage();p.on('pageerror',e=>report.errors.push(e.message));await p.goto(url);await p.locator('#app[data-ready=true]').waitFor();return{p,context};
+}
+async function scanEnglish(p){
+ const bad=await p.evaluate(()=>{
+  const visible=e=>e.getClientRects().length&&getComputedStyle(e).visibility==='visible'&&!e.closest('[hidden]')&&e.closest('[lang]')?.getAttribute('lang')!=='ru';const bad=[];
+  const walker=document.createTreeWalker(document.querySelector('#app'),NodeFilter.SHOW_TEXT);let n;while(n=walker.nextNode()){const e=n.parentElement;if(e&&visible(e)&&/[А-Яа-яЁё]/.test(n.textContent))bad.push(n.textContent);}
+  for(const e of document.querySelectorAll('#app [aria-label]'))if(visible(e)&&/[А-Яа-яЁё]/.test(e.getAttribute('aria-label')))bad.push(e.getAttribute('aria-label'));return bad;
+ });assert.deepEqual(bad,[],'Visible English surface or aria contains Cyrillic');
+}
+async function shot(p,name,lang){if(lang==='en')await scanEnglish(p);await p.screenshot({path:out+'/'+name+'.png'});}
+async function switchPaused(p,lang){await p.locator('[data-action=language][data-language='+lang+']').tap();assert.equal(await p.locator('html').getAttribute('lang'),lang);assert.equal(await p.locator('[data-action=language][data-language='+lang+']').getAttribute('aria-pressed'),'true');}
+async function center(p,l,c){const b=await p.locator('#board').boundingBox(),xs=l.cells.map(c=>c%l.width),ys=l.cells.map(c=>Math.floor(c/l.width)),nx=Math.max(...xs)-Math.min(...xs)+1,ny=Math.max(...ys)-Math.min(...ys)+1,z=Math.min(56*Math.min(b.width/390,1.5),(b.width-40)/(nx+(nx-1)/7),(b.height-64)/(ny+(ny-1)/7));return{x:b.x+(b.width-nx*z-(nx-1)*z/7)/2+(c%l.width-Math.min(...xs))*z*8/7+z/2,y:b.y+(b.height-ny*z-(ny-1)*z/7)/2+(Math.floor(c/l.width)-Math.min(...ys))*z*8/7+z/2};}
+async function touchPath(p,l,path){const cdp=await p.context().newCDPSession(p);const point=await center(p,l,path[0]);await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{...point,id:1}]});for(const c of path.slice(1))await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{...await center(p,l,c),id:1}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await cdp.detach();}
+try{
+ for(let i=0;;i++){try{if((await fetch(url)).ok)break;}catch{}if(i>80)throw Error('preview');await new Promise(r=>setTimeout(r,100));}browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+ if(!rulesOnly){
+ for(const [width,height]of [[320,568],[360,800],[390,844],[412,915],[576,1280]])for(const lang of ['ru','en']){
+  const {p,context}=await open(lang,seed(levels[2],{path:[0,1],completed:levels.slice(0,2).map(l=>l.id)}),width,height);assert.equal(await p.locator('html').getAttribute('lang'),lang);await shot(p,`home-${lang}-${width}`,lang);
+  await p.locator('[data-action=menu-settings]').tap();const card=await p.locator('.pause-card').boundingBox();assert(card.x>=0&&card.x+card.width<=width+1&&card.y>=0&&card.y+card.height<=height+1,'Settings stay inside viewport');
+  const before=await p.evaluate(k=>localStorage.getItem(k),key);await switchPaused(p,lang==='ru'?'en':'ru');await switchPaused(p,lang);assert.equal(await p.evaluate(k=>localStorage.getItem(k),key),before,'Language change never rewrites progress');await shot(p,`settings-${lang}-${width}`,lang);await p.locator('[data-action=resume]').tap();
+  await p.locator('[data-action=sets]:visible').tap();await shot(p,`sets-${lang}-${width}`,lang);await p.locator('[data-action=open-set][data-set=intro]').tap();await shot(p,`levels-${lang}-${width}`,lang);await p.locator('[data-action=menu-back]:visible').tap();await p.locator('[data-action=menu-back]:visible').tap();
+  await p.locator('[data-action=themes]:visible').tap();await shot(p,`themes-${lang}-${width}`,lang);await p.locator('[data-theme-id=lagoon]').tap();await shot(p,`purchase-${lang}-${width}`,lang);await p.locator('[data-action=buy-theme]').tap();assert.equal((await save(p)).coins,500);assert((await save(p)).ownedThemes.includes('lagoon'));await p.locator('[data-action=menu-back]:visible').tap();
+  await p.locator('[data-action=wheel]').tap();await shot(p,`wheel-${lang}-${width}`,lang);await p.locator('[data-action=spin]').tap();await p.waitForFunction(()=>document.querySelector('.wheel-screen').dataset.spinning==='false'&&!document.querySelector('.wheel-result').textContent.includes('Удачи')&&!document.querySelector('.wheel-result').textContent.includes('Good luck'));const spin=(await save(p)).daily.last;assert(spin);await shot(p,`wheel-won-${lang}-${width}`,lang);await p.locator('[data-action=menu-back]:visible').tap();
+  await p.locator('[data-action=continue]').tap();await shot(p,`play-${lang}-${width}`,lang);await touchPath(p,levels[2],[1,2,5,4,3]);await p.locator('.result-heading').waitFor();await p.waitForTimeout(500);assert.equal(await p.locator('.result-heading h1').textContent(),lang==='en'?'CLEAR!':'ГОТОВО!');await shot(p,`result-${lang}-${width}`,lang);
+  const state=await save(p);assert.equal(state.daily.last.id,spin.id);assert.equal(state.completed.length,3);await p.reload();await p.locator('#app[data-ready=true]').waitFor();assert.equal(await p.locator('html').getAttribute('lang'),lang);assert.deepEqual(await save(p),state);await p.locator('[data-action=continue]').tap();await p.locator('.next').tap();await p.locator('.play').waitFor();assert.equal((await save(p)).levelId,levels[3].id);report.screens.push({width,height,lang});await context.close();flush();console.log('Locale viewport passed',lang,width);
+ }
+ for(const lang of ['ru','en']){
+  const {p,context}=await open(lang,seed(levels[1]),390,844,true);await p.locator('[data-action=continue]').tap();await touchPath(p,levels[1],levels[1].witness.slice(0,2));assert.equal(await p.locator('.instruction').textContent(),lang==='ru'?'Продолжи с конца линии':'Continue from the end of the line');assert.deepEqual((await save(p)).path,levels[1].witness.slice(0,2));await p.waitForTimeout(500);await touchPath(p,levels[1],levels[1].witness.slice(1));await p.locator('.result-heading').waitFor();await p.locator('.next').tap();await p.locator('.play').waitFor();await touchPath(p,levels[2],[0,1,2]);await p.waitForTimeout(500);await touchPath(p,levels[2],[2,1]);assert.deepEqual((await save(p)).path,[0,1]);assert.equal(await p.locator('.instruction').textContent(),lang==='ru'?'Откат бесплатный. Заполни всё поле':'Undo is free. Fill every cell');await p.waitForTimeout(700);const v=p.video();await context.close();await v.saveAs(out+'/coach-'+lang+'.webm');report.checks.push('Actual touch release/resume and reverse coaching '+lang);flush();
+ }
+ {
+  const {p,context}=await open('ru',seed(levels[2],{path:[0,1,4],hints:0}));await p.locator('[data-action=continue]').tap();await p.locator('[data-action=hint]').tap();await p.getByRole('button',{name:'Вернуться',exact:true}).waitFor();await p.locator('[data-action=pause]').tap();const before=await save(p);await switchPaused(p,'en');assert.deepEqual(await save(p),before);await p.locator('[data-action=resume]').tap();await p.getByText('This route is a dead end. Go back 1 cell?',{exact:true}).waitFor();await scanEnglish(p);await p.getByRole('button',{name:'Go back',exact:true}).tap();assert.deepEqual((await save(p)).path,[0,1]);assert.equal((await save(p)).hints,0);report.checks.push('Confirmed free rollback relocalizes and remains usable across pause/language change');await context.close();
+ }
+ {
+  const {p,context}=await open('ru',seed(levels[2],{path:[0,1],hints:1}));await p.locator('[data-action=continue]').tap();await p.locator('[data-action=hint]').tap();await p.getByText('Бледная линия показывает продолжение.',{exact:true}).waitFor();await p.locator('[data-action=pause]').tap();await switchPaused(p,'en');await p.locator('[data-action=resume]').tap();await p.locator('[data-action=hint]').tap();await p.getByText('The pale line shows the way forward.',{exact:true}).waitFor();assert.equal((await save(p)).hints,0);report.checks.push('Paid hint repeat remains free after language change');await context.close();
+ }
+ {
+  const {p,context}=await open('ru',seed(levels[0]));await p.locator('[data-action=menu-settings]').tap();const before=await save(p);await p.evaluate(k=>{const original=Storage.prototype.setItem;window.__restoreLocaleWrites=()=>Storage.prototype.setItem=original;Storage.prototype.setItem=function(key,value){if(key===k)throw Error('full');return original.call(this,key,value);};},localeKey);await switchPaused(p,'en');await p.getByText('Language changed, but the choice could not be saved.',{exact:true}).waitFor();assert.deepEqual(await save(p),before);await p.evaluate(()=>__restoreLocaleWrites());await switchPaused(p,'en');assert.equal(await p.locator('.language-status').textContent(),'');await p.reload();await p.locator('#app[data-ready=true]').waitFor();assert.equal(await p.locator('html').getAttribute('lang'),'en');report.checks.push('Preference I/O failure is nonfatal, does not alter progress, and supports retry');await context.close();
+ }
+ {
+  const {p,context}=await open('en',seed(levels[0]));const other=await context.newPage();await other.goto(url);await other.getByText('The game is already open in another tab. Close it and try again.',{exact:true}).waitFor();await shot(other,'ownership-error-en','en');await other.close();await context.close();report.checks.push('Startup ownership error is translated');
+ }
+ for(const lang of ['ru','en']){
+  const context=await browser.newContext({viewport:{width:320,height:568}});await context.addInitScript(({key,localeKey,lang})=>{localStorage.setItem(localeKey,lang);localStorage.setItem(key,'{bad');},{key,localeKey,lang});const p=await context.newPage();await p.goto(url);await p.getByRole('alert').waitFor();assert.equal(await p.locator('.fatal p').textContent(),lang==='en'?'Could not read your save. Your progress has not been reset.':'Не удалось прочитать сохранение. Прогресс не сброшен.');assert.equal(await p.evaluate(k=>localStorage.getItem(k),key),'{bad');await shot(p,'corrupt-save-'+lang,lang);await context.close();report.checks.push('Corrupt save stays intact and shows translated recovery '+lang);
+ }
+ }
+ for(const [width,height]of [[320,568],[390,844]])for(const lang of ['ru','en'])for(const id of ['finish-01','walls-01','checkpoints-01','shapes-30']){
+  const l=levels.find(l=>l.id===id);let path,next;
+  if(id==='finish-01'){path=[0,1,2,5];next=8;}else if(id==='walls-01'){path=[0,3,6,7];next=8;}else if(id==='checkpoints-01'){path=[0,1,2,5];next=8;}else path=l.witness.slice(0,l.witness.indexOf(l.checkpoints.at(-1))+1);
+  const {p,context}=await open(lang,seed(l,{path,themeId:lang==='en'?'dusk':'classic',ownedThemes:['classic','mint','dusk']}),width,height);await p.locator('[data-action=continue]').tap();await p.waitForTimeout(100);
+  const instruction=await p.locator('.instruction').boundingBox(),banner=await p.locator('#banner-slot').boundingBox();assert(instruction.y+instruction.height<=banner.y+1,'Long rule caption clears banner');await shot(p,`rule-${id}-${lang}-${width}`,lang);
+  if(next!==undefined){await touchPath(p,l,[path.at(-1),next]);const expected=lang==='ru'?id==='finish-01'?'Финиш — после всех клеток':id==='walls-01'?'Здесь стенка — обойди её':'Сначала точка 2':id==='finish-01'?'Reach the finish after every cell':id==='walls-01'?'There is a wall — go around it':'Visit number 2 first';assert.equal(await p.locator('.instruction').textContent(),expected);assert.deepEqual((await save(p)).path,path);}else assert((await p.locator('.instruction').textContent()).includes(lang==='ru'?'Номера пройдены':'Numbers done'));
+  report.checks.push(`Rule caption/rejection ${id} ${lang} ${width}`);await context.close();flush();
+ }
+ assert.deepEqual(report.errors,[]);console.log('Localization smoke passed:',report.screens.length,'viewport/language combinations,',report.checks.length,'extra flows');
+}catch(e){report.errors.push(e.stack);console.error(e);process.exitCode=1;}finally{flush();await browser?.close();server.kill('SIGTERM');}

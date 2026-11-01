@@ -1,3 +1,4 @@
+import { copy, themeName } from '../i18n';
 import { diamondPath } from '../presentation/markers';
 import { complete, type Level } from '../core/model';
 import { levelSets, isLevelAvailable, isSetAvailable, levelLabel, getLevelSet, type SetId } from '../core/progression';
@@ -36,36 +37,37 @@ export function renderMenu(host: HTMLElement, screen: Exclude<Screen, 'game'>, s
   const bankTotal = levelSets.reduce((n, s) => n + s.levels.length, 0);
   const bankFinished = save.completed.length === bankTotal;
   const finished = set.levels.every(l => save.completed.includes(l.id));
-  const balance = `<span class="menu-wallet" aria-label="${save.coins} монет">${coin}${save.coins}</span>`;
-  const heading = screen === 'home' ? '' : `<h1 tabindex="-1">${screen === 'themes' ? 'Темы' : screen === 'sets' ? 'Наборы' : set.title}</h1>`;
-  const top = `<header class="menu-header">${screen === 'home' ? `<button class="tool home-settings" data-action="menu-settings" aria-label="Настройки">${icon('settings')}</button>` : `<button class="tool" data-action="menu-back" aria-label="Назад">${icon('back')}</button>`}${balance}</header>`;
+  const balance = `<span class="menu-wallet" aria-label="${copy.coins(save.coins)}">${coin}${save.coins}</span>`;
+  const heading = screen === 'home' ? '' : `<h1 tabindex="-1">${screen === 'themes' ? copy.themes : screen === 'sets' ? copy.sets : copy.setNames[set.id]}</h1>`;
+  const top = `<header class="menu-header">${screen === 'home' ? `<button class="tool home-settings" data-action="menu-settings" aria-label="${copy.settings}">${icon('settings')}</button>` : `<button class="tool" data-action="menu-back" aria-label="${copy.back}">${icon('back')}</button>`}${balance}</header>`;
   let content: string;
   if (screen === 'home') {
     const continuing = save.path.length > 1;
     const currentSet = getLevelSet(save.levelId), setFinished = currentSet.levels.every(l => save.completed.includes(l.id)) && currentSet.levels.at(-1)?.id === save.levelId && complete(currentSet.levels.at(-1)!, save.path);
-    content = `<div class="home-hero"><h1 tabindex="-1">Одной<span>линией</span><i aria-hidden="true">.</i></h1><p>Заполни всё поле</p>${emblem}</div>
-      <div class="home-actions"><button class="primary-action home-play" data-action="${setFinished ? 'sets' : 'continue'}"><span class="play-glyph">${icon('play')}</span><span class="play-copy"><strong>${setFinished ? bankFinished ? 'Выбрать задачу' : 'Выбрать набор' : save.completed.includes(save.levelId) && continuing ? 'Результат' : continuing ? 'Продолжить' : 'Играть'}</strong><small>${setFinished ? bankFinished ? 'Все 90 задач пройдены' : 'Набор пройден' : `Уровень ${levelLabel(save.levelId)}`}</small></span><span class="play-arrow" aria-hidden="true">${icon('back')}</span></button>
-      <button class="secondary-action home-levels" data-action="sets"><span class="nav-art">${icon('grid')}</span><span>Уровни</span></button><button class="secondary-action home-themes" data-action="themes"><span class="nav-art">${icon('palette')}</span><span>Оформление</span></button></div>
-      ${setFinished && continuing ? `<button class="recent-result" data-action="continue">Последний результат · ${levelLabel(save.levelId)}</button>` : ''}
-      <button class="daily-entry" data-action="wheel">${rewardArt('medallion')}<span>Ежедневная награда<small>${canSpin(save) ? 'Можно крутить колесо' : 'Сегодня уже получено'}</small></span><b aria-hidden="true">${canSpin(save) ? '→' : '✓'}</b></button>
-      ${save.giftNotice ? `<button class="gift-entry" data-action="gift">${rewardArt('gift')} Подарок: +100 монет</button>` : ''}<div class="home-progress"><div><span>Всего пройдено</span><strong>${save.completed.length}<small> / ${bankTotal}</small></strong></div><div class="menu-track"><span style="width:${save.completed.length / bankTotal * 100}%"></span></div></div>`;
+    content = `<div class="home-hero"><h1 tabindex="-1">${copy.logoFirst}<span>${copy.logoSecond}</span><i aria-hidden="true">.</i></h1><p>${copy.homeTagline}</p>${emblem}</div>
+      <div class="home-actions"><button class="primary-action home-play" data-action="${setFinished ? 'sets' : 'continue'}"><span class="play-glyph">${icon('play')}</span><span class="play-copy"><strong>${setFinished ? bankFinished ? copy.chooseTask : copy.chooseSet : save.completed.includes(save.levelId) && continuing ? copy.result : continuing ? copy.continue : copy.play}</strong><small>${setFinished ? bankFinished ? copy.bankDone : copy.setDone : copy.currentLevel(levelLabel(save.levelId))}</small></span><span class="play-arrow" aria-hidden="true">${icon('back')}</span></button>
+      <button class="secondary-action home-levels" data-action="sets"><span class="nav-art">${icon('grid')}</span><span>${copy.levels}</span></button><button class="secondary-action home-themes" data-action="themes"><span class="nav-art">${icon('palette')}</span><span>${copy.appearance}</span></button></div>
+      ${setFinished && continuing ? `<button class="recent-result" data-action="continue">${copy.lastResult(levelLabel(save.levelId))}</button>` : ''}
+      <button class="daily-entry" data-action="wheel">${rewardArt('medallion')}<span>${copy.daily}<small>${canSpin(save) ? copy.dailyAvailable : copy.dailyClaimed}</small></span><b aria-hidden="true">${canSpin(save) ? '→' : '✓'}</b></button>
+      ${save.giftNotice ? `<button class="gift-entry" data-action="gift">${rewardArt('gift')} ${copy.giftEntry}</button>` : ''}<div class="home-progress"><div><span>${copy.totalCompleted}</span><strong>${save.completed.length}<small> / ${bankTotal}</small></strong></div><div class="menu-track"><span style="width:${save.completed.length / bankTotal * 100}%"></span></div></div>`;
   } else if (screen === 'themes') {
-    content = `${heading}<p class="menu-caption">Два оформления бесплатно, остальные — за монеты</p><div class="theme-grid">${themes.map(t => {
+    content = `${heading}<p class="menu-caption">${copy.themeCaption}</p><div class="theme-grid">${themes.map(t => {
       const owned = save.ownedThemes.includes(t.id), selected = save.themeId === t.id;
-      return `<button class="theme-card ${selected ? 'equipped' : ''} ${owned ? 'owned' : ''}" data-action="select-theme" data-theme-id="${t.id}" aria-pressed="${selected}" aria-label="${t.name}, ${selected ? 'выбрана' : owned ? 'применить' : `${t.price} монет`}">${themePreview(t)}${!owned ? `<i class="theme-lock" aria-hidden="true">${icon('lock')}</i>` : ''}<strong>${t.name}</strong><span>${selected ? `${icon('check')} Выбрана` : owned ? 'Применить' : `${icon('lock')}${coin} ${t.price}`}</span></button>`;
+      return `<button class="theme-card ${selected ? 'equipped' : ''} ${owned ? 'owned' : ''}" data-action="select-theme" data-theme-id="${t.id}" aria-pressed="${selected}" aria-label="${themeName(t.id)}, ${selected ? copy.selectedAria : owned ? copy.applyAria : copy.coins(t.price)}">${themePreview(t)}${!owned ? `<i class="theme-lock" aria-hidden="true">${icon('lock')}</i>` : ''}<strong>${themeName(t.id)}</strong><span>${selected ? `${icon('check')} ${copy.selected}` : owned ? copy.apply : `${icon('lock')}${coin} ${t.price}`}</span></button>`;
     }).join('')}</div>`;
   } else if (screen === 'sets') {
-    content = `${heading}<p class="menu-caption">Выбери набор задач</p><div class="set-list">${levelSets.map(s => {
+    content = `${heading}<p class="menu-caption">${copy.chooseSetCaption}</p><div class="set-list">${levelSets.map(s => {
       const done = s.levels.filter(l => save.completed.includes(l.id)).length;
-      return `<button class="set-card" style="--set-color:${s.id === 'intro' ? 'var(--ribbon)' : s.color}" data-action="open-set" data-set="${s.id}" ${isSetAvailable(s.id, save.completed) ? '' : 'disabled'}><span class="set-symbol">${s.levels.length ? levelMask(s.levels[Math.min(11, s.levels.length - 1)]!) : icon('lock')}</span><span class="set-copy"><strong>${s.title}</strong><span>${s.description}</span>${s.levels.length ? `<span class="set-progress"><i style="width:${done / s.levels.length * 100}%"></i></span>` : ''}</span><span class="set-count">${isSetAvailable(s.id, save.completed) ? `${done}/${s.levels.length}` : icon('lock')}</span></button>`;
-    }).join('')}</div><p class="bank-caption">${bankTotal} задач в трёх наборах. Новые наборы открываются после первых трёх задач.</p>`;
+      return `<button class="set-card" style="--set-color:${s.id === 'intro' ? 'var(--ribbon)' : s.color}" data-action="open-set" data-set="${s.id}" ${isSetAvailable(s.id, save.completed) ? '' : 'disabled'}><span class="set-symbol">${s.levels.length ? levelMask(s.levels[Math.min(11, s.levels.length - 1)]!) : icon('lock')}</span><span class="set-copy"><strong>${copy.setNames[s.id]}</strong><span>${copy.setDescriptions[s.id]}</span>${s.levels.length ? `<span class="set-progress"><i style="width:${done / s.levels.length * 100}%"></i></span>` : ''}</span><span class="set-count">${isSetAvailable(s.id, save.completed) ? `${done}/${s.levels.length}` : icon('lock')}</span></button>`;
+    }).join('')}</div><p class="bank-caption">${copy.bankCaption}</p>`;
   } else {
-    content = `${heading}<p class="menu-caption">${doneCount} из ${set.levels.length} пройдено</p>${finished ? `<div class="bank-complete"><strong>${bankFinished ? 'Все 90 задач пройдены!' : 'Набор пройден!'}</strong><span>${bankFinished ? 'Можно повторить любую задачу.' : 'Выбери другой набор или повтори любую задачу.'}</span><button class="secondary-action" data-action="sets">Выбрать набор</button></div>` : ''}
+    content = `${heading}<p class="menu-caption">${copy.setProgress(doneCount, set.levels.length)}</p>${finished ? `<div class="bank-complete"><strong>${bankFinished ? copy.bankDoneTitle : copy.setDoneTitle}</strong><span>${bankFinished ? copy.repeatAny : copy.anotherSet}</span><button class="secondary-action" data-action="sets">${copy.chooseSet}</button></div>` : ''}
       <div class="level-grid">${set.levels.map((l, i) => {
         const done = save.completed.includes(l.id), available = isLevelAvailable(l.id, save.completed), current = l.id === save.levelId;
-        const chapter = set.chapters.find(c => c.at === i)?.title ?? '';
-        return `${chapter ? `<div class="level-chapter"><span>${chapter}</span><small>${i + 1}–${i + 5}</small></div>` : ''}<button class="level-tile ${done ? 'completed' : ''} ${current ? 'current' : ''}" data-action="choose-level" data-level="${l.id}" ${available ? '' : 'disabled'} ${current ? 'aria-current="step"' : ''} aria-label="Уровень ${i + 1}${done ? ', пройден, три звезды' : available ? ', доступен' : ', закрыт'}"><strong>${i + 1}</strong>${levelMask(l)}${done ? smallStars : available ? '<span class="level-dot" aria-hidden="true"></span>' : icon('lock')}</button>`;
-      }).join('')}</div><p class="bank-caption">${finished ? 'Награда за первое прохождение уже получена.' : 'Пройди предыдущую задачу, чтобы открыть следующую.'}</p>`;
+        const chapterKey = set.chapters.find(c => c.at === i)?.key;
+        const chapter = chapterKey ? copy.chapters[chapterKey] : '';
+        return `${chapter ? `<div class="level-chapter"><span>${chapter}</span><small>${i + 1}–${i + 5}</small></div>` : ''}<button class="level-tile ${done ? 'completed' : ''} ${current ? 'current' : ''}" data-action="choose-level" data-level="${l.id}" ${available ? '' : 'disabled'} ${current ? 'aria-current="step"' : ''} aria-label="${copy.levelTile(i + 1, done ? 'completed' : available ? 'available' : 'locked')}"><strong>${i + 1}</strong>${levelMask(l)}${done ? smallStars : available ? '<span class="level-dot" aria-hidden="true"></span>' : icon('lock')}</button>`;
+      }).join('')}</div><p class="bank-caption">${finished ? copy.rewardAlreadyReceived : copy.previousFirst}</p>`;
   }
   host.innerHTML = `${top}<div class="menu-body ${screen}">${content}</div>`;
   host.querySelector('.menu-body')!.scrollTop = scroll;

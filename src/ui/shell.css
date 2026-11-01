@@ -190,3 +190,13 @@ button:focus-visible { outline: 3px solid var(--ribbon); outline-offset: 5px; }
 #app[data-blocked=true] .game-content *::before,
 #app[data-blocked=true] .game-content *::after,
 #app[data-background=true] *, #app[data-background=true] *::before, #app[data-background=true] *::after { animation-play-state: paused !important; }
+
+.language-setting { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--edge); text-align: left; color: var(--ink); font-size: 13px; font-weight: 750; }
+.language-setting > div { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+.language-setting button { min-height: 44px; padding: 8px; border-radius: 12px; background: var(--panel); border: 1px solid var(--edge); color: var(--ink); }
+.language-setting button[aria-pressed=true] { color: var(--primary-ink); background: var(--primary); border-color: var(--primary); }
+.language-status { display: block; font-weight: 650; line-height: 1.4; }
+.language-status:empty { display: none; }
+.pause-overlay { overflow-y: auto; }
+.pause-card { max-height: calc(100dvh - 32px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); overflow-y: auto; }
+@media (max-height: 650px) { .pause-card { padding: 18px; } .pause-card h2 { margin-bottom: 14px; } .language-setting { margin-top: 10px; padding-top: 10px; } }
