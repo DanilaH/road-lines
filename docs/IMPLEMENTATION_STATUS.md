@@ -1,6 +1,6 @@
 # Статус Road Lines
 
-Обновлено: 2026-10-31.
+Обновлено: 2026-11-01.
 
 Актуальный итог: банк 90 (3×30), базовый цикл, темы и колесо реализованы. Реклама отложена по просьбе пользователя. Следом — RU/EN и физическая Android-приёмка. Ниже сохранена история этапов; свежая проверка банка — BANK_VALIDATION.md.
 
@@ -77,3 +77,13 @@ Runtime: rendering `a1efa0741462857e610438edca42d624c5ef1152`, финальны�
 Проверено: 355 tests / 58 files; final production smoke — все 90 pointer solutions, 5 viewport и полный flow tail; полный final inspect smoke в CI + локальный theme/reward tail; final UX — 10 групп / 10 viewport-theme combinations; Android sync. Android debug CI `41217908074` на финальном runtime — SUCCESS; App CI `41217908083` в момент записи выполняется. Это не native FPS/RSS/GPU memory acceptance.
 
 Методика, обмен CPU на ограниченный кеш, точные границы source/evidence и результаты — PERFORMANCE_OPTIMIZATION_VALIDATION.md / PERFORMANCE_OPTIMIZATION_EVIDENCE.json. Внешний вид проверен парными screenshots и свежей production записью. Реклама остаётся отложенной. Следующий обязательный этап производительности — физический Android: палец, FPS/нагрев/память, audio/haptics и lifecycle/process death.
+
+
+## Аудит банка и помощи — 1 ноября 2026
+Независимый точный DP и отдельный перебор без отсечений совпали на всех 90 задачах. Решения есть у всех; точный графовый изоморфизм нашёл только осмысленную учебную пару 1–1 / 1–2. Просмотрены 90 renderer fixtures, проверены компоновки 390×844 и 320×568. Инструкции помещаются, минимальная клетка 52.13 / 41.70 CSS px.
+
+587 различных префиксов × два CPU режима = 1174 worker requests: 0 oracle mismatches / UNKNOWN / отсутствующих ближайших откатов. Исправлены бесплатная диагностика тупика при hints=0 и сохранение подтверждённой подсказки/отката через паузу и фон. Исправлены формы «клетку/клетки/клеток» и оставшаяся глава про флажок. Данные/IDs/versions/порядок всех 90 уровней и экономика прежние.
+
+Code: `fc7b1dab412b5ef4ff6aba90615fe682de0a3eb6` + `e43b837cfd3c9b6e31028befe1c6a9eada75f5de`. 355 tests / 58 files, 8 целевых UI checks, final UX 10 групп / 10 viewport-theme combinations и Android sync прошли. Полный production smoke всех 90 с 5 viewport прошёл на fc7b1dab до последнего lifecycle-help исправления; финальное изменение покрыто целевыми проверками. Android debug CI `41294119342` на финальном коде — SUCCESS; App CI `41294119322` выполняется. Новый corpus/zero-budget/lifecycle regression добавлен в App CI.
+
+Кандидаты на редакторский просмотр ритма — 3–14 и 3–19 (большая доля вынужденных ходов перед более разветвлёнными задачами). Их сложность/интересность человеком не измерены; уровни не заменены на основании одних метрик. Отдельный риск обучения: первые tutorial можно пройти без упражнения reverse/release-resume. Подробности и bounded next pass — LEVEL_BALANCE_AUDIT_2026-11-01.md / LEVEL_BALANCE_AUDIT_EVIDENCE.json. Физический Android и RU/EN остаются открыты; реклама отложена.
