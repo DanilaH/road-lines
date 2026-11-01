@@ -45,7 +45,7 @@ try{
  if(spawnSync(process.execPath,['node_modules/vite/bin/vite.js','build'],{stdio:'inherit'}).status!==0)throw Error('build failed');
  server=spawn(process.execPath,['node_modules/vite/bin/vite.js','preview','--host','127.0.0.1','--port','4211','--strictPort'],{stdio:'ignore'});
  for(let i=0;;i++){try{if((await fetch(url)).ok)break;}catch{}if(i>80)throw Error('preview');await new Promise(r=>setTimeout(r,100));}
- browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+ browser=await chromium.launch({channel:'chromium',headless:true,args:['--no-sandbox']});
  for(const index of [0,19])for(const delay of [0,80,400,1200])await check(`clear ${index+1}: reload at ${delay}ms`,async()=>{
   const l=levels[index],coins=index*20,completed=levels.slice(0,index).map(x=>x.id),{p,context}=await open(seed(l,{path:l.witness.slice(0,-1),coins,completed}));
   await lastMove(p,l);await p.locator('.result-heading:visible').waitFor();if(delay)await p.waitForTimeout(delay);await p.reload();await ready(p);
