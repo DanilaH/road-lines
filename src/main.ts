@@ -90,10 +90,13 @@ async function boot(): Promise<void> {
   const feedbackBlockers = new Set<string>();
   const audioBlocked = () => [...feedbackBlockers].some(reason => reason !== 'reward-modal' || bonus !== 'gift');
   function block(reason: string, value: boolean): void {
+    const wasBlocked = activity.isBlocked();
     if (value) feedbackBlockers.add(reason); else feedbackBlockers.delete(reason);
     const blocked = audioBlocked(); feedback.setBlocked(blocked);
     if (blocked) giftView.stop();
     activity.setBlocked(reason, value);
+    // Banner and cadence also depend on individual reasons (e.g. background while paused).
+    if (monetization && !disposed && activity.isBlocked() === wasBlocked) redraw();
   }
   root.innerHTML = `
     <section class="surface" aria-label="Road Lines"><div class="game-content">

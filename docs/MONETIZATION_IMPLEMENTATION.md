@@ -28,6 +28,8 @@ Continue выполняется после сохранённой победы. 
 
 Gift защищает свой переход через persisted level marker; rewarded защищает текущий переход и запускает общий cooldown. Конец90 задач не показывает interstitial. После нетворк-ошибок нет немедленного autoretry; interstitial preloading имеет30с backoff. Loading rewarded ограничен12с; отсутствие pre-show callback можно завершить только до фактического показа/потери фокуса. Отображаемая реклама не прерывается общим timeout.
 
+Banner/cadence пересчитываются также при смене отдельного blocker без aggregate edge: фон внутри уже открытой паузы проверен отдельным сценарием с высотой SDK90px.
+
 Баннер невидим во время fullscreen и после закрытия не возвращается поверх rewarded-модали. Возобновляется только на подходящей игровой поверхности; pause разрешён продуктовыми правилами, фон запрещён. SDK refresh остаётся SDK, повторных per-frame загрузок нет. Geometry requests coalesced, старые generations не используются.
 
 ## SDK и конфигурация
@@ -56,7 +58,7 @@ Typed события `ad_offer`, `ad_event` (request/loaded/load_error/show/impr
 Команды:
 
 - `npm run check`:427 tests/64 files на момент реализации, включая миграции, покупки, readback, failed grant/ack, повтор/restored receipt, active-time cadence и защиту подарка.
-- `node tools/monetization-smoke.mjs`: explicit test build и отдельная проверка отсутствия mock markers в production;12 browser flow groups,10 viewport/language combinations. Реальные UI события; SDK заменён только в этом compile mode.
+- `node tools/monetization-smoke.mjs`: explicit test build и отдельная проверка отсутствия mock markers в production;13 browser flow groups,10 viewport/language combinations. Реальные UI события; SDK заменён только в этом compile mode.
 - `node tools/persistence-smoke.mjs`, `node tools/celebrations-smoke.mjs`, `node tools/analytics-smoke.mjs`, localization/playtest/reload-touch и baseline production/inspection из CI.
 - `node tools/performance-audit.mjs --prepare-only` и `node tools/performance-regression.mjs`: ограниченные renderer/cleanup regressions; новый полный memory soak не заявляется.
 - Android CI: реальная компиляция SDK/bridge. Native screenshot/демо показ/физическая приёмка, process death внутри SDK, живой revenue/fill и аналитический dashboard остаются отдельной проверкой.

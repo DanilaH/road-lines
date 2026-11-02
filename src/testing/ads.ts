@@ -26,8 +26,8 @@ export function testAds(): AdsBridge {
     },
     pending: async () => ({ receipts: localStorage.getItem('test-ad-pending') ? [JSON.parse(localStorage.getItem('test-ad-pending')!)] : [] }),
     acknowledge: async ({ id }) => { const raw = localStorage.getItem('test-ad-pending'); if (raw && JSON.parse(raw).id !== id) throw Error('Ack mismatch'); localStorage.removeItem('test-ad-pending'); },
-    measureBanner: async ({ slotWidth }) => ({ webView: { x: 0, y: 0, width: innerWidth, height: innerHeight }, root: { width: innerWidth, height: innerHeight }, adHeight: 50 }),
-    placeBanner: async () => {}, hideBanner: async () => {}, dispose: async () => { live = false; listeners.clear(); },
+    measureBanner: async ({ slotWidth }) => ({ webView: { x: 0, y: 0, width: innerWidth, height: innerHeight }, root: { width: innerWidth, height: innerHeight }, adHeight: mode === 'large-banner' ? 90 : 50 }),
+    placeBanner: async () => { localStorage.setItem('test-banner-state','visible'); }, hideBanner: async () => { localStorage.setItem('test-banner-state','hidden'); }, dispose: async () => { live = false; listeners.clear(); },
     addListener: async (_name, cb) => { listeners.add(cb); return { remove: async () => { listeners.delete(cb); } }; },
   };
 }
