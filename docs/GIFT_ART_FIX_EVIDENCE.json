@@ -1,0 +1,176 @@
+{
+  "date": "2026-11-02",
+  "runtimeCommit": "d555df4091c7dc528a0a89bb84bef9fafbe441a4",
+  "sourceSha256": "02d50e5629c8f9d9306180347aee8a6bb01d2458a496c5c228c4087bf4532036",
+  "originalGift": {
+    "path": "src/assets/rewards/gift.webp",
+    "sha256": "08f5edd9893aa917532372f028062c744d3281be00bc9e835ad1f1fdb132f78c",
+    "unchangedFromAcceptedAsset": true,
+    "usedAs": "Literal lid/bow and front-wall SVG clips"
+  },
+  "interior": {
+    "path": "src/assets/rewards/gift-interior.webp",
+    "bytes": 12116,
+    "sha256": "2fa206a5058d440de91a974ea5c2c71459182320d047588cb83d9266b586bfbb",
+    "size": [
+      384,
+      332
+    ],
+    "source": "Built-in edit of original reference, right cell cropped 620x536+840+292",
+    "usedAs": "Rear inner walls/rim/floor behind original front walls, never a U-shaped empty shell"
+  },
+  "presentation": {
+    "confettiBursts": [
+      48,
+      40
+    ],
+    "maxVisualConfetti": 88,
+    "stopMs": 2500,
+    "lighting": "Aperture-clipped interior light, rising cone, halo, fading rays",
+    "reducedMotion": "Settled open box, no particles/tweens"
+  },
+  "unit": {
+    "tests": 415,
+    "files": 63,
+    "result": "PASS"
+  },
+  "celebrations": {
+    "checks": [
+      "budget-aware free preview, no disabled purchase trap, rotating result candidates across levels/reload",
+      "affordable result purchase confirms once and preserves the equipped theme after reload",
+      "theme target is durable before animation, reload awards it once, Apply is free",
+      "legacy sector 7 remains 300 coins; all-owned rare sector substitutes 300",
+      "gift sound is allowed under its own modal, background cancels it without replay or loss",
+      "gift acknowledgement failure retains its notice; reload recovery cannot grant it twice",
+      "gift reveal demonstration and complete cleanup on Continue",
+      "rare theme wheel demonstration, specific reward and immediate Apply"
+    ],
+    "screens": [
+      {
+        "width": 320,
+        "height": 568,
+        "lang": "ru",
+        "theme": "classic"
+      },
+      {
+        "width": 320,
+        "height": 568,
+        "lang": "en",
+        "theme": "neon"
+      },
+      {
+        "width": 360,
+        "height": 800,
+        "lang": "ru",
+        "theme": "classic"
+      },
+      {
+        "width": 360,
+        "height": 800,
+        "lang": "en",
+        "theme": "neon"
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "lang": "ru",
+        "theme": "classic"
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "lang": "en",
+        "theme": "neon"
+      },
+      {
+        "width": 412,
+        "height": 915,
+        "lang": "ru",
+        "theme": "classic"
+      },
+      {
+        "width": 412,
+        "height": 915,
+        "lang": "en",
+        "theme": "neon"
+      },
+      {
+        "width": 576,
+        "height": 1280,
+        "lang": "ru",
+        "theme": "classic"
+      },
+      {
+        "width": 576,
+        "height": 1280,
+        "lang": "en",
+        "theme": "neon"
+      }
+    ],
+    "errors": []
+  },
+  "extraValidation": [
+    "Referenced raster images decoded before viewport screenshots",
+    "Background interruption after 850ms with live confetti; nodes and running animations zero after cancel",
+    "Original/front/back/rim and interior depth inspected in light/dark renderer screenshots; opening contact sheet inspected"
+  ],
+  "performance": {
+    "checks": [
+      "Idle has no Phaser frames or FillPath work",
+      "Endpoint pulse/sparks render without rebuilding either cached texture",
+      "Hidden result CSS animations are paused",
+      "Background pauses all CSS animation timelines",
+      "Sleeping renderer disposal removes canvases and WebGL context",
+      "Active renderer disposal also completes; disposed screen has no running CSS animations"
+    ],
+    "errors": [],
+    "probeSource": {
+      "sourceCommit": "d555df4091c7dc528a0a89bb84bef9fafbe441a4",
+      "sourceSha256": "02d50e5629c8f9d9306180347aee8a6bb01d2458a496c5c228c4087bf4532036",
+      "mode": "main",
+      "probe": "Isolated production source copy; sole source change exposes existing objects. Instrumentation/ablation added at runtime. Normal release globals untouched."
+    }
+  },
+  "ci": {
+    "appRun": 41472749353,
+    "mobileJobs": {
+      "persistence": "success",
+      "localization": "success",
+      "analytics": "success",
+      "reload-touch": "success",
+      "playtest": "success",
+      "celebrations": "success"
+    },
+    "baseline": "in_progress at recording",
+    "androidRun": 41472749399,
+    "android": "success"
+  },
+  "apk": {
+    "source": "d555df4091c7dc528a0a89bb84bef9fafbe441a4",
+    "sha256": "214c0d184efc42a3f388732f9d3de544683dff62ce7b1b5b57c87aa03fdd1180",
+    "bytes": 6565155,
+    "certificateSha256": "4dcd2fd9420531301e277b679c956ede74f2d2eeb2a6e01b47e014fae6203b88",
+    "sameManifestAndSignature": true,
+    "allEmbeddedAssetsMatch": true,
+    "name": "road-lines-gift-fix.apk",
+    "githubArtifactId": 13156655520,
+    "zipSha256": "f94bafcbcd0405285594d46b4e6a1625763140cf0e1a8f92b050a532fd9a4334",
+    "libraryFileId": "libfile_29b4a5addff48191a1ae199a7cf5e2d1",
+    "libraryVersion": 3,
+    "librarySaveConfirmed": true
+  },
+  "gif": {
+    "name": "road-lines-gift.gif",
+    "bytes": 1842512,
+    "sha256": "da82c59f922e38d21f17049f94863b0ee96478f795fed0396d84b817b0841632",
+    "source": "Actual production renderer, scripted earned gift fixture",
+    "libraryFileId": "libfile_d1eb5490c74c81918ed8ae7a3cf85e89",
+    "libraryVersion": 1,
+    "librarySaveConfirmed": true
+  },
+  "limits": [
+    "No economy/save/rules changes; ads still deferred",
+    "Browser/compile evidence, not physical-device FPS/heat or native sound/haptic acceptance",
+    "No new full memory soak; targeted gift cancellation and six renderer resource regressions passed"
+  ]
+}
