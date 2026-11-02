@@ -110,7 +110,7 @@ describe('save ownership', () => {
       const storage = { getItem: backing.getItem, setItem(k: string, raw: string) { writes++; backing.setItem(k, raw); } };
       const a = new GameStore(storage);
       a.path(levels[0]!, [0]);
-      expect(JSON.parse(backing.getItem()!)).toMatchObject({ version: 3, themeId: 'classic', ownedThemes: ['classic', 'mint'] });
+      expect(JSON.parse(backing.getItem()!)).toMatchObject({ version: 4, themeId: 'classic', ownedThemes: ['classic', 'mint'] });
       a.path(levels[0]!, [0]); expect(writes).toBe(1);
       a.reload(); a.path(levels[0]!, [0]); expect(writes).toBe(1);
     }

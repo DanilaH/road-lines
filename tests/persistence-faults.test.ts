@@ -26,6 +26,8 @@ const operations = [
   { name: 'theme purchase', seed(s: GameStore) { s.write({ ...s.state, coins: 700 }); }, run(s: GameStore) { s.selectTheme('dusk'); } },
   { name: 'wheel stage', seed(s: GameStore) { s.path(l, [0, 1]); }, run(s: GameStore) { s.stageSpin({ id: 'fixed', date: '2026-11-01', sector: 7 }); } },
   { name: 'wheel commit', seed(s: GameStore) { s.stageSpin({ id: 'fixed', date: '2026-11-01', sector: 7 }); }, run(s: GameStore) { s.commitSpin('fixed'); } },
+  { name: 'theme wheel stage', seed(s: GameStore) { s.path(l, [0, 1]); }, run(s: GameStore) { s.stageSpin({ id: 'theme', date: '2026-11-02', sector: 7, themeId: 'dusk' }); } },
+  { name: 'theme wheel commit', seed(s: GameStore) { s.stageSpin({ id: 'theme', date: '2026-11-02', sector: 7, themeId: 'dusk' }); }, run(s: GameStore) { s.commitSpin('theme'); } },
   { name: 'gift acknowledgement', seed(s: GameStore) { for (const x of levels.slice(0, 20)) s.finish(x, x.witness); }, run(s: GameStore) { s.acknowledgeGift(); } },
   { name: 'offer dismissal', seed(s: GameStore) { for (const x of levels.slice(0, 10)) s.finish(x, x.witness); }, run(s: GameStore) { s.dismissOffer(); } },
 ];
@@ -51,7 +53,7 @@ describe('save transaction fault boundaries', () => {
       if (fault === 'before') operation.run(store);
       expect(new GameStore(d.storage).state).toEqual(after);
       // Replaying idempotent transactions must not charge/grant twice.
-      if (!['hint debit and current prefix', 'wheel stage'].includes(operation.name)) {
+      if (!['hint debit and current prefix', 'wheel stage', 'theme wheel stage'].includes(operation.name)) {
         operation.run(store); expect(new GameStore(d.storage).state).toEqual(after);
       }
     });

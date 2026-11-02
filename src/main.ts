@@ -29,7 +29,10 @@ import { localDate } from './core/rewards';
 import { rewardArt } from './ui/reward-art';
 import { GameAnalytics, levelInfo } from './services/analytics';
 import { createAnalyticsAdapter } from './platform/analytics';
-import { wheelPrizes } from './core/rewards';
+import { wheelCoinReward } from './core/rewards';
+import { themeSuggestions } from './core/theme-suggestions';
+import type { Theme } from './content/themes';
+import { GiftReveal } from './presentation/gift';
 import './style.css';
 import './ui/shell.css';
 try { loadLanguage(localStorage); } catch { setLanguage('ru'); }
@@ -46,7 +49,7 @@ async function boot(): Promise<void> {
   releaseWriter = await acquireSaveOwnership();
   const store = new GameStore(localStorage);
   const wheelService = new WheelService(store);
-  if (store.state.daily.pending) { const spin = store.state.daily.pending; await wheelService.commit(); analytics.event('wheel_reward', { sector: spin.sector, amount: wheelPrizes[spin.sector]!, recovered: true }); }
+  if (store.state.daily.pending) { const spin = store.state.daily.pending; await wheelService.commit(); analytics.event('wheel_reward', { sector: spin.sector, amount: wheelCoinReward(store.state.daily.last!), ...(spin.themeId && !store.state.daily.last?.fallback ? { theme: spin.themeId } : {}), recovered: true }); }
   applyTheme(root, getTheme(store.state.themeId));
   let level = levels.find(l => l.id === store.state.levelId)!;
   if (inspect && params.has('level')) level = levels[Math.max(0, Math.min(levels.length - 1, Number(params.get('level')) - 1))] ?? level;
@@ -58,7 +61,10 @@ async function boot(): Promise<void> {
   let screen: Screen = fixture || (inspect && params.has('level')) ? 'game' : 'home';
   let themeOrigin: { screen: Screen; paused: boolean } = { screen: 'home', paused: false };
   let pendingTheme: string | null = null, previewTheme: string | null = null;
-  let resultThemeIndex = 0;
+  let resultThemeIndex = 0, suggestionKey = '';
+  let suggestedThemes: Theme[] = [];
+  let lastSuggested: string | null = null;
+  try { lastSuggested = localStorage.getItem('road-lines.theme-suggestion.v1'); } catch {}
   let bonus: 'gift' | 'offer' | null = null;
   let continueAfterBonus = false;
   let paidHint: { key: string; path: number[] } | null = null;
@@ -68,13 +74,21 @@ async function boot(): Promise<void> {
   let rejectionTimer: ReturnType<typeof setTimeout> | undefined;
   let wheelBusy = false, wheelPreparing = false, wheelToken = 0;
   let wheelCommit: Promise<void> | null = null;
-  const feedback = new Feedback();
+  const feedback = new Feedback(); feedback.setLevel(level.id);
   let shownBalance = store.state.coins, collecting = false;
   let paused = false, disposed = false, saveFailed = false, conflict = false, busy = false, revision = 0;
   let hint: number[] = [], rollback: number | null = null, saveTimer: ReturnType<typeof setTimeout> | undefined;
   let disposeRuntime = (): void => {};
   let frame = 0, secondFrame = 0, resizeFrame = 0, renderFrame = 0;
   const activity = new GameplayActivityCoordinator(() => {}, () => {}), hints = new HintService();
+  const feedbackBlockers = new Set<string>();
+  const audioBlocked = () => [...feedbackBlockers].some(reason => reason !== 'reward-modal' || bonus !== 'gift');
+  function block(reason: string, value: boolean): void {
+    if (value) feedbackBlockers.add(reason); else feedbackBlockers.delete(reason);
+    const blocked = audioBlocked(); feedback.setBlocked(blocked);
+    if (blocked) giftView.stop();
+    activity.setBlocked(reason, value);
+  }
   root.innerHTML = `
     <section class="surface" aria-label="Road Lines"><div class="game-content">
       <header class="hud"><span class="level"></span><div class="tools">
@@ -107,6 +121,7 @@ async function boot(): Promise<void> {
       <div class="notice" hidden role="status"><span></span><button data-action="notice"></button></div>
     </section><div id="startup" role="status">${copy.loading}</div>`;
   const $ = <T extends HTMLElement = HTMLElement>(selector: string): T => root.querySelector<T>(selector)!;
+  const giftView = new GiftReveal($('.bonus-overlay'), feedback);
   await document.fonts.load('900 16px "Road Nunito"').catch(() => []);
   const host = $('#board'), scene = new BoardScene();
   let renderRatio = getRenderPixelRatio(2);
@@ -203,7 +218,8 @@ async function boot(): Promise<void> {
     if (bonus) {
       const offer = store.state.offer;
       $('#bonus-title').textContent = bonus === 'gift' ? copy.gift : copy.newTheme;
-      $('.bonus-art').innerHTML = bonus === 'gift' ? rewardArt('gift', true) : offer ? themePreview(getTheme(offer.themeId)) : '';
+      if (bonus === 'gift') giftView.render(store.state.coins, store.state.giftNotice ?? 20);
+      else $('.bonus-art').innerHTML = offer ? themePreview(getTheme(offer.themeId)) : '';
       $('.bonus-copy').textContent = bonus === 'gift' ? copy.giftReward : offer ? themeName(offer.themeId) : '';
       $('.bonus-video').hidden = bonus === 'gift'; $('.bonus-video-note').hidden = bonus === 'gift';
       $('.bonus-close').textContent = bonus === 'gift' ? copy.resume : copy.notNow;
@@ -231,8 +247,12 @@ async function boot(): Promise<void> {
       $('[data-action=cycle-result-theme]').hidden = themes.filter(t => !store.state.ownedThemes.includes(t.id)).length <= 1;
       $('.result-theme-preview').innerHTML = themePreview(candidate);
       $('.result-theme-copy strong').textContent = themeName(candidate.id);
-      $('.result-theme-copy small').textContent = previewTheme === candidate.id ? copy.previewFree : store.state.ownedThemes.includes(candidate.id) ? copy.themes : copy.themePrice(candidate.price);
-      $('[data-action=try-result-theme]').textContent = store.state.ownedThemes.includes(candidate.id) ? copy.chooseTheme : previewTheme === candidate.id ? copy.buyFor(candidate.price) : copy.tryTheme;
+      const owned = store.state.ownedThemes.includes(candidate.id), affordable = store.state.coins >= candidate.price, tried = previewTheme === candidate.id;
+      $('.result-theme-card').dataset.themeId = candidate.id;
+      $('.result-theme-copy small').textContent = owned ? copy.themes : !affordable ? copy.shortage(candidate.price - store.state.coins) : tried ? copy.previewFree : copy.themePrice(candidate.price);
+      const action = $<HTMLButtonElement>('[data-action=try-result-theme]');
+      action.textContent = owned ? copy.chooseTheme : tried ? affordable ? copy.buyFor(candidate.price) : copy.previewActive : copy.tryTheme;
+      action.disabled = !owned && tried && !affordable;
     }
     updateRouteUI();
     activity.setGameplayDesired(screen === 'game' && !result);
@@ -266,7 +286,7 @@ async function boot(): Promise<void> {
     clearTimeout(saveTimer);
     try {
       const from = layout(), oldHost = host.getBoundingClientRect();
-      reward = store.finish(level, path); analytics.finish(reward); saveFailed = false; result = true; invalidate(); input.cancel(); notice('');
+      reward = store.finish(level, path); analytics.finish(reward); saveFailed = false; result = true; suggestionKey = ''; invalidate(); input.cancel(); notice('');
       motion.start(reward, store.state.coins, store.state.completed.length, () => { scene.settle(); syncSize(); });
       redraw();
       const newHost = host.getBoundingClientRect();
@@ -286,7 +306,6 @@ async function boot(): Promise<void> {
   const input = installRouteInput(host, () => ({ level, path, layout: layout(), blocked: screen !== 'game' || result || activity.isBlocked() || conflict || complete(level, path) }), next => { if (next.length < path.length) coach.backtracked = true; change(next); }, () => { if (!complete(level, path)) { if (path.length > 1) coach.released = true; flush(); scene.resumeHead(); updateRouteUI(); } }, rejectMove, $('.surface'));
   const unsubscribe = activity.onBlockedChange(blocked => {
     root.dataset.blocked = String(blocked); analytics.block(blocked);
-    feedback.setBlocked(blocked);
     // Confirmed help still describes the same prefix across lifecycle blockers.
     if (blocked) { screens.stop(); cancelWheel(); invalidate(true); input.cancel(); flush(); motion.stop(); scene.settle(); showBalance(store.state.coins); }
     redraw();
@@ -295,7 +314,7 @@ async function boot(): Promise<void> {
   function setPause(value: boolean): void {
     if (result && screen === 'game') return;
     if (!value) screens.pause($('.pause-overlay'), false);
-    paused = value; $('.pause-overlay').hidden = !value; activity.setBlocked('pause', value);
+    paused = value; $('.pause-overlay').hidden = !value; block('pause', value);
     redraw(); if (value) screens.pause($('.pause-overlay'), true);
     (value ? $('[data-action=resume]') : screen === 'game' ? $('[data-action=pause]') : $('[data-action=menu-settings]')).focus();
   }
@@ -320,7 +339,7 @@ async function boot(): Promise<void> {
     invalidate(); motion.stop(); scene.settle(); showBalance(store.state.coins);
     if (next === 'levels' && screen === 'game') viewSetId = getLevelSet(level.id).id;
     screen = next; paused = false; $('.pause-overlay').hidden = true;
-    activity.setBlocked('pause', false); notice(''); redraw(); game.loop.sleep();
+    block('pause', false); notice(''); redraw(); game.loop.sleep();
     screens.enterMenu(screen === 'wheel' ? $('.wheel-screen') : $('.menu-screen'));
     (screen === 'wheel' ? $('.wheel-body h1') : $('.menu-body h1')).focus();
   }
@@ -328,8 +347,8 @@ async function boot(): Promise<void> {
     if (screen !== 'game' && screen !== 'wheel') screens.leaveMenu($('.menu-screen'));
     else screens.stop();
     if (!result) analytics.enter(level, path.length, store.state.completed.includes(level.id));
-    screen = 'game'; paused = false; $('.pause-overlay').hidden = true;
-    activity.setBlocked('pause', false); notice(''); redraw();
+    feedback.setLevel(level.id); screen = 'game'; paused = false; $('.pause-overlay').hidden = true;
+    block('pause', false); notice(''); redraw();
     if (!activity.isBlocked()) game.loop.wake();
     screens.enterGame(root); scene.resumeHead(); host.focus();
   }
@@ -359,24 +378,33 @@ async function boot(): Promise<void> {
   }
   function closeThemePurchase(): void {
     const id = pendingTheme; pendingTheme = null;
-    activity.setBlocked('theme-confirm', false); redraw(); if (screen === 'game') $('[data-action=try-result-theme]').focus(); else if (id) focusTheme(id);
+    block('theme-confirm', false); redraw(); if (screen === 'game') $('[data-action=try-result-theme]').focus(); else if (id) focusTheme(id);
   }
   function resultTheme() {
-    const candidates = themes.filter(t => !store.state.ownedThemes.includes(t.id));
-    return candidates[resultThemeIndex % Math.max(1, candidates.length)] ?? getTheme(store.state.themeId);
+    const key = level.id + ':' + store.state.completed.length;
+    if (suggestionKey !== key || !suggestedThemes.length || store.state.ownedThemes.includes(suggestedThemes[resultThemeIndex % suggestedThemes.length]!.id)) {
+      suggestionKey = key; resultThemeIndex = 0;
+      suggestedThemes = themeSuggestions(store.state.ownedThemes, store.state.coins, lastSuggested);
+    }
+    const candidate = suggestedThemes[resultThemeIndex % Math.max(1, suggestedThemes.length)] ?? getTheme(store.state.themeId);
+    if (lastSuggested !== candidate.id) {
+      lastSuggested = candidate.id; try { localStorage.setItem('road-lines.theme-suggestion.v1', candidate.id); } catch {}
+    }
+    return candidate;
   }
   function tryResultTheme(): void {
     if (screen !== 'game' || !result || conflict || store.recoveryRequired) return;
     const candidate = resultTheme();
     if (store.state.ownedThemes.includes(candidate.id)) { openThemes(); return; }
     if (previewTheme !== candidate.id) { previewTheme = candidate.id; redraw(); return; }
-    pendingTheme = candidate.id; redraw(); activity.setBlocked('theme-confirm', true);
+    if (store.state.coins < candidate.price) return;
+    pendingTheme = candidate.id; redraw(); block('theme-confirm', true);
     ($<HTMLButtonElement>('[data-action=buy-theme]').disabled ? $('[data-action=cancel-theme]') : $('[data-action=buy-theme]')).focus();
   }
   function selectTheme(id: string): void {
     if (screen !== 'themes' || conflict || store.recoveryRequired) return;
     if (!store.state.ownedThemes.includes(id)) {
-      pendingTheme = getTheme(id).id; redraw(); activity.setBlocked('theme-confirm', true);
+      pendingTheme = getTheme(id).id; redraw(); block('theme-confirm', true);
       ($<HTMLButtonElement>('[data-action=buy-theme]').disabled ? $('[data-action=cancel-theme]') : $('[data-action=buy-theme]')).focus();
       return;
     }
@@ -396,13 +424,15 @@ async function boot(): Promise<void> {
   function openBonus(kind: 'gift' | 'offer'): void {
     if ((kind === 'gift' && !store.state.giftNotice) || (kind === 'offer' && !store.state.offer)) return;
     if (!flush()) return;
-    motion.stop(); showBalance(store.state.coins); bonus = kind; activity.setBlocked('reward-modal', true); redraw(); $('.bonus-close').focus();
+    motion.stop(); showBalance(store.state.coins); bonus = kind; block('reward-modal', true); redraw();
+    if (kind === 'gift') giftView.start();
+    $('.bonus-close').focus();
   }
   function closeBonus(proceed = true): void {
     if (!bonus) return;
     try { if (bonus === 'gift') store.acknowledgeGift(); else store.dismissOffer(); } catch { saveError(); return; }
     const resume = continueAfterBonus && proceed; continueAfterBonus = false;
-    bonus = null; activity.setBlocked('reward-modal', false); redraw(); feedback.play('progress');
+    giftView.stop(); bonus = null; block('reward-modal', false); redraw(); feedback.play('progress');
     if (resume && screen === 'game' && result && !activity.isBlocked()) { void goNext(); return; }
     if (screen === 'game') $('.next').focus(); else $('.menu-body h1').focus();
   }
@@ -416,7 +446,7 @@ async function boot(): Promise<void> {
     if (wheelCommit) return wheelCommit;
     wheelCommit = (async () => {
       try {
-        if (store.state.daily.pending) { const spin = store.state.daily.pending; await wheelService.commit(); analytics.event('wheel_reward', { sector: spin.sector, amount: wheelPrizes[spin.sector]!, recovered: false }); }
+        if (store.state.daily.pending) { const spin = store.state.daily.pending; await wheelService.commit(); analytics.event('wheel_reward', { sector: spin.sector, amount: wheelCoinReward(store.state.daily.last!), ...(spin.themeId && !store.state.daily.last?.fallback ? { theme: spin.themeId } : {}), recovered: false }); }
         if (disposed) return;
         wheelBusy = false; showBalance(store.state.coins); redraw();
         if (celebrate && screen === 'wheel' && !activity.isBlocked()) wheelView.celebrate();
@@ -433,6 +463,7 @@ async function boot(): Promise<void> {
     finally { wheelPreparing = false; }
     if (disposed) return;
     if (token !== wheelToken || screen !== 'wheel' || activity.isBlocked()) { await settleWheel(); return; }
+    wheelView.render(store.state, true);
     const shown = await wheelView.spin(spin);
     if (!disposed) await settleWheel(shown && token === wheelToken);
   }
@@ -467,6 +498,12 @@ async function boot(): Promise<void> {
     switch (target.dataset.action) {
       case 'wheel': navigate('wheel'); break;
       case 'spin': void spinWheel(); break;
+      case 'apply-wheel-theme': {
+        const id = store.state.daily.last?.themeId;
+        if (screen !== 'wheel' || !id || store.state.daily.last?.fallback || !store.state.ownedThemes.includes(id)) break;
+        try { if (store.selectTheme(id) === 'equipped') analytics.event('theme_selected', { theme: id }); } catch { saveError(); return; }
+        redraw(); feedback.play('progress'); break;
+      }
       case 'gift': openBonus('gift'); break;
       case 'close-bonus': closeBonus(); break;
       case 'themes': openThemes(); break;
@@ -524,7 +561,7 @@ async function boot(): Promise<void> {
     const nextPath = complete(next, draft) ? [next.start] : [...draft];
     try { store.path(next, nextPath); } catch { $<HTMLButtonElement>('.next').disabled = false; saveError(); return; }
     motion.stop(); scene.settle(); showBalance(store.state.coins);
-    previewTheme = null; invalidate(); input.cancel(); level = next; path = nextPath; result = false; reward = 0;
+    previewTheme = null; invalidate(); input.cancel(); level = next; feedback.setLevel(level.id); path = nextPath; result = false; reward = 0;
     notice(''); redraw(); analytics.enter(level, path.length, store.state.completed.includes(level.id)); scene.open(); screens.stop(); screens.enterGame(root);
   }
   const prime = (): void => feedback.prime();
@@ -543,13 +580,13 @@ async function boot(): Promise<void> {
   const onStorage = (event: StorageEvent): void => {
     if (event.key !== SAVE_KEY && event.key !== null) return;
     if (!conflict) analytics.event('save_conflict', {});
-    conflict = true; activity.setBlocked('save-conflict', true);
+    conflict = true; block('save-conflict', true);
     notice(() => copy.conflict, () => copy.reload);
   };
   window.addEventListener('storage', onStorage);
   const onViewportResize = (): void => {
-    screens.stop(); cancelWheel(); motion.stop(); scene.settle(); showBalance(store.state.coins);
-    feedback.setBlocked(true); feedback.setBlocked(activity.isBlocked()); redraw();
+    screens.stop(); cancelWheel(); motion.stop(); giftView.stop(); scene.settle(); showBalance(store.state.coins);
+    feedback.setBlocked(true); feedback.setBlocked(audioBlocked()); redraw();
   };
   window.addEventListener('resize', onViewportResize);
 
@@ -586,7 +623,7 @@ async function boot(): Promise<void> {
     input.dispose(); flush(); analytics.dispose(); disposed = true; root.dataset.background = 'true'; invalidate(); clearTimeout(saveTimer); clearTimeout(rejectionTimer); clearTimeout(deadline);
     cancelAnimationFrame(frame); cancelAnimationFrame(secondFrame); cancelAnimationFrame(resizeFrame); cancelAnimationFrame(renderFrame);
     clearInterval(clock); wheelToken++; wheelView.dispose(); wheelService.dispose();
-    resize.disconnect(); disposeRuntime(); unsubscribe(); screens.dispose(); motion.dispose(); feedback.dispose(); disposeThumbControls(); root.removeEventListener('click', click);
+    resize.disconnect(); disposeRuntime(); unsubscribe(); screens.dispose(); motion.dispose(); giftView.dispose(); feedback.dispose(); disposeThumbControls(); root.removeEventListener('click', click);
     root.removeEventListener('pointerdown', prime, true); root.removeEventListener('keydown', prime, true);
     window.removeEventListener('resize', onViewportResize); window.removeEventListener('storage', onStorage); window.removeEventListener('pagehide', pagehide); window.removeEventListener('pageshow', pageshow);
     root.removeEventListener('keydown', trapFocus); destroyRenderer(game, releaseWriter);
@@ -596,8 +633,8 @@ async function boot(): Promise<void> {
   const pagehide = (event: PageTransitionEvent): void => { analytics.leave('pagehide'); flush(); if (!event.persisted) dispose(); };
   window.addEventListener('pagehide', pagehide);
   if (import.meta.hot) import.meta.hot.dispose(dispose);
-  try { const dispose = await installRuntime(activity, onBack, background => { root.dataset.background = String(background); }); if (disposed) dispose(); else { disposeRuntime = dispose; platformReady = true; timeline.mark('platform'); presentable(); } }
-  catch (error) { activity.setBlocked('startup-error', true); clearTimeout(deadline); $('#startup').textContent = copy.failedStart; console.error(error); }
+  try { const dispose = await installRuntime({ setBlocked: block }, onBack, background => { root.dataset.background = String(background); }); if (disposed) dispose(); else { disposeRuntime = dispose; platformReady = true; timeline.mark('platform'); presentable(); } }
+  catch (error) { block('startup-error', true); clearTimeout(deadline); $('#startup').textContent = copy.failedStart; console.error(error); }
 }
 void boot().catch(error => {
   analytics.event('startup_error', { reason: error instanceof SaveOwnershipError ? 'ownership' : 'save_or_boot' });

@@ -27,7 +27,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        flow: [persistence, localization, analytics, reload-touch, playtest]
+        flow: [persistence, localization, analytics, reload-touch, playtest, celebrations]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -53,4 +53,6 @@ jobs:
             .test-output/reload-touch/failure.png
             .test-output/playtest/results.json
             .test-output/playtest/failure.png
+            .test-output/celebrations/results.json
+            .test-output/celebrations/failure.png
           if-no-files-found: ignore

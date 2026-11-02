@@ -1,22 +1,22 @@
 import { complete, validPath, type Level } from '../core/model';
 import { levels } from '../content/levels';
 import { themes, getTheme, defaultTheme, freeThemeIds } from '../content/themes';
-import { initialRewards, giftReward, offerDue, validDate, wheelPrizes, type RewardState, type WheelSpin } from '../core/rewards';
+import { initialRewards, giftReward, offerDue, validDate, wheelPrizes, wheelCoinReward, rareThemeSector, type RewardState, type WheelSpin } from '../core/rewards';
 export const SAVE_KEY = 'road-lines.save.v1';
 export interface GameSave extends RewardState {
-  version: 3; levelId: string; levelVersion: number; path: number[];
+  version: 4; levelId: string; levelVersion: number; path: number[];
   completed: string[]; coins: number; hints: number;
   themeId: string; ownedThemes: string[];
   drafts: Record<string, { version: number; path: number[] }>;
 }
 export interface SyncStorage { getItem(key: string): string | null; setItem(key: string, value: string): void; }
-export const defaultSave = (): GameSave => ({ ...initialRewards(), version: 3, levelId: levels[0]!.id, levelVersion: 1,
+export const defaultSave = (): GameSave => ({ ...initialRewards(), version: 4, levelId: levels[0]!.id, levelVersion: 1,
   path: [levels[0]!.start], completed: [], coins: 0, hints: 3, drafts: {}, themeId: defaultTheme.id, ownedThemes: [...freeThemeIds] });
 export function decodeSave(raw: string): GameSave {
   const data: unknown = JSON.parse(raw);
   if (!data || typeof data !== 'object') throw Error('Invalid save');
   const d = data as Record<string, unknown>;
-  if ((d.version !== 1 && d.version !== 2 && d.version !== 3) || !Array.isArray(d.completed) || d.completed.some(id => typeof id !== 'string' || !levels.some(l => l.id === id)) ||
+  if ((d.version !== 1 && d.version !== 2 && d.version !== 3 && d.version !== 4) || !Array.isArray(d.completed) || d.completed.some(id => typeof id !== 'string' || !levels.some(l => l.id === id)) ||
     new Set(d.completed).size !== d.completed.length || !Number.isSafeInteger(d.coins) || (d.coins as number) < 0 ||
     !Number.isSafeInteger(d.hints) || (d.hints as number) < 0) throw Error('Invalid progression');
   const level = levels.find(l => l.id === d.levelId);
@@ -29,7 +29,7 @@ export function decodeSave(raw: string): GameSave {
     new Set(ownedThemes).size !== ownedThemes.length || !freeThemeIds.every(id => ownedThemes.includes(id)) ||
     typeof themeId !== 'string' || !ownedThemes.includes(themeId)) throw Error('Invalid theme ownership');
   let rewards = initialRewards();
-  if (d.version === 3) {
+  if (d.version === 3 || d.version === 4) {
     const count = d.completed.length;
     if (!Number.isSafeInteger(d.giftMilestones) || (d.giftMilestones as number) < 0 || (d.giftMilestones as number) !== Math.floor(count / 20) ||
       (d.giftNotice !== null && (!Number.isSafeInteger(d.giftNotice) || (d.giftNotice as number) < 20 || (d.giftNotice as number) % 20 !== 0 || (d.giftNotice as number) > (d.giftMilestones as number) * 20)) ||
@@ -38,9 +38,12 @@ export function decodeSave(raw: string): GameSave {
     if (o !== null && (!o || !themes.some(t => t.id === o.themeId && t.price > 0) || ownedThemes.includes(o.themeId) ||
       !d.completed.includes(o.levelId) || !Number.isSafeInteger(o.milestone) || o.milestone < 10 || o.milestone !== d.lastOfferAt)) throw Error('Invalid theme offer');
     const daily = d.daily as RewardState['daily'];
-    const validSpin = (s: WheelSpin | null): boolean => s === null || Boolean(s && typeof s.id === 'string' && s.id.length > 0 && s.id.length <= 100 && validDate(s.date) && Number.isInteger(s.sector) && s.sector >= 0 && s.sector < wheelPrizes.length);
+    const validSpin = (s: WheelSpin | null): boolean => s === null || Boolean(s && typeof s.id === 'string' && s.id.length > 0 && s.id.length <= 100 && validDate(s.date) && Number.isInteger(s.sector) && s.sector >= 0 && s.sector < wheelPrizes.length &&
+      (s.themeId === undefined || (s.sector === rareThemeSector && themes.some(t => t.id === s.themeId && t.price > 0))) &&
+      (s.fallback === undefined || (s.fallback === true && s.themeId !== undefined)));
     if (!daily || (daily.lastDate !== null && !validDate(daily.lastDate)) || !validSpin(daily.pending) || !validSpin(daily.last) ||
-      (daily.pending && daily.pending.date !== daily.lastDate) || (daily.last && (!daily.lastDate || daily.last.date > daily.lastDate)) ||
+      (daily.pending && (daily.pending.date !== daily.lastDate || daily.pending.fallback !== undefined)) || (daily.last && (!daily.lastDate || daily.last.date > daily.lastDate)) ||
+      (daily.last?.themeId && !ownedThemes.includes(daily.last.themeId)) ||
       (daily.pending && daily.last?.id === daily.pending.id) || (daily.lastDate !== null && !daily.pending && daily.last?.date !== daily.lastDate)) throw Error('Invalid wheel ledger');
     rewards = { giftMilestones: d.giftMilestones as number, giftNotice: d.giftNotice as number | null,
       lastOfferAt: d.lastOfferAt as number, offer: o && { ...o }, daily: { lastDate: daily.lastDate, pending: daily.pending && { ...daily.pending }, last: daily.last && { ...daily.last } } };
@@ -54,7 +57,7 @@ export function decodeSave(raw: string): GameSave {
     }
   }
   drafts[level.id] = { version: level.version, path: [...path] };
-  return { ...rewards, version: 3, levelId: level.id, levelVersion: level.version, path: [...path],
+  return { ...rewards, version: 4, levelId: level.id, levelVersion: level.version, path: [...path],
     completed: [...d.completed] as string[], coins: d.coins as number, hints: d.hints as number, drafts, themeId, ownedThemes: [...ownedThemes] };
 }
 /** One synchronous document writer. Memory follows confirmed atomic replacement. */
@@ -88,13 +91,19 @@ export class GameStore {
   stageSpin(spin: WheelSpin): void {
     if (this.state.daily.pending) throw Error('Spin already pending');
     if (!validDate(spin.date) || (this.state.daily.lastDate && spin.date <= this.state.daily.lastDate)) throw Error('Daily spin unavailable');
+    if (spin.fallback || (spin.themeId && (spin.sector !== rareThemeSector || this.state.ownedThemes.includes(spin.themeId)))) throw Error('Invalid staged theme');
     this.write({ ...this.state, daily: { ...this.state.daily, lastDate: spin.date, pending: spin } });
   }
   commitSpin(id: string): void {
     const spin = this.state.daily.pending;
     if (!spin) { if (this.state.daily.last?.id === id) return; throw Error('Unknown spin'); }
     if (spin.id !== id) throw Error('Stale spin');
-    this.write({ ...this.state, coins: this.state.coins + wheelPrizes[spin.sector]!, daily: { ...this.state.daily, pending: null, last: spin } });
+    const duplicate = Boolean(spin.themeId && this.state.ownedThemes.includes(spin.themeId));
+    const last: WheelSpin = duplicate ? { ...spin, fallback: true } : spin;
+    this.write({ ...this.state, coins: this.state.coins + wheelCoinReward(last),
+      ownedThemes: spin.themeId && !duplicate ? [...this.state.ownedThemes, spin.themeId] : this.state.ownedThemes,
+      offer: spin.themeId && this.state.offer?.themeId === spin.themeId ? null : this.state.offer,
+      daily: { ...this.state.daily, pending: null, last } });
   }
   dismissOffer(): void { if (this.state.offer) this.write({ ...this.state, offer: null }); }
   acknowledgeGift(): void { if (this.state.giftNotice) this.write({ ...this.state, giftNotice: null }); }

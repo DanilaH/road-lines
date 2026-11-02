@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest';
 import { CueGate, Feedback } from '../src/presentation/feedback';
 import { victoryLayout } from '../src/presentation/geometry';
 import { boardLayout } from '../src/ui/layout';
+import { readFileSync } from 'node:fs';
 
 describe('presentation limits', () => {
   it('expands the complete figure before settling exactly at the miniature', () => {
@@ -32,10 +33,13 @@ describe('presentation limits', () => {
     expect(new Feedback(storage).settings).toEqual({ sound: false, vibration: false });
   });
   it('uses bounded pre-rendered sound variants rather than per-cue oscillators', () => {
-    expect(soundBank.cell.length).toBe(4); expect(soundBank.undo.length).toBe(2);
+    expect(soundBank.cell.length).toBeGreaterThanOrEqual(8); expect(soundBank.undo.length).toBeGreaterThanOrEqual(3);
     let previous = 0;
     for (const clips of Object.values(soundBank)) for (const [offset, duration] of clips) {
-      expect(offset).toBeGreaterThanOrEqual(previous); expect(duration).toBeGreaterThan(.04); expect(duration).toBeLessThan(1.1); previous = offset + duration;
+      expect(offset).toBeGreaterThanOrEqual(previous); expect(duration).toBeGreaterThan(.04); expect(duration).toBeLessThan(1.5); previous = offset + duration;
     }
+    const wav = readFileSync('src/assets/audio/feedback.wav');
+    expect(previous).toBeLessThanOrEqual((wav.byteLength - 44) / wav.readUInt32LE(28));
+    expect(wav.byteLength).toBeLessThan(1024 * 1024);
   });
 });

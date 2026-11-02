@@ -232,3 +232,34 @@ button:focus-visible { outline: 3px solid var(--ribbon); outline-offset: 5px; }
 #app[data-screen=game][data-notice=true] .play .instruction { visibility: hidden; }
 /* Keep native touch hit regions still while pressing the thumb controls. */
 .route-action:active:not(:disabled) { transform: none; box-shadow: inset 0 2px 4px #3b24591c,0 1px 0 var(--edge); }
+
+/* The gift takes the whole stage; its reward is already durable before this opens. */
+.bonus-overlay[data-kind=gift] { background: radial-gradient(ellipse at 50% 43%,#f5dfba66,transparent 60%),var(--background); color: var(--ink); padding: max(24px,env(safe-area-inset-top)) 22px max(22px,env(safe-area-inset-bottom)); overflow: hidden; }
+[data-kind=gift] .bonus-card { display: flex; flex-direction: column; align-items: center; width: min(100%,380px); padding: 40px 0 12px; border: 0; box-shadow: none; background: none; color: var(--ink); overflow: visible; }
+[data-kind=gift] .bonus-card h2 { font-size: 40px; font-weight: 950; letter-spacing: -1.1px; margin: 0 0 4px; }
+[data-kind=gift] .bonus-art { position: static; width: 100%; max-width: none; }
+[data-kind=gift] .bonus-art::before { display: none; }
+.gift-wallet { position: absolute; right: 22px; top: max(20px,env(safe-area-inset-top)); display: flex; gap: 7px; align-items: center; font-size: 21px; font-weight: 950; border-radius: 30px; padding: 6px 12px; background: #f4c85524; box-shadow: inset 0 -2px 0 #b37b2420; }
+.gift-wallet .coin { width: 28px; height: 28px; }
+.gift-milestone { margin: 0 0 12px; font-size: 14px; color: var(--muted); font-weight: 750; }
+.gift-stage { position: relative; width: 100%; height: 310px; display: grid; place-items: center; }
+.gift-box { position: absolute; width: 240px; height: 250px; bottom: -6px; overflow: visible; filter: drop-shadow(0 12px 15px #6332821a); }
+.gift-lid { transform-box: fill-box; transform-origin: center; transform: translateY(-69px) rotate(-13deg); }
+.gift-base { transform: translateY(18px); }
+.gift-rays { position: absolute; width: 290px; height: 290px; top: -16px; border-radius: 50%; background: repeating-conic-gradient(#ffd56644 0deg 12deg,transparent 12deg 30deg),radial-gradient(#ffdf8c88,transparent 65%); mask-image: radial-gradient(#000 20%,transparent 69%); }
+.gift-prize { position: absolute; top: 43px; left: 0; right: 0; display: flex; align-items: center; justify-content: center; gap: 9px; font-size: 58px; font-weight: 950; letter-spacing: -2px; color: var(--ink); filter: drop-shadow(0 3px 0 #fff8); }
+.gift-prize .coin { width: 42px; height: 42px; font-size: 36px; }
+[data-kind=gift] .bonus-copy { margin: 12px 0 20px; font-size: 17px; color: var(--muted); }
+[data-kind=gift] .bonus-close { width: 100%; min-height: 56px; border-radius: 20px; color: var(--primary-ink); background: var(--primary); box-shadow: inset 0 2px 0 #fff3,0 5px 0 color-mix(in srgb,var(--primary),black 22%); margin: 0; z-index: 2; }
+.gift-particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.gift-particles i { position: absolute; width: 7px; height: 12px; opacity: 0; }
+.gift-token { position: absolute; width: 28px; height: 28px; margin: -14px; opacity: 0; }
+.gift-token svg { width: 100%; height: 100%; }
+.wheel-odds { color: var(--muted); font-size: 12px; line-height: 1.4; margin: 0 0 12px; }
+.wheel-theme-prize { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0 auto 12px; }
+.wheel-theme-preview { width: 70px; height: 54px; border-radius: 12px; overflow: hidden; }
+.wheel-theme-preview svg { display: block; width: 100%; height: 100%; }
+.wheel-theme-prize button { min-height: 44px; padding: 9px 16px; border-radius: 14px; background: var(--primary); color: var(--primary-ink); font-weight: 850; }
+.wheel-theme-prize button:disabled { background: var(--soft); color: var(--muted); }
+.wheel-body:has(.wheel-theme-prize:not([hidden])) .wheel-result { margin-top: 14px; margin-bottom: 5px; }
+@media(max-height:680px) { [data-kind=gift] .bonus-card { padding-top: 35px; } [data-kind=gift] .bonus-card h2 { font-size: 32px; }.gift-stage { height: 230px; }.gift-box { width: 190px; height: 198px; bottom: -4px; }.gift-prize { top: 14px; font-size: 48px; }.gift-rays { top: -35px; width: 240px; height: 240px; }[data-kind=gift] .bonus-copy { font-size: 14px; margin: 10px 0 18px; }.wheel-body:has(.wheel-theme-prize:not([hidden])) .wheel-assembly { width: 185px; }.wheel-body:has(.wheel-theme-prize:not([hidden])) .wheel-clock { margin: 10px 0; }.wheel-odds { margin-bottom: 8px; font-size: 11px; } }

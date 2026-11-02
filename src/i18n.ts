@@ -3,6 +3,7 @@ export const LANGUAGE_KEY = 'road-lines.locale.v1';
 const noun = (n: number, one: string, few: string, many: string): string => n % 100 >= 11 && n % 100 <= 14 ? many : n % 10 === 1 ? one : n % 10 >= 2 && n % 10 <= 4 ? few : many;
 const ruCoins = (n: number): string => `${n} ${noun(n, 'монета', 'монеты', 'монет')}`;
 const ru = {
+  previewActive: 'ПРИМЕРЯЕМ', rareTheme: 'ТЕМА', rareChance: 'Новая тема — шанс 1 из 8', allThemesWheel: 'Все темы собраны — в секторе темы 300 монет', themeWon: (name: string): string => `Получена тема «${name}»`, giftMilestone: (n: number): string => `За ${n} пройденных задач`,
   resetShort: 'Сброс', anotherTheme: 'Другая тема', previewFree: 'Примерка — бесплатно', chooseTheme: 'ВЫБРАТЬ', tryTheme: 'ПРИМЕРИТЬ', themePrice: (n: number): string => `${n} монет`,
   loading: 'Загрузка…', themes: 'Темы', home: 'Главное меню', restart: 'Начать заново', hint: 'Подсказка', pause: 'Пауза',
   won: 'ГОТОВО!', threeStars: 'Три звезды', board: 'Поле', navigation: 'Навигация', daily: 'Ежедневная награда', settings: 'Настройки', back: 'Назад',
@@ -46,7 +47,7 @@ const ru = {
   lastResult: (label: string): string => `Последний результат · ${label}`,
   setProgress: (n: number, total: number): string => `${n} из ${total} пройдено`,
   levelTile: (n: number, state: 'completed' | 'available' | 'locked'): string => `Уровень ${n}, ${state === 'completed' ? 'пройден, три звезды' : state === 'available' ? 'доступен' : 'закрыт'}`,
-  wheelAria: (amounts: string): string => `Восемь равных секторов: ${amounts} монет`,
+  wheelAria: (amounts: string): string => `Восемь равных секторов: ${amounts}`,
   wheelWin: (n: number): string => `Выигрыш: +${n} ${noun(n, 'монета', 'монеты', 'монет')}`,
   nextSpin: (time: string): string => `До новой попытки: ${time}`,
   themeNames: { classic: 'Классика', mint: 'Мята', lagoon: 'Лагуна', sunset: 'Закат', lavender: 'Лаванда', honey: 'Мёд', dusk: 'Сумерки', neon: 'Неон' },
@@ -56,6 +57,7 @@ const ru = {
 };
 export type Messages = typeof ru;
 const en: Messages = {
+  previewActive: 'TRYING', rareTheme: 'THEME', rareChance: 'A new theme — 1 in 8 chance', allThemesWheel: 'All themes collected — theme sector pays 300 coins', themeWon: (name: string): string => `Theme unlocked: ${name}`, giftMilestone: (n: number): string => `For ${n} completed puzzles`,
   resetShort: 'Reset', anotherTheme: 'Another theme', previewFree: 'Free preview', chooseTheme: 'CHOOSE', tryTheme: 'TRY', themePrice: (n: number): string => `${n} coins`,
   loading: 'Loading…', themes: 'Themes', home: 'Main menu', restart: 'Start over', hint: 'Hint', pause: 'Pause',
   won: 'CLEAR!', threeStars: 'Three stars', board: 'Board', navigation: 'Navigation', daily: 'Daily reward', settings: 'Settings', back: 'Back',
@@ -99,7 +101,7 @@ const en: Messages = {
   lastResult: (label: string): string => `Last result · ${label}`,
   setProgress: (n: number, total: number): string => `${n} of ${total} completed`,
   levelTile: (n: number, state: 'completed' | 'available' | 'locked'): string => `Level ${n}, ${state === 'completed' ? 'completed, three stars' : state === 'available' ? 'available' : 'locked'}`,
-  wheelAria: (amounts: string): string => `Eight equal sectors: ${amounts} coins`,
+  wheelAria: (amounts: string): string => `Eight equal sectors: ${amounts}`,
   wheelWin: (n: number): string => `You won: +${n} ${n === 1 ? 'coin' : 'coins'}`,
   nextSpin: (time: string): string => `Next free spin in ${time}`,
   themeNames: { classic: 'Classic', mint: 'Mint', lagoon: 'Lagoon', sunset: 'Sunset', lavender: 'Lavender', honey: 'Honey', dusk: 'Dusk', neon: 'Neon' },

@@ -1,5 +1,8 @@
 export const wheelPrizes = [20, 30, 50, 75, 100, 150, 200, 300] as const;
-export interface WheelSpin { id: string; date: string; sector: number; }
+// v4 theme award fields: legacy sector 7 with no themeId still pays its original 300.
+export interface WheelSpin { id: string; date: string; sector: number; themeId?: string; fallback?: true; }
+export const rareThemeSector = 7;
+export const wheelCoinReward = (spin: WheelSpin): number => spin.themeId && !spin.fallback ? 0 : wheelPrizes[spin.sector]!;
 export interface ThemeOffer { themeId: string; levelId: string; milestone: number; }
 export interface RewardState {
   giftMilestones: number; giftNotice: number | null; lastOfferAt: number; offer: ThemeOffer | null;

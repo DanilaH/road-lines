@@ -1,5 +1,7 @@
-import { copy } from '../i18n';
-import { canSpin, localDate, wheelAngle, wheelPrizes, type WheelSpin } from '../core/rewards';
+import { copy, themeName } from '../i18n';
+import { canSpin, localDate, wheelAngle, wheelPrizes, wheelCoinReward, rareThemeSector, type WheelSpin } from '../core/rewards';
+import { themes, getTheme } from '../content/themes';
+import { themePreview } from './themes';
 import type { GameSave } from '../services/save';
 import type { Feedback } from '../presentation/feedback';
 import { rewardArt } from './reward-art';
@@ -8,7 +10,7 @@ const polar = (r: number, degrees: number) => ({ x: 160 + r * Math.cos(degrees *
 export function wheelSvg(): string {
   return `<svg class="daily-wheel" viewBox="0 0 320 320" aria-label="${copy.wheelAria(wheelPrizes.join(', '))}"><defs><radialGradient id="wheel-purple" cx=".36" cy=".2" r=".85"><stop stop-color="#ac80f4"/><stop offset="1" stop-color="#7140be"/></radialGradient><radialGradient id="wheel-cream" cx=".35" cy=".2" r=".9"><stop stop-color="#fff9de"/><stop offset="1" stop-color="#f2d394"/></radialGradient></defs><circle cx="160" cy="160" r="149" fill="#b57c33"/>${wheelPrizes.map((amount, i) => {
     const a = polar(140, -112.5 + i * 45), b = polar(140, -67.5 + i * 45), label = polar(101, -90 + i * 45);
-    return `<g class="wheel-sector" data-sector="${i}"><path d="M160 160L${a.x} ${a.y}A140 140 0 0 1 ${b.x} ${b.y}Z" fill="url(#wheel-${i % 2 ? 'purple' : 'cream'})" stroke="#fff2c0" stroke-opacity=".45" stroke-width="1.2"/><text x="${label.x}" y="${label.y}" text-anchor="middle" dominant-baseline="central" transform="rotate(${i * 45} ${label.x} ${label.y})" fill="${i % 2 ? '#fff4d8' : '#634224'}" font-size="21" font-weight="950">${amount}</text></g>`;
+    return `<g class="wheel-sector" data-sector="${i}"><path d="M160 160L${a.x} ${a.y}A140 140 0 0 1 ${b.x} ${b.y}Z" fill="url(#wheel-${i % 2 ? 'purple' : 'cream'})" stroke="#fff2c0" stroke-opacity=".45" stroke-width="1.2"/><text x="${label.x}" y="${label.y}" text-anchor="middle" dominant-baseline="central" transform="rotate(${i * 45} ${label.x} ${label.y})" fill="${i % 2 ? '#fff4d8' : '#634224'}" font-size="${i === rareThemeSector ? 13 : 21}" font-weight="950">${i === rareThemeSector ? copy.rareTheme : amount}</text></g>`;
   }).join('')}</svg>`;
 }
 function wheelRim(): string {
@@ -22,18 +24,32 @@ export class WheelView {
   constructor(private host: HTMLElement, private feedback: Feedback) {
     host.innerHTML = `<header class="menu-header"><button class="tool" data-action="menu-back" data-i18n-aria="back" aria-label="${copy.back}">${icon('back')}</button><span class="menu-wallet">${coin}<span class="wheel-balance"></span></span></header>
       <div class="wheel-body"><h1 tabindex="-1" data-i18n="daily">${copy.daily}</h1><p class="wheel-caption" data-i18n="dailyCaption">${copy.dailyCaption}</p><div class="wheel-assembly"><div class="wheel-pointer" aria-hidden="true"></div>${wheelSvg()}${wheelRim()}<div class="wheel-medallion" aria-hidden="true">${rewardArt('medallion')}</div><div class="wheel-sparks" aria-hidden="true"></div></div>
-      <p class="wheel-result" role="status"></p><button class="wheel-spin" data-action="spin">${copy.spinFree}</button><p class="wheel-clock"></p><button class="wheel-extra" disabled>${icon('play')} <span data-i18n="spinVideo">${copy.spinVideo}</span></button><p class="wheel-ad-note" data-i18n="videoUnavailable">${copy.videoUnavailable}</p></div>`;
+      <p class="wheel-result" role="status"></p><div class="wheel-theme-prize" hidden><div class="wheel-theme-preview"></div><button data-action="apply-wheel-theme"></button></div><p class="wheel-odds"></p><button class="wheel-spin" data-action="spin">${copy.spinFree}</button><p class="wheel-clock"></p><button class="wheel-extra" disabled>${icon('play')} <span data-i18n="spinVideo">${copy.spinVideo}</span></button><p class="wheel-ad-note" data-i18n="videoUnavailable">${copy.videoUnavailable}</p></div>`;
   }
   render(save: GameSave, busy: boolean): void {
     this.host.querySelector('.wheel-balance')!.textContent = String(save.coins);
     const button = this.host.querySelector<HTMLButtonElement>('.wheel-spin')!;
     button.disabled = busy || !canSpin(save);
     button.textContent = busy ? copy.spinning : canSpin(save) ? copy.spinFree : copy.dailyClaimed;
-    this.host.querySelector('.wheel-result')!.textContent = busy ? copy.goodLuck : save.daily.last ? copy.wheelWin(wheelPrizes[save.daily.last.sector]!) : copy.equalChance;
+    const last = save.daily.last, wonTheme = !busy && last?.themeId && !last.fallback ? last.themeId : null;
+    const allOwned = themes.every(t => save.ownedThemes.includes(t.id));
+    const themeSector = save.daily.pending?.sector === rareThemeSector ? Boolean(save.daily.pending.themeId)
+      : !busy && last?.sector === rareThemeSector ? Boolean(wonTheme) : !allOwned;
+    const rareLabel = this.host.querySelector<SVGTextElement>(`.wheel-sector[data-sector="${rareThemeSector}"] text`)!;
+    rareLabel.textContent = themeSector ? copy.rareTheme : String(wheelPrizes[rareThemeSector]);
+    rareLabel.setAttribute('font-size', themeSector ? '13' : '21');
+    this.host.querySelector('.wheel-result')!.textContent = busy ? copy.goodLuck : wonTheme ? copy.themeWon(themeName(wonTheme)) : last ? copy.wheelWin(wheelCoinReward(last)) : copy.equalChance;
+    this.host.querySelector('.wheel-odds')!.textContent = allOwned ? copy.allThemesWheel : copy.rareChance;
+    const prize = this.host.querySelector<HTMLElement>('.wheel-theme-prize')!; prize.hidden = !wonTheme;
+    if (wonTheme) {
+      this.host.querySelector('.wheel-theme-preview')!.innerHTML = themePreview(getTheme(wonTheme));
+      const apply = this.host.querySelector<HTMLButtonElement>('[data-action=apply-wheel-theme]')!;
+      apply.textContent = save.themeId === wonTheme ? copy.selected : copy.apply; apply.disabled = save.themeId === wonTheme;
+    }
     this.host.dataset.spinning = String(busy);
     this.host.querySelectorAll<SVGGElement>('.wheel-sector').forEach((node, i) => node.classList.toggle('won', !busy && save.daily.last?.sector === i));
     if (!busy) (this.host.querySelector('.daily-wheel') as SVGElement).style.transform = `rotate(${save.daily.last ? wheelAngle(save.daily.last.sector) % 360 : 0}deg)`;
-    this.host.querySelector('.daily-wheel')!.setAttribute('aria-label', copy.wheelAria(wheelPrizes.join(', ')));
+    this.host.querySelector('.daily-wheel')!.setAttribute('aria-label', copy.wheelAria(wheelPrizes.map((n,i) => i === rareThemeSector && themeSector ? copy.rareTheme : n).join(', ')));
     this.tick(save);
   }
   tick(save: GameSave): void {

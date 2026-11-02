@@ -2,7 +2,7 @@ import { Capacitor, type PluginListenerHandle } from '@capacitor/core';
 import { GameplayActivityCoordinator, installDocumentVisibilityBlocker } from '../../vendor/mini-games-kit/src/platform/activity';
 
 export async function installRuntime(
-  activity: GameplayActivityCoordinator,
+  activity: Pick<GameplayActivityCoordinator, 'setBlocked'>,
   onBack: () => void,
   onBackground: (background: boolean) => void = () => {},
 ): Promise<() => void> {

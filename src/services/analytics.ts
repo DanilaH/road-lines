@@ -20,7 +20,7 @@ export interface Events {
   hint_repeat: LevelInfo;
   theme_purchase: { theme: string; price: number };
   theme_selected: { theme: string };
-  wheel_reward: { sector: number; amount: number; recovered: boolean };
+  wheel_reward: { sector: number; amount: number; recovered: boolean; theme?: string };
   save_error: { operation: string };
   save_conflict: Record<string, never>;
   language_change: { language: string; saved: boolean };

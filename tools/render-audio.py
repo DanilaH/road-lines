@@ -16,12 +16,20 @@ def mallet(f,d=.22,wood=False):
  if wood:y=np.tanh(y*1.8)*np.exp(-t*15)
  return y
 clips={}
-for i in range(4):clips[f'cell{i}']=mallet(540+i*7,.18,True)+mallet(1080+i*11,.18)*.10
-for i in range(2):
+# Three audibly different families, four independent strikes each.
+for i in range(4):
+ clips[f'cell{i}']=mallet(490+i*22,.20,True)+mallet(980+i*27,.20)*.13
+for i in range(4):
+ clips[f'cell{i+4}']=mallet(620+i*24,.20)*.62+mallet(930+i*19,.20,True)*.30
+for i in range(4):
+ t=np.arange(int(rate*.20))/rate; f=365+i*17
+ clips[f'cell{i+8}']=sum(np.sin(2*np.pi*f*k*t)*np.exp(-t*(15+k*5))/k**1.7 for k in range(1,6))*(1-np.exp(-t*1600))+noise(len(t),.3)*np.exp(-t*180)*.14
+for i in range(4):
  t=np.arange(int(rate*.18))/rate;clips[f'undo{i}']=noise(len(t),.18)*np.sin(np.pi*np.minimum(t/.16,1))**2*np.exp(-t*15)*.8+mallet(245+i*10,.18,True)*.45
-for i in range(3):clips[f'coin{i}']=mallet(1480+i*19,.16)*.52+mallet(2240+i*17,.16)*.18
-for i in range(2):clips[f'button{i}']=mallet(310+i*8,.09,True)
+for i in range(4):clips[f'coin{i}']=mallet(1480+i*19,.16)*.52+mallet(2240+i*17,.16)*.18
+for i in range(3):clips[f'button{i}']=mallet(310+i*8,.09,True)
 clips['reject0']=mallet(180,.13,True)
+clips['reject1']=mallet(155,.13,True)*.8+mallet(230,.13,True)*.25
 for i,f in enumerate([659.25,783.99,1046.5]):clips[f'star{i}']=mallet(f,.42)+.28*mallet(f*2,.42)
 def chord(notes,duration):
  result=np.zeros(int(rate*duration))
@@ -29,7 +37,10 @@ def chord(notes,duration):
   a=mallet(f,.55);at=int(rate*.055*i);end=min(len(result),at+len(a));result[at:end]+=a[:end-at]*(.7 if i else 1)
  return result
 clips['win0']=chord([523.25,659.25,783.99,1046.5],1.05)
+clips['win1']=chord([587.33,739.99,880,1174.66],1.05)
 clips['progress0']=chord([783.99,1046.5,1318.5],.72)
+clips['progress1']=chord([698.46,932.33,1174.66],.72)
+clips['gift0']=chord([392,523.25,659.25,783.99,1046.5,1318.5],1.35)
 output=[];meta={};offset=0
 for name,y in clips.items():
  # Short reflected body, baked once; zero CPU convolution/reverb during drawing.

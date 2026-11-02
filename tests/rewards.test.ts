@@ -33,7 +33,7 @@ describe('gift and offer policy', () => {
     for (const l of levels.slice(0, 10)) all.finish(l, l.witness); expect(all.state.offer).toBeNull();
   });
   it('migrates v2 without resetting ownership or progression', () => {
-    expect(decodeSave(JSON.stringify({ ...defaultSave(), version: 2, coins: 70, themeId: 'mint', completed: ['intro-01'] }))).toMatchObject({ version: 3, coins: 70, themeId: 'mint', completed: ['intro-01'], ...initialRewards() });
+    expect(decodeSave(JSON.stringify({ ...defaultSave(), version: 2, coins: 70, themeId: 'mint', completed: ['intro-01'] }))).toMatchObject({ version: 4, coins: 70, themeId: 'mint', completed: ['intro-01'], ...initialRewards() });
   });
 });
 describe('durable daily wheel', () => {
@@ -51,7 +51,7 @@ describe('durable daily wheel', () => {
   });
   it('rebases commit on current state, preserving purchases, paths and rewards', async () => {
     const store = new GameStore(memory()); store.write({ ...store.state, coins: 500 });
-    const service = new WheelService(store, () => 7, () => 'a'); await service.prepare(day);
+    const service = new WheelService(store, () => 7, () => 'a', () => 4); await service.prepare(day);
     store.selectTheme('dusk'); store.path(levels[0]!, [0, 1]); store.finish(levels[0]!, levels[0]!.witness); await service.commit();
     expect(store.state).toMatchObject({ coins: 320, themeId: 'dusk', completed: ['intro-01'], path: [0, 1, 2] });
   });
