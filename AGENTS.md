@@ -6,6 +6,9 @@
 3. Read vendor/mini-games-kit/README.md, then the focused API docs for any reused module.
 4. User instructions override this contract. Preserve new decisions here or in the product plan; chat history must not be the only specification.
 
+## Current monetization contract — approved 2 November 2026
+User approved `docs/MONETIZATION_PLAN.md`; it supersedes all earlier monetization numbers/placements and earlier ad deferral. Hint single60 / pack3 for150; one rewarded topup150 from hint/theme shortage; themes500 and existing rewards/free daily wheel unchanged. First interstitial requires60 active seconds AND5 first clears; later90 active seconds AND3 new first clears after the last fullscreen ad closes, including rewarded. Only Continue; protect gifts/final bank result. Banner included with a separate slot and short-screen fallback. No x5/direct theme/extra wheel/IAP in this package. Research cadence10/180/4/150 and cap3 per10min are historical, not approved. Specification recorded; implementation remains pending. Read the plan before monetization changes.
+
 ## Product contract
 Build a Fill puzzle closely matching the supplied competitor reference in interaction, composition, animation sequence and reward cadence. First reproduce the baseline, then add new ideas. The goal is a tactile, rewarding game, not merely a solver with coloured cells.
 - Keep the full agreed scope: stars, coins, gift progress, themes/catalog, skin offers, daily wheel and ads.
