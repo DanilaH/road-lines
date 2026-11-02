@@ -26,8 +26,8 @@ jobs:
       - run: npm run check
       - uses: actions/cache@v4
         with:
-          path: ~/.android/debug.keystore
-          key: road-lines-playtest-debug-keystore-v1
+          path: .test-output/android-signing/debug.keystore
+          key: road-lines-playtest-debug-keystore-v2
       - run: npm run android:build
         env:
           APPMETRICA_API_KEY: ${{ secrets.APPMETRICA_DEBUG_API_KEY }}

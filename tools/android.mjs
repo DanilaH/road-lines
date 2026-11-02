@@ -40,8 +40,14 @@ let gradle = readFileSync(gradlePath, 'utf8');
 // Install playtest builds alongside the user's existing app and its saves.
 // Namespace and Java package stay unchanged; only the debug application ID differs.
 const playtest = process.env.ROAD_LINES_PLAYTEST === 'true';
+const debugKey = resolve(root, '.test-output/android-signing/debug.keystore');
+if (playtest && build && !existsSync(debugKey)) {
+  mkdirSync(dirname(debugKey), { recursive: true });
+  run('keytool', ['-genkeypair', '-keystore', debugKey, '-storepass', 'android', '-keypass', 'android',
+    '-alias', 'androiddebugkey', '-dname', 'CN=Android Debug,O=Android,C=US', '-keyalg', 'RSA', '-keysize', '2048', '-validity', '10000']);
+}
 writeFileSync(resolve(root, 'android/app/road-playtest.gradle'), playtest
-  ? "android { buildTypes { debug { applicationIdSuffix '.playtest'; versionNameSuffix '-playtest' } } }\n" : '');
+  ? "android { signingConfigs { debug { storeFile rootProject.file('../.test-output/android-signing/debug.keystore'); storePassword 'android'; keyAlias 'androiddebugkey'; keyPassword 'android' } }; buildTypes { debug { applicationIdSuffix '.playtest'; versionNameSuffix '-playtest'; signingConfig signingConfigs.debug } } }\n" : '');
 if (!gradle.includes("apply from: 'road-playtest.gradle'")) gradle += "\napply from: 'road-playtest.gradle'\n";
 const stringsPath = resolve(app, 'res/values/strings.xml');
 let strings = readFileSync(stringsPath, 'utf8').replaceAll(' · тест', '');
