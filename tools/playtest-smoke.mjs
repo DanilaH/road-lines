@@ -29,10 +29,22 @@ try{
  }
  await check('screen-wide directional gestures, resume below board, button exclusion and free reset',async()=>{
   const {p,context}=await open(seed(levels[2]),{video:true,width:390,height:844});const b=await p.locator('#board').boundingBox();
+  await p.evaluate(()=>{window.__resetClicks=0;document.querySelector('#app').addEventListener('click',e=>{if(e.target.closest('[data-action=restart]'))__resetClicks++;});});
   await swipe(p,{x:15,y:b.y+8},{x:97,y:b.y+8});assert.deepEqual((await save(p)).path,[0,1,2]);
   const dock=await p.locator('.play-controls').boundingBox();await swipe(p,{x:35,y:dock.y-20},{x:35,y:dock.y+22});assert.deepEqual((await save(p)).path,[0,1,2,5]);assert.equal((await save(p)).hints,3);
-  await p.locator('[data-action=restart]').tap();await p.waitForFunction(k=>JSON.parse(localStorage.getItem(k)).path.length===1,key);assert.deepEqual((await save(p)).path,[0]);assert.equal((await save(p)).hints,3);
+  await p.locator('[data-action=restart]').tap();await p.waitForFunction(k=>JSON.parse(localStorage.getItem(k)).path.length===1,key);assert.deepEqual((await save(p)).path,[0]);assert.equal((await save(p)).hints,3);assert.equal(await p.evaluate(()=>__resetClicks),1,'One tap dispatches reset exactly once');
   await swipe(p,{x:15,y:b.y+8},{x:97,y:b.y+8});await swipe(p,{x:15,y:b.y+8},{x:15,y:b.y+50});await swipe(p,{x:100,y:b.y+8},{x:18,y:b.y+8});await p.locator('.result-heading:visible').waitFor();assert.equal((await save(p)).coins,20);await p.waitForTimeout(900);await p.locator('[data-action=try-result-theme]').tap();await p.waitForTimeout(500);await p.screenshot({path:out+'/preview.png'});const video=p.video();await context.close();await video.saveAs(out+'/directional-preview.webm');
+ });
+ await check('thumb touches activate once; drag/cancel do not activate; mouse and keyboard still work',async()=>{
+  const {p,context}=await open(seed(levels[2],{path:[0,1]}));
+  await p.evaluate(()=>{window.__actions={restart:0,hint:0};document.querySelector('#app').addEventListener('click',e=>{const a=e.target.closest('button')?.dataset.action;if(a in __actions)__actions[a]++;});});
+  const r=await p.locator('[data-action=restart]').boundingBox(),point={x:r.x+r.width/2,y:r.y+r.height/2},cdp=await p.context().newCDPSession(p);
+  await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{...point,id:0}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:5,y:r.y-25,id:0}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});assert.deepEqual((await save(p)).path,[0,1]);
+  await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{...point,id:0}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchCancel',touchPoints:[]});assert.deepEqual((await save(p)).path,[0,1]);
+  await p.locator('[data-action=restart]').tap();assert.deepEqual((await save(p)).path,[0]);assert.equal(await p.evaluate(()=>__actions.restart),1);
+  await p.locator('[data-action=hint]').tap();await p.getByText('Бледная линия показывает продолжение.',{exact:true}).waitFor();assert.equal((await save(p)).hints,2);assert.equal(await p.evaluate(()=>__actions.hint),1);
+  await p.locator('[data-action=hint]').focus();await p.keyboard.press('Enter');assert.equal((await save(p)).hints,2);assert.equal(await p.evaluate(()=>__actions.hint),2);
+  await p.locator('[data-action=restart]').click();await p.locator('[data-action=restart]').focus();await p.keyboard.press('Space');assert.equal(await p.evaluate(()=>__actions.restart),3);await cdp.detach();await context.close();
  });
  await check('capture continues past board bounds; directional reverse does not teleport',async()=>{
   const l=levels[2],{p,context}=await open(seed(l,{path:[0,1]})),points=await centers(p,l),b=await p.locator('#board').boundingBox();

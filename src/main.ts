@@ -14,6 +14,7 @@ import { complete, type MoveBlock } from './core/model';
 import { GameStore, SAVE_KEY } from './services/save';
 import { HintService } from './services/hints';
 import { installRouteInput } from './services/input';
+import { installThumbControls } from './services/thumb-controls';
 import { acquireSaveOwnership, SaveOwnershipError } from './services/ownership';
 import { Feedback } from './presentation/feedback';
 import { WinMotion } from './presentation/motion';
@@ -529,6 +530,7 @@ async function boot(): Promise<void> {
   const prime = (): void => feedback.prime();
   root.addEventListener('pointerdown', prime, true); root.addEventListener('keydown', prime, true);
   root.addEventListener('click', click);
+  const disposeThumbControls = installThumbControls(root);
   const trapFocus = (event: KeyboardEvent): void => {
     if (event.key === 'Tab' && (paused || pendingTheme || bonus)) {
       event.preventDefault(); const buttons = [...root.querySelectorAll<HTMLButtonElement>(bonus ? '.bonus-card button' : pendingTheme ? '.theme-purchase button' : '.pause-card button')].filter(button => !button.disabled && button.getClientRects().length > 0);
@@ -584,7 +586,7 @@ async function boot(): Promise<void> {
     input.dispose(); flush(); analytics.dispose(); disposed = true; root.dataset.background = 'true'; invalidate(); clearTimeout(saveTimer); clearTimeout(rejectionTimer); clearTimeout(deadline);
     cancelAnimationFrame(frame); cancelAnimationFrame(secondFrame); cancelAnimationFrame(resizeFrame); cancelAnimationFrame(renderFrame);
     clearInterval(clock); wheelToken++; wheelView.dispose(); wheelService.dispose();
-    resize.disconnect(); disposeRuntime(); unsubscribe(); screens.dispose(); motion.dispose(); feedback.dispose(); root.removeEventListener('click', click);
+    resize.disconnect(); disposeRuntime(); unsubscribe(); screens.dispose(); motion.dispose(); feedback.dispose(); disposeThumbControls(); root.removeEventListener('click', click);
     root.removeEventListener('pointerdown', prime, true); root.removeEventListener('keydown', prime, true);
     window.removeEventListener('resize', onViewportResize); window.removeEventListener('storage', onStorage); window.removeEventListener('pagehide', pagehide); window.removeEventListener('pageshow', pageshow);
     root.removeEventListener('keydown', trapFocus); destroyRenderer(game, releaseWriter);
