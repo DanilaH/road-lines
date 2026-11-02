@@ -228,7 +228,7 @@ button:focus-visible { outline: 3px solid var(--ribbon); outline-offset: 5px; }
 
 /* Status uses the caption space, never the thumb targets. */
 .play .notice { bottom: calc(136px + env(safe-area-inset-bottom,0px)); padding: 8px 12px; font-size: 12px; line-height: 1.3; pointer-events: none; }
-.play .notice button { min-height: 36px; padding: 6px 10px; pointer-events: auto; flex-shrink: 0; }
+.play .notice button { min-height: 44px; padding: 6px 10px; pointer-events: auto; flex-shrink: 0; }
 #app[data-screen=game][data-notice=true] .play .instruction { visibility: hidden; }
 /* Keep native touch hit regions still while pressing the thumb controls. */
 .route-action:active:not(:disabled) { transform: none; box-shadow: inset 0 2px 4px #3b24591c,0 1px 0 var(--edge); }
