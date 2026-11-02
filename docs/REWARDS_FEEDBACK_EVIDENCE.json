@@ -1,0 +1,666 @@
+{
+  "date": "2026-11-02",
+  "capturedAtUtc": "2026-11-02T15:10:34.672950+00:00",
+  "sourceCommit": "eb4df929e51dcceee08a85ddebb65a5d419b8594",
+  "sourceSha256": "336094323cf1111a961a04899852d587d5328e0dccd0d1796d0f76f4a13aff0c",
+  "unit": {
+    "files": 63,
+    "tests": 415,
+    "result": "PASS",
+    "faultMatrix": "33 storage/recovery cases including themed stage/commit before-write, after-write and unreadable readback"
+  },
+  "production": {
+    "result": "PASS",
+    "pointerSolutions": 90,
+    "viewports": 5,
+    "includes": [
+      "live resize",
+      "mechanics",
+      "bank/drafts",
+      "menus",
+      "themes/purchases",
+      "wheel stage/reload/background/failures",
+      "gift Continue"
+    ],
+    "report": {
+      "inspect": false,
+      "results": [
+        {
+          "width": 320,
+          "height": 568,
+          "passed": true
+        },
+        {
+          "width": 360,
+          "height": 800,
+          "passed": true
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "passed": true
+        },
+        {
+          "width": 412,
+          "height": 915,
+          "passed": true
+        },
+        {
+          "width": 576,
+          "height": 1280,
+          "passed": true
+        }
+      ]
+    }
+  },
+  "celebrations": {
+    "checks": [
+      "budget-aware free preview, no disabled purchase trap, rotating result candidates across levels/reload",
+      "affordable result purchase confirms once and preserves the equipped theme after reload",
+      "theme target is durable before animation, reload awards it once, Apply is free",
+      "legacy sector 7 remains 300 coins; all-owned rare sector substitutes 300",
+      "gift sound is allowed under its own modal, background cancels it without replay or loss",
+      "gift acknowledgement failure retains its notice; reload recovery cannot grant it twice",
+      "gift reveal demonstration and complete cleanup on Continue",
+      "rare theme wheel demonstration, specific reward and immediate Apply"
+    ],
+    "screens": [
+      {
+        "width": 320,
+        "height": 568,
+        "lang": "ru",
+        "theme": "classic"
+      },
+      {
+        "width": 320,
+        "height": 568,
+        "lang": "en",
+        "theme": "neon"
+      },
+      {
+        "width": 360,
+        "height": 800,
+        "lang": "ru",
+        "theme": "classic"
+      },
+      {
+        "width": 360,
+        "height": 800,
+        "lang": "en",
+        "theme": "neon"
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "lang": "ru",
+        "theme": "classic"
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "lang": "en",
+        "theme": "neon"
+      },
+      {
+        "width": 412,
+        "height": 915,
+        "lang": "ru",
+        "theme": "classic"
+      },
+      {
+        "width": 412,
+        "height": 915,
+        "lang": "en",
+        "theme": "neon"
+      },
+      {
+        "width": 576,
+        "height": 1280,
+        "lang": "ru",
+        "theme": "classic"
+      },
+      {
+        "width": 576,
+        "height": 1280,
+        "lang": "en",
+        "theme": "neon"
+      }
+    ],
+    "errors": []
+  },
+  "playtest": {
+    "checks": [
+      "screen-wide directional gestures, resume below board, button exclusion and free reset",
+      "thumb touches activate once; drag/cancel do not activate; mouse and keyboard still work",
+      "capture continues past board bounds; directional reverse does not teleport",
+      "directional input cannot cross walls or enter numbered finish early",
+      "result preview is free/transient and Continue restores saved theme",
+      "result purchase confirms once, preserves reward, equips and survives reload",
+      "Continue crosses both sets directly, including gift acknowledgement, without extra grants",
+      "sampled playback, bounded voices, background cancellation and no stale replay"
+    ],
+    "screens": [
+      {
+        "width": 320,
+        "height": 568,
+        "theme": "classic"
+      },
+      {
+        "width": 320,
+        "height": 568,
+        "theme": "neon"
+      },
+      {
+        "width": 360,
+        "height": 800,
+        "theme": "classic"
+      },
+      {
+        "width": 360,
+        "height": 800,
+        "theme": "neon"
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "theme": "classic"
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "theme": "neon"
+      },
+      {
+        "width": 412,
+        "height": 915,
+        "theme": "classic"
+      },
+      {
+        "width": 412,
+        "height": 915,
+        "theme": "neon"
+      },
+      {
+        "width": 576,
+        "height": 1280,
+        "theme": "classic"
+      },
+      {
+        "width": 576,
+        "height": 1280,
+        "theme": "neon"
+      }
+    ],
+    "errors": []
+  },
+  "performance": {
+    "errors": [],
+    "checks": [
+      "Idle has no Phaser frames or FillPath work",
+      "Endpoint pulse/sparks render without rebuilding either cached texture",
+      "Hidden result CSS animations are paused",
+      "Background pauses all CSS animation timelines",
+      "Sleeping renderer disposal removes canvases and WebGL context",
+      "Active renderer disposal also completes; disposed screen has no running CSS animations"
+    ],
+    "regressionErrors": [],
+    "uiCycles": 38,
+    "fxCycles": 20,
+    "samples": [
+      {
+        "label": "UI warmup 6",
+        "heap": 6110556,
+        "dom": {
+          "documents": 1,
+          "nodes": 477,
+          "jsEventListeners": 71
+        },
+        "queues": {
+          "timers": 0,
+          "animations": 0,
+          "coins": 0,
+          "particles": 0,
+          "sparks": 0,
+          "wheelSparks": 0
+        },
+        "live": {
+          "raf": 0,
+          "timeouts": 0,
+          "intervals": 1,
+          "workers": 0,
+          "audioCreated": 1,
+          "audioClosed": 0,
+          "voices": 0,
+          "peakVoices": 4,
+          "writes": 17
+        }
+      },
+      {
+        "label": "UI cycles 14",
+        "heap": 6478416,
+        "dom": {
+          "documents": 1,
+          "nodes": 477,
+          "jsEventListeners": 71
+        },
+        "queues": {
+          "timers": 0,
+          "animations": 0,
+          "coins": 0,
+          "particles": 0,
+          "sparks": 0,
+          "wheelSparks": 0
+        },
+        "live": {
+          "raf": 0,
+          "timeouts": 0,
+          "intervals": 1,
+          "workers": 0,
+          "audioCreated": 1,
+          "audioClosed": 0,
+          "voices": 0,
+          "peakVoices": 4,
+          "writes": 41
+        }
+      },
+      {
+        "label": "UI cycles 22",
+        "heap": 6584524,
+        "dom": {
+          "documents": 1,
+          "nodes": 477,
+          "jsEventListeners": 71
+        },
+        "queues": {
+          "timers": 0,
+          "animations": 0,
+          "coins": 0,
+          "particles": 0,
+          "sparks": 0,
+          "wheelSparks": 0
+        },
+        "live": {
+          "raf": 0,
+          "timeouts": 0,
+          "intervals": 1,
+          "workers": 0,
+          "audioCreated": 1,
+          "audioClosed": 0,
+          "voices": 0,
+          "peakVoices": 4,
+          "writes": 65
+        }
+      },
+      {
+        "label": "UI cycles 30",
+        "heap": 6619100,
+        "dom": {
+          "documents": 1,
+          "nodes": 477,
+          "jsEventListeners": 71
+        },
+        "queues": {
+          "timers": 0,
+          "animations": 0,
+          "coins": 0,
+          "particles": 0,
+          "sparks": 0,
+          "wheelSparks": 0
+        },
+        "live": {
+          "raf": 0,
+          "timeouts": 0,
+          "intervals": 1,
+          "workers": 0,
+          "audioCreated": 1,
+          "audioClosed": 0,
+          "voices": 0,
+          "peakVoices": 4,
+          "writes": 89
+        }
+      },
+      {
+        "label": "UI cycles 38",
+        "heap": 6654976,
+        "dom": {
+          "documents": 1,
+          "nodes": 477,
+          "jsEventListeners": 71
+        },
+        "queues": {
+          "timers": 0,
+          "animations": 0,
+          "coins": 0,
+          "particles": 0,
+          "sparks": 0,
+          "wheelSparks": 0
+        },
+        "live": {
+          "raf": 0,
+          "timeouts": 0,
+          "intervals": 1,
+          "workers": 0,
+          "audioCreated": 1,
+          "audioClosed": 0,
+          "voices": 0,
+          "peakVoices": 4,
+          "writes": 113
+        }
+      },
+      {
+        "label": "after 20 presentation stress cycles",
+        "heap": 6740960,
+        "dom": {
+          "documents": 1,
+          "nodes": 477,
+          "jsEventListeners": 73
+        },
+        "queues": {
+          "timers": 0,
+          "animations": 0,
+          "coins": 0,
+          "particles": 0,
+          "sparks": 0,
+          "wheelSparks": 0
+        },
+        "live": {
+          "raf": 0,
+          "timeouts": 0,
+          "intervals": 1,
+          "workers": 0,
+          "audioCreated": 1,
+          "audioClosed": 0,
+          "voices": 1,
+          "peakVoices": 7,
+          "writes": 113
+        }
+      }
+    ],
+    "workerStress": [
+      {
+        "label": "worker stress",
+        "found": 10,
+        "cancelled": 10,
+        "workers": 0
+      }
+    ],
+    "dispose": [
+      {
+        "label": "dispose-while-running",
+        "after": {
+          "state": {
+            "screen": "game",
+            "paused": false,
+            "result": false,
+            "path": [
+              0
+            ],
+            "disposed": true
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 0,
+          "textures": 0,
+          "canvases": 0,
+          "ghosts": 0,
+          "coins": 0,
+          "animations": [
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "ambient-drift",
+              "target": "SECTION",
+              "hidden": "visible"
+            }
+          ],
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 0,
+            "workers": 0,
+            "audioCreated": 1,
+            "audioClosed": 1,
+            "voices": 0,
+            "peakVoices": 0,
+            "writes": 1
+          }
+        },
+        "afterWake": null
+      },
+      {
+        "label": "dispose-while-sleeping",
+        "after": {
+          "state": {
+            "screen": "home",
+            "paused": false,
+            "result": false,
+            "path": [
+              0
+            ],
+            "disposed": true
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 0,
+          "textures": 0,
+          "canvases": 0,
+          "ghosts": 0,
+          "coins": 0,
+          "animations": [
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "ambient-drift",
+              "target": "SECTION",
+              "hidden": "visible"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "ambient-drift",
+              "target": "SECTION",
+              "hidden": "visible"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "board-hover",
+              "target": "svg",
+              "hidden": "visible"
+            }
+          ],
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 0,
+            "workers": 0,
+            "audioCreated": 1,
+            "audioClosed": 1,
+            "voices": 1,
+            "peakVoices": 1,
+            "writes": 1
+          }
+        },
+        "afterWake": null
+      }
+    ]
+  },
+  "audio": {
+    "bytes": 721004,
+    "sha256": "27c40b379028b6d57fafd18531e4bc9f2a260c4bad56d3908a860b505593393b",
+    "seconds": 11.265,
+    "sampleRate": 32000,
+    "channels": 1,
+    "bitDepth": 16,
+    "cellStrikes": 12,
+    "families": 3,
+    "clipCount": 33,
+    "reproducibleGeneration": "PASS",
+    "origin": "Original offline authored synthetic percussion, not downloaded/recorded foley",
+    "runtime": "One decoded buffer/context, bounded 20 voices; no oscillators, no new runtime dependency"
+  },
+  "haptics": {
+    "nativeCellMs": 24,
+    "nativeCellAmplitude": 230,
+    "minimumCellGapMs": 70,
+    "coinGapMs": 90,
+    "winPatternMs": [
+      0,
+      34,
+      45,
+      42,
+      55,
+      62
+    ],
+    "giftPatternMs": [
+      0,
+      32,
+      45,
+      42,
+      50,
+      70,
+      70,
+      100
+    ],
+    "priority": "Coin/button/cell cannot truncate an ongoing win/gift waveform",
+    "nativeCompilation": "PASS",
+    "physicalFeel": "Not independently accepted on phone"
+  },
+  "wheel": {
+    "sectors": 8,
+    "equalChances": true,
+    "newThemeSector": 7,
+    "themeChance": 0.125,
+    "stage": "Fixed unowned paid theme before animation",
+    "duplicateOrAllOwnedCoins": 300,
+    "legacySector7Coins": 300,
+    "expectedCoinPayoutBeforeAllOwned": 78.125,
+    "expectedCoinPayoutAfterAllOwned": 115.625
+  },
+  "save": {
+    "version": 4,
+    "acceptsLegacy": [
+      1,
+      2,
+      3
+    ],
+    "keeps": "wallet, ownership, hints, completions, level versions and drafts; old numeric pending awards",
+    "downgrade": "Older clients reject v4 rather than interpret themed pending as 300 coins"
+  },
+  "ci": {
+    "appRun": 41466542171,
+    "mobileJobs": {
+      "persistence": "success",
+      "localization": "success",
+      "analytics": "success",
+      "reload-touch": "success",
+      "playtest": "success",
+      "celebrations": "success"
+    },
+    "sequentialBaseline": "success",
+    "androidRun": 41466542320,
+    "android": "success",
+    "appConclusion": "success",
+    "fullBaselineIncludes": [
+      "npm run check",
+      "inspect all90",
+      "production all90",
+      "UX smoke",
+      "balance/oracle smoke"
+    ]
+  },
+  "artifacts": {
+    "apk": {
+      "name": "road-lines-rewards.apk",
+      "sourceCommit": "eb4df929e51dcceee08a85ddebb65a5d419b8594",
+      "bytes": 6552253,
+      "sha256": "f135ab26f11b6308bd1c5538440c0c20488469ae8fdcc2834e9c8072808df9e1",
+      "certificateSha256": "4dcd2fd9420531301e277b679c956ede74f2d2eeb2a6e01b47e014fae6203b88",
+      "sameSignatureAndManifestAsPreviousPlaytest": true,
+      "appId": "com.danilah.roadlines.playtest",
+      "embeddedAssetsMatch": [
+        {
+          "name": "assets/public/assets/esm-L0-hGaMr.js",
+          "sha256": "fe138262454bca756d9b0934d07dc1c274f5889086fde11946776fb6f9037c84"
+        },
+        {
+          "name": "assets/public/assets/feedback-BL5pFbmG.wav",
+          "sha256": "27c40b379028b6d57fafd18531e4bc9f2a260c4bad56d3908a860b505593393b"
+        },
+        {
+          "name": "assets/public/assets/hint.worker-sYsRWQ4p.js",
+          "sha256": "e9f9120dccad85f8003ac2f4496b4e30e08e018a2cb178cc39451f81be89d695"
+        },
+        {
+          "name": "assets/public/assets/index-CBPWWe3J.js",
+          "sha256": "b5dc7a5b4691bcfb77197563afad946baac4b8ac79539fa71ee5ac2dd2a33233"
+        },
+        {
+          "name": "assets/public/assets/index-CBXG94hK.css",
+          "sha256": "17e87017006b30bbae51abe5a3e5429d34407bdf533fb1ade94bfae5e98d86cb"
+        },
+        {
+          "name": "assets/public/assets/web-LEggtMan.js",
+          "sha256": "30b5084ec5f147afc99ee74ce0024eac8dc7d7cd0f314e8712cbca9e32c6a530"
+        }
+      ],
+      "githubArtifactId": 13153740000,
+      "zipSha256": "1bafc68ad1837ba85a7eb725ccf1c78154aa44bf0145452ab718e83cc9333317",
+      "libraryFileId": "libfile_29b4a5addff48191a1ae199a7cf5e2d1",
+      "libraryVersion": 2
+    },
+    "gifs": [
+      {
+        "name": "road-lines-gift.gif",
+        "bytes": 1510528,
+        "sha256": "007ebc13b78f489c1c9e0c24e67c44ac542338e71b0b5ae801ee652ae2279d0d",
+        "durationSeconds": 5.41,
+        "width": 320,
+        "height": 693,
+        "fps": 12,
+        "libraryFileId": "libfile_d1eb5490c74c81918ed8ae7a3cf85e89",
+        "libraryVersion": 0
+      },
+      {
+        "name": "road-lines-wheel-theme.gif",
+        "bytes": 2755601,
+        "sha256": "6cffd2e6c76bd94cf3ccc2deefc6e9a6a86f0fc353ebb7bc219f57f9af6e7082",
+        "durationSeconds": 7.66,
+        "width": 320,
+        "height": 693,
+        "fps": 12,
+        "libraryFileId": "libfile_16aab19cb3788191a2d1545eb5404557",
+        "libraryVersion": 0
+      }
+    ],
+    "recordings": "Actual production UI; gift seed represents earned milestone, rare wheel outcome forced only by external browser harness to demonstrate branch, actual spin duration unchanged"
+  },
+  "limitations": [
+    "Physical sound/haptic feel/FPS/heat and release signing remain device/release acceptance",
+    "Resource counts are bounded browser evidence, not proof of zero leaks",
+    "Ads and buying hints/rewarded coin topups deferred by user",
+    "AppMetrica API key remains absent; live delivery not claimed"
+  ]
+}
