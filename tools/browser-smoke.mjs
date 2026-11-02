@@ -268,12 +268,12 @@ try {
   await touch('touchEnd', []);
   assert.deepEqual((await readSave()).path, [0, 1, 2, 5]);
   await cdp.detach();
-  // Once the pointer leaves the board, re-entry while still held cannot continue.
+  // Captured input outside the board keeps steering sequentially in the new direction.
   await move(await center(branch, 5)); await gameplay.mouse.down();
   const outside = await gameplay.locator('#board').boundingBox();
   await gameplay.mouse.move(outside.x + outside.width + 20, p5.y);
-  await move(await center(branch, 4)); await gameplay.mouse.up();
-  assert.deepEqual((await readSave()).path, [0, 1, 2, 5]);
+  await gameplay.mouse.move(outside.x + outside.width - 22, p5.y); await gameplay.mouse.up();
+  assert.deepEqual((await readSave()).path, [0, 1, 2, 5, 4]);
 
   // An unavailable worker search is neither a charged hint nor a claimed dead end.
   await gameplay.route('**/assets/hint.worker-*.js', route => route.abort());
