@@ -3,6 +3,7 @@ export const LANGUAGE_KEY = 'road-lines.locale.v1';
 const noun = (n: number, one: string, few: string, many: string): string => n % 100 >= 11 && n % 100 <= 14 ? many : n % 10 === 1 ? one : n % 10 >= 2 && n % 10 <= 4 ? few : many;
 const ruCoins = (n: number): string => `${n} ${noun(n, 'монета', 'монеты', 'монет')}`;
 const ru = {
+  rewardRecoveryFailed: 'Не удалось проверить рекламную награду. Попробуй ещё раз.',
   hintShop: 'Подсказки', hintShopCaption: 'Покажут следующие клетки маршрута', buyHintSingle: '1 подсказка · 60', buyHintPack: '3 подсказки · 150', adCoins: '+150 монет · видео', adLoading: 'Загружаю видео…', adUnavailable: 'Видео сейчас недоступно. Можно попробовать позже.', adGranted: 'Получено 150 монет', hintBought: 'Подсказки куплены', getCoins: 'ПОПОЛНИТЬ МОНЕТЫ',
 
   previewActive: 'ПРИМЕРЯЕМ', rareTheme: 'ТЕМА', rareChance: 'Новая тема — шанс 1 из 8', allThemesWheel: 'Все темы собраны — в секторе темы 300 монет', themeWon: (name: string): string => `Получена тема «${name}»`, giftMilestone: (n: number): string => `За ${n} пройденных задач`,
@@ -59,6 +60,7 @@ const ru = {
 };
 export type Messages = typeof ru;
 const en: Messages = {
+  rewardRecoveryFailed: 'Could not check the ad reward. Please try again.',
   hintShop: 'Hints', hintShopCaption: 'Reveal the next cells of your route', buyHintSingle: '1 hint · 60', buyHintPack: '3 hints · 150', adCoins: '+150 coins · video', adLoading: 'Loading video…', adUnavailable: 'Video is unavailable now. Try again later.', adGranted: '150 coins received', hintBought: 'Hints purchased', getCoins: 'GET COINS',
 
   previewActive: 'TRYING', rareTheme: 'THEME', rareChance: 'A new theme — 1 in 8 chance', allThemesWheel: 'All themes collected — theme sector pays 300 coins', themeWon: (name: string): string => `Theme unlocked: ${name}`, giftMilestone: (n: number): string => `For ${n} completed puzzles`,

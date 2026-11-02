@@ -85,6 +85,7 @@ async function boot(): Promise<void> {
   let paused = false, disposed = false, saveFailed = false, conflict = false, busy = false, revision = 0;
   let hint: number[] = [], rollback: number | null = null, saveTimer: ReturnType<typeof setTimeout> | undefined;
   let disposeRuntime = (): void => {};
+  let rendererReady = false, platformReady = false, readyReported = false;
   let frame = 0, secondFrame = 0, resizeFrame = 0, renderFrame = 0;
   const activity = new GameplayActivityCoordinator(() => {}, () => {}), hints = new HintService();
   const feedbackBlockers = new Set<string>();
@@ -345,7 +346,7 @@ async function boot(): Promise<void> {
     // Confirmed help still describes the same prefix across lifecycle blockers.
     if (blocked) { screens.stop(); cancelWheel(); invalidate(true); input.cancel(); flush(); motion.stop(); scene.settle(); showBalance(store.state.coins); }
     redraw();
-    if (game.isBooted) { if (blocked) game.loop.sleep(); else if (screen === 'game') game.loop.wake(); }
+    if (game.isBooted && rendererReady) { if (blocked) game.loop.sleep(); else if (screen === 'game') game.loop.wake(); }
   });
   function setPause(value: boolean): void {
     if (result && screen === 'game') return;
@@ -669,7 +670,6 @@ async function boot(): Promise<void> {
     monetization?.tick();
     if (root.dataset.ready === 'true' && !monetization?.enabled.rewarded) void monetization?.refreshStatus();
   }, 1000);
-  let rendererReady = false, platformReady = false, readyReported = false;
   const deadline = setTimeout(() => { const startup = root.querySelector('#startup'); if (startup) startup.textContent = copy.slowStart; }, 15_000);
   function presentable(): void {
     if (!rendererReady || !platformReady || disposed) return;
@@ -687,12 +687,13 @@ async function boot(): Promise<void> {
       }); });
     }); });
   }
-  game.events.once('postrender', () => { if (!result) scene.open(); rendererReady = true; timeline.mark('renderer'); presentable(); });
+  game.events.once('postrender', () => { if (!result && !activity.isBlocked()) scene.open(); rendererReady = true; timeline.mark('renderer'); presentable(); if (activity.isBlocked()) game.loop.sleep(); });
   monetization = new Monetization(store, localStorage, analytics, block,
     () => { clearTimeout(saveTimer); input.cancel(); invalidate(true); if (conflict) return false; try { store.reload(); saveFailed = false; } catch { return false; } return flush(); },
     () => { if (!disposed) { showBalance(store.state.coins); redraw(); } },
-    () => { hintShop = false; pendingTheme = null; block('hint-shop', false); block('theme-confirm', false); saveError('ad-receipt'); redraw(); }, $('#banner-slot'));
-  await monetization.init().catch(() => {});
+    () => { hintShop = false; pendingTheme = null; block('hint-shop', false); block('theme-confirm', false); saveError('ad-receipt'); notice(() => copy.rewardRecoveryFailed, () => copy.retry); redraw(); }, $('#banner-slot'));
+  // Native ad status/listener/receipt timing must never gate the first visible frame.
+  void monetization.init().catch(() => {});
   redraw();
   if (screen === 'game' && !result) analytics.enter(level, path.length, store.state.completed.includes(level.id));
 
