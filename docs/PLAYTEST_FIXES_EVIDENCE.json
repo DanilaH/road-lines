@@ -1,0 +1,599 @@
+{
+  "date": "2026-11-02",
+  "runtimeCommit": "09c465c5cd7d4a19a56bb5f7bc1798ca56e7d81f",
+  "sourceSha256": "016175de84e3f5e69196a8387f923d5ce1ea394f5a39c149b46054c430e98e02",
+  "packageCommit": "09c465c5cd7d4a19a56bb5f7bc1798ca56e7d81f",
+  "fullHarnessCommit": "cb6ffe721d36b1d7098f152f943c2344a6515039",
+  "unit": {
+    "files": 62,
+    "tests": 400,
+    "result": "PASS"
+  },
+  "playtest": {
+    "checks": [
+      "screen-wide directional gestures, resume below board, button exclusion and free reset",
+      "thumb touches activate once; drag/cancel do not activate; mouse and keyboard still work",
+      "capture continues past board bounds; directional reverse does not teleport",
+      "directional input cannot cross walls or enter numbered finish early",
+      "result preview is free/transient and Continue restores saved theme",
+      "result purchase confirms once, preserves reward, equips and survives reload",
+      "Continue crosses both sets directly, including gift acknowledgement, without extra grants",
+      "sampled playback, bounded voices, background cancellation and no stale replay"
+    ],
+    "screens": [
+      {
+        "width": 320,
+        "height": 568,
+        "theme": "classic"
+      },
+      {
+        "width": 320,
+        "height": 568,
+        "theme": "neon"
+      },
+      {
+        "width": 360,
+        "height": 800,
+        "theme": "classic"
+      },
+      {
+        "width": 360,
+        "height": 800,
+        "theme": "neon"
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "theme": "classic"
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "theme": "neon"
+      },
+      {
+        "width": 412,
+        "height": 915,
+        "theme": "classic"
+      },
+      {
+        "width": 412,
+        "height": 915,
+        "theme": "neon"
+      },
+      {
+        "width": 576,
+        "height": 1280,
+        "theme": "classic"
+      },
+      {
+        "width": 576,
+        "height": 1280,
+        "theme": "neon"
+      }
+    ],
+    "errors": []
+  },
+  "extraShortResults": {
+    "viewport": [
+      320,
+      568
+    ],
+    "languages": [
+      "ru",
+      "en"
+    ],
+    "result": "PASS",
+    "nextBottom": 556,
+    "themeCardBottom": 506,
+    "sourceRuntime": "f108a8f; result geometry unchanged in final runtime"
+  },
+  "performance": {
+    "sourceSha256": "016175de84e3f5e69196a8387f923d5ce1ea394f5a39c149b46054c430e98e02",
+    "verifiedEqualsFinalRuntimeSrc": true,
+    "capturedHeadBeforeFetch": "cb6ffe721d36b1d7098f152f943c2344a6515039",
+    "note": "Audited working src was committed as 09c465c; exact content hash, not captured pre-fetch HEAD, establishes provenance.",
+    "checks": [
+      "Idle has no Phaser frames or FillPath work",
+      "Endpoint pulse/sparks render without rebuilding either cached texture",
+      "Hidden result CSS animations are paused",
+      "Background pauses all CSS animation timelines",
+      "Sleeping renderer disposal removes canvases and WebGL context",
+      "Active renderer disposal also completes; disposed screen has no running CSS animations"
+    ],
+    "errors": [],
+    "auditErrors": [],
+    "uiCycles": 38,
+    "fxCycles": 20,
+    "memory": [
+      {
+        "label": "UI warmup 6",
+        "usedHeap": 6071812,
+        "dom": {
+          "documents": 1,
+          "nodes": 473,
+          "jsEventListeners": 71
+        },
+        "queues": {
+          "timers": 0,
+          "animations": 0,
+          "coins": 0,
+          "particles": 0,
+          "sparks": 0,
+          "wheelSparks": 0
+        },
+        "live": {
+          "raf": 0,
+          "timeouts": 0,
+          "intervals": 1,
+          "workers": 0,
+          "audioCreated": 1,
+          "audioClosed": 0,
+          "voices": 0,
+          "peakVoices": 4,
+          "writes": 17
+        }
+      },
+      {
+        "label": "UI cycles 14",
+        "usedHeap": 6437580,
+        "dom": {
+          "documents": 1,
+          "nodes": 473,
+          "jsEventListeners": 71
+        },
+        "queues": {
+          "timers": 0,
+          "animations": 0,
+          "coins": 0,
+          "particles": 0,
+          "sparks": 0,
+          "wheelSparks": 0
+        },
+        "live": {
+          "raf": 0,
+          "timeouts": 0,
+          "intervals": 1,
+          "workers": 0,
+          "audioCreated": 1,
+          "audioClosed": 0,
+          "voices": 0,
+          "peakVoices": 4,
+          "writes": 41
+        }
+      },
+      {
+        "label": "UI cycles 22",
+        "usedHeap": 6547908,
+        "dom": {
+          "documents": 1,
+          "nodes": 473,
+          "jsEventListeners": 71
+        },
+        "queues": {
+          "timers": 0,
+          "animations": 0,
+          "coins": 0,
+          "particles": 0,
+          "sparks": 0,
+          "wheelSparks": 0
+        },
+        "live": {
+          "raf": 0,
+          "timeouts": 0,
+          "intervals": 1,
+          "workers": 0,
+          "audioCreated": 1,
+          "audioClosed": 0,
+          "voices": 0,
+          "peakVoices": 4,
+          "writes": 65
+        }
+      },
+      {
+        "label": "UI cycles 30",
+        "usedHeap": 6569148,
+        "dom": {
+          "documents": 1,
+          "nodes": 473,
+          "jsEventListeners": 71
+        },
+        "queues": {
+          "timers": 0,
+          "animations": 0,
+          "coins": 0,
+          "particles": 0,
+          "sparks": 0,
+          "wheelSparks": 0
+        },
+        "live": {
+          "raf": 0,
+          "timeouts": 0,
+          "intervals": 1,
+          "workers": 0,
+          "audioCreated": 1,
+          "audioClosed": 0,
+          "voices": 0,
+          "peakVoices": 4,
+          "writes": 89
+        }
+      },
+      {
+        "label": "UI cycles 38",
+        "usedHeap": 6637688,
+        "dom": {
+          "documents": 1,
+          "nodes": 473,
+          "jsEventListeners": 71
+        },
+        "queues": {
+          "timers": 0,
+          "animations": 0,
+          "coins": 0,
+          "particles": 0,
+          "sparks": 0,
+          "wheelSparks": 0
+        },
+        "live": {
+          "raf": 0,
+          "timeouts": 0,
+          "intervals": 1,
+          "workers": 0,
+          "audioCreated": 1,
+          "audioClosed": 0,
+          "voices": 0,
+          "peakVoices": 4,
+          "writes": 113
+        }
+      },
+      {
+        "label": "after 20 presentation stress cycles",
+        "usedHeap": 6724600,
+        "dom": {
+          "documents": 1,
+          "nodes": 473,
+          "jsEventListeners": 73
+        },
+        "queues": {
+          "timers": 0,
+          "animations": 0,
+          "coins": 0,
+          "particles": 0,
+          "sparks": 0,
+          "wheelSparks": 0
+        },
+        "live": {
+          "raf": 0,
+          "timeouts": 0,
+          "intervals": 1,
+          "workers": 0,
+          "audioCreated": 1,
+          "audioClosed": 0,
+          "voices": 1,
+          "peakVoices": 7,
+          "writes": 113
+        }
+      }
+    ],
+    "workerStress": [
+      {
+        "label": "worker stress",
+        "found": 10,
+        "cancelled": 10,
+        "workers": 0
+      }
+    ],
+    "dispose": [
+      {
+        "label": "dispose-while-running",
+        "after": {
+          "state": {
+            "screen": "game",
+            "paused": false,
+            "result": false,
+            "path": [
+              0
+            ],
+            "disposed": true
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 0,
+          "textures": 0,
+          "canvases": 0,
+          "ghosts": 0,
+          "coins": 0,
+          "animations": [
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "ambient-drift",
+              "target": "SECTION",
+              "hidden": "visible"
+            }
+          ],
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 0,
+            "workers": 0,
+            "audioCreated": 1,
+            "audioClosed": 1,
+            "voices": 0,
+            "peakVoices": 0,
+            "writes": 1
+          }
+        },
+        "afterWake": null
+      },
+      {
+        "label": "dispose-while-sleeping",
+        "after": {
+          "state": {
+            "screen": "home",
+            "paused": false,
+            "result": false,
+            "path": [
+              0
+            ],
+            "disposed": true
+          },
+          "loop": false,
+          "pendingDestroy": false,
+          "renderType": 2,
+          "commands": 657,
+          "labels": 0,
+          "objects": 0,
+          "textures": 0,
+          "canvases": 0,
+          "ghosts": 0,
+          "coins": 0,
+          "animations": [
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "ambient-drift",
+              "target": "SECTION",
+              "hidden": "visible"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "ambient-drift",
+              "target": "SECTION",
+              "hidden": "visible"
+            },
+            {
+              "type": "CSSAnimation",
+              "state": "paused",
+              "name": "board-hover",
+              "target": "svg",
+              "hidden": "visible"
+            }
+          ],
+          "queues": {
+            "timers": 0,
+            "animations": 0,
+            "coins": 0,
+            "particles": 0,
+            "sparks": 0,
+            "wheelSparks": 0
+          },
+          "live": {
+            "raf": 0,
+            "timeouts": 0,
+            "intervals": 0,
+            "workers": 0,
+            "audioCreated": 1,
+            "audioClosed": 1,
+            "voices": 1,
+            "peakVoices": 1,
+            "writes": 1
+          }
+        },
+        "afterWake": null
+      }
+    ]
+  },
+  "ci": {
+    "run": 41450046738,
+    "sourceCommit": "09c465c5cd7d4a19a56bb5f7bc1798ca56e7d81f",
+    "mobileJobs": {
+      "persistence": "success",
+      "localization": "success",
+      "analytics": "success",
+      "reload-touch": "success",
+      "playtest": "success"
+    },
+    "fullBaseline": "in_progress at recording; local production all90 passed",
+    "androidRun": 41450046688,
+    "android": "success",
+    "debugKeyCache": "restored road-lines-playtest-debug-keystore-v2",
+    "earlierFailures": [
+      "Stale outside-board-cancellation assertion replaced by sequential continuation check",
+      "Rollback target restored from 36 to 44 px",
+      "Captured swipe followed by native tap lost compatibility click: final thumb release activation plus dedup, tested 12 repetitions and 8 flow groups"
+    ]
+  },
+  "artifacts": {
+    "apk": {
+      "name": "road-lines-playtest.apk",
+      "bytes": 6166465,
+      "sha256": "2dda938559589751a6e39be7b40884edcfb1612ee1413ea6a99550b7407d8448",
+      "appId": "com.danilah.roadlines.playtest",
+      "certificateSha256": "4dcd2fd9420531301e277b679c956ede74f2d2eeb2a6e01b47e014fae6203b88",
+      "manifestClasses": "PASS",
+      "assets": [
+        {
+          "path": "assets/public/assets/esm-DpoLfG4J.js",
+          "sha256": "b2a3c8ad0df4546279b160a93649434c33fc7b0743a0eb317e57511fe1fca02d"
+        },
+        {
+          "path": "assets/public/assets/feedback-BOMz0Meo.wav",
+          "sha256": "761745dd36aa5a515654931cc2624abdc90bbb4d6a2dea20c35da58e3563d239"
+        },
+        {
+          "path": "assets/public/assets/hint.worker-sYsRWQ4p.js",
+          "sha256": "e9f9120dccad85f8003ac2f4496b4e30e08e018a2cb178cc39451f81be89d695"
+        },
+        {
+          "path": "assets/public/assets/index-BHzNXV8S.css",
+          "sha256": "45b41319bd85549856312ffda3aab1f3cf25a2eabb4feb12d2b9451a3c574fc9"
+        },
+        {
+          "path": "assets/public/assets/index-Besxo8sw.js",
+          "sha256": "daa1b49ba7e0d45874c92180dfd8468c2b57f3c483966cb621bb305c1e5f1b35"
+        },
+        {
+          "path": "assets/public/assets/web-Ddw_2d-z.js",
+          "sha256": "8593e4391a8414042847f1dcd51a7df822db90272191736eb10c4a422deae8df"
+        }
+      ],
+      "embeddedAssetsMatch": "All JS/CSS/WAV bytes equal final tested production dist",
+      "artifactId": 13143168427,
+      "artifactZipSha256": "8153bbf8c8392236b315e79861a8cadd19a78ea80929effbe865272d4ce1b544",
+      "libraryFileId": "libfile_29b4a5addff48191a1ae199a7cf5e2d1",
+      "libraryVersion": 1
+    },
+    "gif": {
+      "name": "road-lines-playtest.gif",
+      "bytes": 2732225,
+      "sha256": "2f1445e522d6da4a795f0cc1b036bf08851f9d22a94f01c2348b908550bab6c1",
+      "seconds": 8.08,
+      "fps": 12,
+      "width": 320,
+      "source": "Actual production pointer/touch recording with test-only touch ring",
+      "libraryFileId": "libfile_54b20bcf581c8191b89d1f329cc9590c",
+      "sourceCommit": "09c465c5cd7d4a19a56bb5f7bc1798ca56e7d81f",
+      "libraryVersion": 1
+    },
+    "samples": {
+      "bytes": 340844,
+      "sha256": "761745dd36aa5a515654931cc2624abdc90bbb4d6a2dea20c35da58e3563d239",
+      "originalOfflineSynthesis": true
+    }
+  },
+  "limits": [
+    "Browser/software GPU evidence, not phone FPS/thermals",
+    "Physical Android audio/haptics/input acceptance remains user playtest",
+    "Separate playtest package starts its own save; old package/progress retained",
+    "Debug signing cache is not a release signing solution",
+    "Ads remain deferred"
+  ],
+  "rapidSwipeTapRepeats": {
+    "repetitions": 12,
+    "result": "PASS",
+    "timing": "No added delay before the immediate reset tap; later recorded gestures are paced for the demonstration"
+  },
+  "fullProduction": {
+    "sourceCommit": "09c465c5cd7d4a19a56bb5f7bc1798ca56e7d81f",
+    "result": "PASS",
+    "pointerSolutions": 90,
+    "includes": [
+      "live resize",
+      "touch cancellation and second pointer",
+      "directional capture past board",
+      "mechanics",
+      "sets/drafts",
+      "menu",
+      "themes/purchases",
+      "reward/wheel/reload/failure"
+    ],
+    "report": {
+      "inspect": false,
+      "results": [
+        {
+          "width": 320,
+          "height": 568,
+          "passed": true
+        },
+        {
+          "width": 360,
+          "height": 800,
+          "passed": true
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "passed": true
+        },
+        {
+          "width": 412,
+          "height": 915,
+          "passed": true
+        },
+        {
+          "width": 576,
+          "height": 1280,
+          "passed": true
+        }
+      ]
+    }
+  },
+  "ux": {
+    "sourceRuntime": "4b2d57c (final layout before thumb-event handler)",
+    "flowChecks": 10,
+    "viewportThemeCombinations": 10,
+    "result": "PASS"
+  },
+  "balance": {
+    "oracleJobs": 587,
+    "cpuRates": 2,
+    "result": "PASS",
+    "errors": [],
+    "ui": [
+      {
+        "check": "Free zero-budget nearest rollback and reload",
+        "id": "intro-03",
+        "width": 320,
+        "height": 568,
+        "notice": "Этот маршрут зашёл в тупик. Вернуться на 1 клетку?",
+        "rollback": 2
+      },
+      {
+        "check": "Free zero-budget nearest rollback and reload",
+        "id": "shapes-10",
+        "width": 390,
+        "height": 844,
+        "notice": "Этот маршрут зашёл в тупик. Вернуться на 4 клетки?",
+        "rollback": 1
+      },
+      {
+        "check": "Free zero-budget nearest rollback and reload",
+        "id": "shapes-20",
+        "width": 412,
+        "height": 915,
+        "notice": "Этот маршрут зашёл в тупик. Вернуться на 19 клеток?",
+        "rollback": 1
+      },
+      {
+        "check": "Paid last hint becomes zero; same-session repeat is free, reload does not reveal a new paid hint"
+      },
+      {
+        "check": "Unavailable worker at zero budget is UNKNOWN, no false dead-end/charge"
+      },
+      {
+        "check": "Reset cancels an in-flight zero-budget diagnosis; stale rollback is discarded"
+      },
+      {
+        "check": "Confirmed zero-budget rollback survives pause and document background, then still applies"
+      },
+      {
+        "check": "Confirmed paid hint survives pause and repeats for free at zero budget"
+      }
+    ],
+    "sourceSha256": "016175de84e3f5e69196a8387f923d5ce1ea394f5a39c149b46054c430e98e02",
+    "verifiedEqualsFinalRuntimeSrc": true
+  }
+}
