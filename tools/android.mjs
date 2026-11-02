@@ -37,7 +37,18 @@ console.info(analyticsKey ? 'Native analytics configured.' : 'Native analytics d
 copyFileSync(resolve(root, 'native/android/road-analytics.gradle'), resolve(root, 'android/app/road-analytics.gradle'));
 const gradlePath = resolve(root, 'android/app/build.gradle');
 let gradle = readFileSync(gradlePath, 'utf8');
+// Install playtest builds alongside the user's existing app and its saves.
+// Namespace and Java package stay unchanged; only the debug application ID differs.
+const playtest = process.env.ROAD_LINES_PLAYTEST === 'true';
+writeFileSync(resolve(root, 'android/app/road-playtest.gradle'), playtest
+  ? "android { buildTypes { debug { applicationIdSuffix '.playtest'; versionNameSuffix '-playtest' } } }\n" : '');
+if (!gradle.includes("apply from: 'road-playtest.gradle'")) gradle += "\napply from: 'road-playtest.gradle'\n";
+const stringsPath = resolve(app, 'res/values/strings.xml');
+let strings = readFileSync(stringsPath, 'utf8').replaceAll(' · тест', '');
+if (playtest) strings = strings.replace(/(<string name="(?:app_name|title_activity_main)">)([^<]+)(<\/string>)/g, '$1$2 · тест$3');
+writeFileSync(stringsPath, strings);
 if (!gradle.includes("apply from: 'road-analytics.gradle'")) { gradle += "\napply from: 'road-analytics.gradle'\n"; writeFileSync(gradlePath, gradle); }
+writeFileSync(gradlePath, gradle);
 
 copyFileSync(resolve(root, 'native/android/road_lines_icon.xml'), resolve(app, 'res/drawable/road_lines_icon.xml'));
 copyFileSync(resolve(root, 'native/android/styles.xml'), resolve(app, 'res/values/styles.xml'));

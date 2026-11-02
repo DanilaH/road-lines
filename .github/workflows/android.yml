@@ -24,11 +24,16 @@ jobs:
       - run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
       - run: npm ci
       - run: npm run check
+      - uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: road-lines-playtest-debug-keystore-v1
       - run: npm run android:build
         env:
           APPMETRICA_API_KEY: ${{ secrets.APPMETRICA_DEBUG_API_KEY }}
+          ROAD_LINES_PLAYTEST: 'true'
       - uses: actions/upload-artifact@v4
         with:
-          name: road-lines-debug
+          name: road-lines-playtest-debug
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
