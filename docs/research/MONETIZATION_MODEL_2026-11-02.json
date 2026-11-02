@@ -1,0 +1,859 @@
+{
+  "date": "2026-11-02",
+  "kind": "design sensitivity analysis, not telemetry; no SDK/runtime changes",
+  "runtimeCommit": "0331c701b1f81e160d1c6711824a80d64bf888ec",
+  "sourceSha256": {
+    "src/services/save.ts": "9de84d343bf8437121440f61e106fa2099b248023755f61b4bd906400011d6e3",
+    "src/core/rewards.ts": "7876ae793387c5b0d3f67243a87101f4ad863cee995fa3b98275ad00d83938e6",
+    "src/content/themes.ts": "0ac0f75a943d299e7ddf07362924ad190329310dd8f13a688ec59e838e003bb1",
+    "src/content/levels.ts": "2e55e441da5e6fc78f010b1d690826a9a9d83cbc443edf7351f4434d0f9f25ed"
+  },
+  "current": {
+    "levels": 90,
+    "initialHints": 3,
+    "baseCoins": 20,
+    "giftEvery": 20,
+    "giftCoins": 100,
+    "campaignCoins": 2200,
+    "themePrices": [
+      0,
+      0,
+      500,
+      500,
+      500,
+      500,
+      500,
+      500
+    ],
+    "paidCatalogCoins": 3000,
+    "wheelPrizesLegacy": [
+      20,
+      30,
+      50,
+      75,
+      100,
+      150,
+      200,
+      300
+    ]
+  },
+  "recommendationCandidate": {
+    "hintSingle": 60,
+    "hintPackCount": 3,
+    "hintPackCoins": 150,
+    "rewardedTopup": 150,
+    "note": "proposal only, replaces earlier ad routes only if approved; earned balances unchanged"
+  },
+  "terminalNoWheel": [
+    {
+      "uses": 0,
+      "themes": 0,
+      "packCost": 0,
+      "resourceDeficit": 0,
+      "minimum150CoinViewsIgnoringTiming": 0,
+      "surplusBeforeVideos": 2200
+    },
+    {
+      "uses": 0,
+      "themes": 1,
+      "packCost": 0,
+      "resourceDeficit": 0,
+      "minimum150CoinViewsIgnoringTiming": 0,
+      "surplusBeforeVideos": 1700
+    },
+    {
+      "uses": 0,
+      "themes": 3,
+      "packCost": 0,
+      "resourceDeficit": 0,
+      "minimum150CoinViewsIgnoringTiming": 0,
+      "surplusBeforeVideos": 700
+    },
+    {
+      "uses": 12,
+      "themes": 0,
+      "packCost": 450,
+      "resourceDeficit": 0,
+      "minimum150CoinViewsIgnoringTiming": 0,
+      "surplusBeforeVideos": 1750
+    },
+    {
+      "uses": 12,
+      "themes": 1,
+      "packCost": 450,
+      "resourceDeficit": 0,
+      "minimum150CoinViewsIgnoringTiming": 0,
+      "surplusBeforeVideos": 1250
+    },
+    {
+      "uses": 12,
+      "themes": 3,
+      "packCost": 450,
+      "resourceDeficit": 0,
+      "minimum150CoinViewsIgnoringTiming": 0,
+      "surplusBeforeVideos": 250
+    },
+    {
+      "uses": 30,
+      "themes": 0,
+      "packCost": 1350,
+      "resourceDeficit": 0,
+      "minimum150CoinViewsIgnoringTiming": 0,
+      "surplusBeforeVideos": 850
+    },
+    {
+      "uses": 30,
+      "themes": 1,
+      "packCost": 1350,
+      "resourceDeficit": 0,
+      "minimum150CoinViewsIgnoringTiming": 0,
+      "surplusBeforeVideos": 350
+    },
+    {
+      "uses": 30,
+      "themes": 3,
+      "packCost": 1350,
+      "resourceDeficit": 650,
+      "minimum150CoinViewsIgnoringTiming": 5,
+      "surplusBeforeVideos": -650
+    },
+    {
+      "uses": 60,
+      "themes": 0,
+      "packCost": 2850,
+      "resourceDeficit": 650,
+      "minimum150CoinViewsIgnoringTiming": 5,
+      "surplusBeforeVideos": -650
+    },
+    {
+      "uses": 60,
+      "themes": 1,
+      "packCost": 2850,
+      "resourceDeficit": 1150,
+      "minimum150CoinViewsIgnoringTiming": 8,
+      "surplusBeforeVideos": -1150
+    },
+    {
+      "uses": 60,
+      "themes": 3,
+      "packCost": 2850,
+      "resourceDeficit": 2150,
+      "minimum150CoinViewsIgnoringTiming": 15,
+      "surplusBeforeVideos": -2150
+    },
+    {
+      "uses": 120,
+      "themes": 0,
+      "packCost": 5850,
+      "resourceDeficit": 3650,
+      "minimum150CoinViewsIgnoringTiming": 25,
+      "surplusBeforeVideos": -3650
+    },
+    {
+      "uses": 120,
+      "themes": 1,
+      "packCost": 5850,
+      "resourceDeficit": 4150,
+      "minimum150CoinViewsIgnoringTiming": 28,
+      "surplusBeforeVideos": -4150
+    },
+    {
+      "uses": 120,
+      "themes": 3,
+      "packCost": 5850,
+      "resourceDeficit": 5150,
+      "minimum150CoinViewsIgnoringTiming": 35,
+      "surplusBeforeVideos": -5150
+    }
+  ],
+  "chronologicalNoWheel": {
+    "independent": {
+      "hintsUsed": 0,
+      "paidHintsBought": 0,
+      "hintCoinsSpent": 0,
+      "rewardedViewsIfEveryRequestedHintIsUsed": 0,
+      "coinsLeft": 2200,
+      "hintsLeft": 3,
+      "themesBought": 0,
+      "themePurchaseLevels": [],
+      "unfulfilledThemeWishes": 0
+    },
+    "light": {
+      "hintsUsed": 12,
+      "paidHintsBought": 9,
+      "hintCoinsSpent": 450,
+      "rewardedViewsIfEveryRequestedHintIsUsed": 0,
+      "coinsLeft": 1750,
+      "hintsLeft": 0,
+      "themesBought": 0,
+      "themePurchaseLevels": [],
+      "unfulfilledThemeWishes": 0
+    },
+    "moderate": {
+      "hintsUsed": 30,
+      "paidHintsBought": 27,
+      "hintCoinsSpent": 1350,
+      "rewardedViewsIfEveryRequestedHintIsUsed": 0,
+      "coinsLeft": 850,
+      "hintsLeft": 0,
+      "themesBought": 0,
+      "themePurchaseLevels": [],
+      "unfulfilledThemeWishes": 0
+    },
+    "frequent": {
+      "hintsUsed": 60,
+      "paidHintsBought": 57,
+      "hintCoinsSpent": 2850,
+      "rewardedViewsIfEveryRequestedHintIsUsed": 5,
+      "coinsLeft": 100,
+      "hintsLeft": 0,
+      "themesBought": 0,
+      "themePurchaseLevels": [],
+      "unfulfilledThemeWishes": 0
+    },
+    "stress": {
+      "hintsUsed": 120,
+      "paidHintsBought": 117,
+      "hintCoinsSpent": 5850,
+      "rewardedViewsIfEveryRequestedHintIsUsed": 25,
+      "coinsLeft": 100,
+      "hintsLeft": 0,
+      "themesBought": 0,
+      "themePurchaseLevels": [],
+      "unfulfilledThemeWishes": 0
+    }
+  },
+  "chronologicalOneThemeWishAt20NoWheel": {
+    "independent": {
+      "hintsUsed": 0,
+      "paidHintsBought": 0,
+      "hintCoinsSpent": 0,
+      "rewardedViewsIfEveryRequestedHintIsUsed": 0,
+      "coinsLeft": 1700,
+      "hintsLeft": 3,
+      "themesBought": 1,
+      "themePurchaseLevels": [
+        20
+      ],
+      "unfulfilledThemeWishes": 0
+    },
+    "light": {
+      "hintsUsed": 12,
+      "paidHintsBought": 9,
+      "hintCoinsSpent": 450,
+      "rewardedViewsIfEveryRequestedHintIsUsed": 0,
+      "coinsLeft": 1250,
+      "hintsLeft": 0,
+      "themesBought": 1,
+      "themePurchaseLevels": [
+        20
+      ],
+      "unfulfilledThemeWishes": 0
+    },
+    "moderate": {
+      "hintsUsed": 30,
+      "paidHintsBought": 27,
+      "hintCoinsSpent": 1350,
+      "rewardedViewsIfEveryRequestedHintIsUsed": 0,
+      "coinsLeft": 350,
+      "hintsLeft": 0,
+      "themesBought": 1,
+      "themePurchaseLevels": [
+        20
+      ],
+      "unfulfilledThemeWishes": 0
+    },
+    "frequent": {
+      "hintsUsed": 60,
+      "paidHintsBought": 57,
+      "hintCoinsSpent": 2850,
+      "rewardedViewsIfEveryRequestedHintIsUsed": 5,
+      "coinsLeft": 100,
+      "hintsLeft": 0,
+      "themesBought": 0,
+      "themePurchaseLevels": [],
+      "unfulfilledThemeWishes": 1
+    },
+    "stress": {
+      "hintsUsed": 120,
+      "paidHintsBought": 117,
+      "hintCoinsSpent": 5850,
+      "rewardedViewsIfEveryRequestedHintIsUsed": 25,
+      "coinsLeft": 100,
+      "hintsLeft": 0,
+      "themesBought": 0,
+      "themePurchaseLevels": [],
+      "unfulfilledThemeWishes": 1
+    }
+  },
+  "sensitivityNoWheel": [
+    {
+      "packPrice": 90,
+      "topup": 150,
+      "profiles": {
+        "independent": {
+          "hintsUsed": 0,
+          "paidHintsBought": 0,
+          "hintCoinsSpent": 0,
+          "rewardedViewsIfEveryRequestedHintIsUsed": 0,
+          "coinsLeft": 2200,
+          "hintsLeft": 3,
+          "themesBought": 0,
+          "themePurchaseLevels": [],
+          "unfulfilledThemeWishes": 0
+        },
+        "light": {
+          "hintsUsed": 12,
+          "paidHintsBought": 9,
+          "hintCoinsSpent": 270,
+          "rewardedViewsIfEveryRequestedHintIsUsed": 0,
+          "coinsLeft": 1930,
+          "hintsLeft": 0,
+          "themesBought": 0,
+          "themePurchaseLevels": [],
+          "unfulfilledThemeWishes": 0
+        },
+        "moderate": {
+          "hintsUsed": 30,
+          "paidHintsBought": 27,
+          "hintCoinsSpent": 810,
+          "rewardedViewsIfEveryRequestedHintIsUsed": 0,
+          "coinsLeft": 1390,
+          "hintsLeft": 0,
+          "themesBought": 0,
+          "themePurchaseLevels": [],
+          "unfulfilledThemeWishes": 0
+        },
+        "frequent": {
+          "hintsUsed": 60,
+          "paidHintsBought": 57,
+          "hintCoinsSpent": 1710,
+          "rewardedViewsIfEveryRequestedHintIsUsed": 0,
+          "coinsLeft": 490,
+          "hintsLeft": 0,
+          "themesBought": 0,
+          "themePurchaseLevels": [],
+          "unfulfilledThemeWishes": 0
+        },
+        "stress": {
+          "hintsUsed": 120,
+          "paidHintsBought": 117,
+          "hintCoinsSpent": 3510,
+          "rewardedViewsIfEveryRequestedHintIsUsed": 9,
+          "coinsLeft": 40,
+          "hintsLeft": 0,
+          "themesBought": 0,
+          "themePurchaseLevels": [],
+          "unfulfilledThemeWishes": 0
+        }
+      }
+    },
+    {
+      "packPrice": 150,
+      "topup": 80,
+      "profiles": {
+        "independent": {
+          "hintsUsed": 0,
+          "paidHintsBought": 0,
+          "hintCoinsSpent": 0,
+          "rewardedViewsIfEveryRequestedHintIsUsed": 0,
+          "coinsLeft": 2200,
+          "hintsLeft": 3,
+          "themesBought": 0,
+          "themePurchaseLevels": [],
+          "unfulfilledThemeWishes": 0
+        },
+        "light": {
+          "hintsUsed": 12,
+          "paidHintsBought": 9,
+          "hintCoinsSpent": 450,
+          "rewardedViewsIfEveryRequestedHintIsUsed": 0,
+          "coinsLeft": 1750,
+          "hintsLeft": 0,
+          "themesBought": 0,
+          "themePurchaseLevels": [],
+          "unfulfilledThemeWishes": 0
+        },
+        "moderate": {
+          "hintsUsed": 30,
+          "paidHintsBought": 27,
+          "hintCoinsSpent": 1350,
+          "rewardedViewsIfEveryRequestedHintIsUsed": 0,
+          "coinsLeft": 850,
+          "hintsLeft": 0,
+          "themesBought": 0,
+          "themePurchaseLevels": [],
+          "unfulfilledThemeWishes": 0
+        },
+        "frequent": {
+          "hintsUsed": 60,
+          "paidHintsBought": 57,
+          "hintCoinsSpent": 2850,
+          "rewardedViewsIfEveryRequestedHintIsUsed": 9,
+          "coinsLeft": 70,
+          "hintsLeft": 0,
+          "themesBought": 0,
+          "themePurchaseLevels": [],
+          "unfulfilledThemeWishes": 0
+        },
+        "stress": {
+          "hintsUsed": 120,
+          "paidHintsBought": 117,
+          "hintCoinsSpent": 5850,
+          "rewardedViewsIfEveryRequestedHintIsUsed": 47,
+          "coinsLeft": 110,
+          "hintsLeft": 0,
+          "themesBought": 0,
+          "themePurchaseLevels": [],
+          "unfulfilledThemeWishes": 0
+        }
+      }
+    },
+    {
+      "packPrice": 150,
+      "topup": 150,
+      "profiles": {
+        "independent": {
+          "hintsUsed": 0,
+          "paidHintsBought": 0,
+          "hintCoinsSpent": 0,
+          "rewardedViewsIfEveryRequestedHintIsUsed": 0,
+          "coinsLeft": 2200,
+          "hintsLeft": 3,
+          "themesBought": 0,
+          "themePurchaseLevels": [],
+          "unfulfilledThemeWishes": 0
+        },
+        "light": {
+          "hintsUsed": 12,
+          "paidHintsBought": 9,
+          "hintCoinsSpent": 450,
+          "rewardedViewsIfEveryRequestedHintIsUsed": 0,
+          "coinsLeft": 1750,
+          "hintsLeft": 0,
+          "themesBought": 0,
+          "themePurchaseLevels": [],
+          "unfulfilledThemeWishes": 0
+        },
+        "moderate": {
+          "hintsUsed": 30,
+          "paidHintsBought": 27,
+          "hintCoinsSpent": 1350,
+          "rewardedViewsIfEveryRequestedHintIsUsed": 0,
+          "coinsLeft": 850,
+          "hintsLeft": 0,
+          "themesBought": 0,
+          "themePurchaseLevels": [],
+          "unfulfilledThemeWishes": 0
+        },
+        "frequent": {
+          "hintsUsed": 60,
+          "paidHintsBought": 57,
+          "hintCoinsSpent": 2850,
+          "rewardedViewsIfEveryRequestedHintIsUsed": 5,
+          "coinsLeft": 100,
+          "hintsLeft": 0,
+          "themesBought": 0,
+          "themePurchaseLevels": [],
+          "unfulfilledThemeWishes": 0
+        },
+        "stress": {
+          "hintsUsed": 120,
+          "paidHintsBought": 117,
+          "hintCoinsSpent": 5850,
+          "rewardedViewsIfEveryRequestedHintIsUsed": 25,
+          "coinsLeft": 100,
+          "hintsLeft": 0,
+          "themesBought": 0,
+          "themePurchaseLevels": [],
+          "unfulfilledThemeWishes": 0
+        }
+      }
+    },
+    {
+      "packPrice": 240,
+      "topup": 150,
+      "profiles": {
+        "independent": {
+          "hintsUsed": 0,
+          "paidHintsBought": 0,
+          "hintCoinsSpent": 0,
+          "rewardedViewsIfEveryRequestedHintIsUsed": 0,
+          "coinsLeft": 2200,
+          "hintsLeft": 3,
+          "themesBought": 0,
+          "themePurchaseLevels": [],
+          "unfulfilledThemeWishes": 0
+        },
+        "light": {
+          "hintsUsed": 12,
+          "paidHintsBought": 9,
+          "hintCoinsSpent": 720,
+          "rewardedViewsIfEveryRequestedHintIsUsed": 0,
+          "coinsLeft": 1480,
+          "hintsLeft": 0,
+          "themesBought": 0,
+          "themePurchaseLevels": [],
+          "unfulfilledThemeWishes": 0
+        },
+        "moderate": {
+          "hintsUsed": 30,
+          "paidHintsBought": 27,
+          "hintCoinsSpent": 2160,
+          "rewardedViewsIfEveryRequestedHintIsUsed": 1,
+          "coinsLeft": 190,
+          "hintsLeft": 0,
+          "themesBought": 0,
+          "themePurchaseLevels": [],
+          "unfulfilledThemeWishes": 0
+        },
+        "frequent": {
+          "hintsUsed": 60,
+          "paidHintsBought": 57,
+          "hintCoinsSpent": 4560,
+          "rewardedViewsIfEveryRequestedHintIsUsed": 17,
+          "coinsLeft": 190,
+          "hintsLeft": 0,
+          "themesBought": 0,
+          "themePurchaseLevels": [],
+          "unfulfilledThemeWishes": 0
+        },
+        "stress": {
+          "hintsUsed": 120,
+          "paidHintsBought": 117,
+          "hintCoinsSpent": 9360,
+          "rewardedViewsIfEveryRequestedHintIsUsed": 48,
+          "coinsLeft": 40,
+          "hintsLeft": 0,
+          "themesBought": 0,
+          "themePurchaseLevels": [],
+          "unfulfilledThemeWishes": 0
+        }
+      }
+    }
+  ],
+  "singleHintOnlyNoWheel": {
+    "independent": {
+      "hintsUsed": 0,
+      "paidHintsBought": 0,
+      "hintCoinsSpent": 0,
+      "rewardedViewsIfEveryRequestedHintIsUsed": 0,
+      "coinsLeft": 2200,
+      "hintsLeft": 3,
+      "themesBought": 0,
+      "themePurchaseLevels": [],
+      "unfulfilledThemeWishes": 0
+    },
+    "light": {
+      "hintsUsed": 12,
+      "paidHintsBought": 9,
+      "hintCoinsSpent": 540,
+      "rewardedViewsIfEveryRequestedHintIsUsed": 0,
+      "coinsLeft": 1660,
+      "hintsLeft": 0,
+      "themesBought": 0,
+      "themePurchaseLevels": [],
+      "unfulfilledThemeWishes": 0
+    },
+    "moderate": {
+      "hintsUsed": 30,
+      "paidHintsBought": 27,
+      "hintCoinsSpent": 1620,
+      "rewardedViewsIfEveryRequestedHintIsUsed": 0,
+      "coinsLeft": 580,
+      "hintsLeft": 0,
+      "themesBought": 0,
+      "themePurchaseLevels": [],
+      "unfulfilledThemeWishes": 0
+    },
+    "frequent": {
+      "hintsUsed": 60,
+      "paidHintsBought": 57,
+      "hintCoinsSpent": 3420,
+      "rewardedViewsIfEveryRequestedHintIsUsed": 9,
+      "coinsLeft": 130,
+      "hintsLeft": 0,
+      "themesBought": 0,
+      "themePurchaseLevels": [],
+      "unfulfilledThemeWishes": 0
+    },
+    "stress": {
+      "hintsUsed": 120,
+      "paidHintsBought": 117,
+      "hintCoinsSpent": 7020,
+      "rewardedViewsIfEveryRequestedHintIsUsed": 33,
+      "coinsLeft": 130,
+      "hintsLeft": 0,
+      "themesBought": 0,
+      "themePurchaseLevels": [],
+      "unfulfilledThemeWishes": 0
+    }
+  },
+  "wheelNoPurchases": [
+    {
+      "days": 1,
+      "initialPaidThemesOwned": 0,
+      "expectedCoins": 78.125,
+      "expectedNewThemes": 0.125,
+      "probabilityAtLeastOneNewTheme": 0.125,
+      "themeCountDistribution": {
+        "0": 0.875,
+        "1": 0.125
+      }
+    },
+    {
+      "days": 1,
+      "initialPaidThemesOwned": 6,
+      "expectedCoins": 115.625,
+      "expectedNewThemes": 0.0,
+      "probabilityAtLeastOneNewTheme": 0,
+      "themeCountDistribution": {
+        "6": 1.0
+      }
+    },
+    {
+      "days": 7,
+      "initialPaidThemesOwned": 0,
+      "expectedCoins": 546.8751430511475,
+      "expectedNewThemes": 0.8749995231628418,
+      "probabilityAtLeastOneNewTheme": 0.6073040962219238,
+      "themeCountDistribution": {
+        "0": 0.39269590377807617,
+        "1": 0.39269590377807617,
+        "2": 0.16829824447631836,
+        "3": 0.04007101058959961,
+        "4": 0.005724430084228516,
+        "5": 0.0004906654357910156,
+        "6": 2.384185791015625e-05
+      }
+    },
+    {
+      "days": 7,
+      "initialPaidThemesOwned": 6,
+      "expectedCoins": 809.375,
+      "expectedNewThemes": 0.0,
+      "probabilityAtLeastOneNewTheme": 0,
+      "themeCountDistribution": {
+        "6": 1.0
+      }
+    },
+    {
+      "days": 30,
+      "initialPaidThemesOwned": 0,
+      "expectedCoins": 2377.4951124047357,
+      "expectedNewThemes": 3.6375162919842148,
+      "probabilityAtLeastOneNewTheme": 0.9817928659099648,
+      "themeCountDistribution": {
+        "0": 0.018207134090035118,
+        "1": 0.07803057467157906,
+        "2": 0.16163476181969946,
+        "3": 0.21551301575959936,
+        "4": 0.20781612233961366,
+        "5": 0.15437769088085582,
+        "6": 0.16442070043861748
+      }
+    },
+    {
+      "days": 30,
+      "initialPaidThemesOwned": 6,
+      "expectedCoins": 3468.75,
+      "expectedNewThemes": 0.0,
+      "probabilityAtLeastOneNewTheme": 0,
+      "themeCountDistribution": {
+        "6": 1.0
+      }
+    }
+  ],
+  "wheelFirstSpin": {
+    "coinExpectationUnowned": 78.125,
+    "themeChance": 0.125,
+    "coinExpectationAllOwned": 115.625,
+    "themeRetailEquivalent": 62.5,
+    "note": "retail equivalent is not cash or player willingness-to-pay"
+  },
+  "x5Stress": {
+    "bonusPerView": 80,
+    "views": 90,
+    "bonusCoins": 7200,
+    "campaignPlusBonus": 9400
+  },
+  "cadence": {
+    "candidate": [
+      {
+        "assumedActiveSecondsPerClear": 8,
+        "campaignActiveMinutes": 12.0,
+        "eligibleShows": 3,
+        "showLevels": [
+          23,
+          42,
+          61
+        ],
+        "protectedGiftTransitionsSkipped": [
+          80
+        ],
+        "first10ActiveMinutes": 3
+      },
+      {
+        "assumedActiveSecondsPerClear": 25,
+        "campaignActiveMinutes": 37.5,
+        "eligibleShows": 11,
+        "showLevels": [
+          10,
+          16,
+          22,
+          34,
+          41,
+          47,
+          58,
+          65,
+          71,
+          82,
+          89
+        ],
+        "protectedGiftTransitionsSkipped": [
+          40,
+          80
+        ],
+        "first10ActiveMinutes": 3
+      },
+      {
+        "assumedActiveSecondsPerClear": 60,
+        "campaignActiveMinutes": 90.0,
+        "eligibleShows": 20,
+        "showLevels": [
+          10,
+          14,
+          18,
+          22,
+          26,
+          30,
+          34,
+          38,
+          42,
+          46,
+          50,
+          54,
+          58,
+          62,
+          66,
+          70,
+          74,
+          78,
+          82,
+          86
+        ],
+        "protectedGiftTransitionsSkipped": [],
+        "first10ActiveMinutes": 1
+      }
+    ],
+    "legacy": [
+      {
+        "assumedActiveSecondsPerClear": 8,
+        "campaignActiveMinutes": 12.0,
+        "eligibleShows": 7,
+        "showLevels": [
+          12,
+          24,
+          36,
+          48,
+          61,
+          73,
+          85
+        ],
+        "protectedGiftTransitionsSkipped": [
+          60
+        ],
+        "first10ActiveMinutes": 6
+      },
+      {
+        "assumedActiveSecondsPerClear": 25,
+        "campaignActiveMinutes": 37.5,
+        "eligibleShows": 21,
+        "showLevels": [
+          6,
+          10,
+          14,
+          18,
+          22,
+          26,
+          30,
+          34,
+          38,
+          42,
+          46,
+          50,
+          54,
+          58,
+          62,
+          66,
+          70,
+          74,
+          78,
+          82,
+          86
+        ],
+        "protectedGiftTransitionsSkipped": [],
+        "first10ActiveMinutes": 5
+      },
+      {
+        "assumedActiveSecondsPerClear": 60,
+        "campaignActiveMinutes": 90.0,
+        "eligibleShows": 28,
+        "showLevels": [
+          6,
+          9,
+          12,
+          15,
+          18,
+          21,
+          24,
+          27,
+          30,
+          33,
+          36,
+          39,
+          42,
+          45,
+          48,
+          51,
+          54,
+          57,
+          61,
+          64,
+          67,
+          70,
+          73,
+          76,
+          79,
+          82,
+          85,
+          88
+        ],
+        "protectedGiftTransitionsSkipped": [
+          60
+        ],
+        "first10ActiveMinutes": 2
+      }
+    ],
+    "limits": "No ad duration/retention/fill modeled; gifts protected; rewarded suppresses later interstitials in real policy. Candidate grace and full-screen cooldown must persist across restart."
+  },
+  "revenue": {
+    "formula": "revenue = displayedImpressions / 1000 * observed publisher eCPM",
+    "notForecast": true,
+    "sensitivityFor10000DisplayedImpressions": [
+      {
+        "hypotheticalEcpmRub": 100,
+        "grossRub": 1000
+      },
+      {
+        "hypotheticalEcpmRub": 300,
+        "grossRub": 3000
+      },
+      {
+        "hypotheticalEcpmRub": 600,
+        "grossRub": 6000
+      }
+    ],
+    "limits": "arbitrary sensitivity inputs, NOT measured rates; no fill, tax, retention or traffic forecast"
+  }
+}
