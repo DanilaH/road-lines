@@ -18,7 +18,7 @@ Build a Fill puzzle closely matching the supplied competitor reference in intera
 - Do not add modes, backend, profiles, cloud saves, narrative or extra economy before baseline acceptance.
 
 ## Stack and boundaries
-TypeScript + Phaser + Vite; Android via Capacitor; native Yandex Mobile Ads integration. Portrait v1. Consult current official docs when adding native SDKs or choosing their versions.
+TypeScript + Phaser + Vite; Android via Capacitor; native Yandex Mobile Ads integration. Portrait locked on Android: user explicitly requires a vertical game without rotation. Keep `android:screenOrientation="portrait"` in deterministic Android generation; game screens and banner layout must not switch to landscape on device rotation. Consult current official docs when adding native SDKs or choosing their versions.
 - The kit's Yandex Games web adapter is NOT Android Yandex Mobile Ads.
 - Do not replace the agreed stack or pull in the landscape Yandex bootstrap unchanged.
 - Pure TS model/solver/economy; Phaser rendering; worker solver; platform seams for ads/storage/audio/haptics/lifecycle/analytics.
