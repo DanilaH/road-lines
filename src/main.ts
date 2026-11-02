@@ -236,7 +236,7 @@ async function boot(): Promise<void> {
       $('.purchase-preview').innerHTML = themePreview(item);
       $('.purchase-balance').textContent = copy.balance(store.state.coins);
       $('[data-action=buy-theme]').textContent = copy.buyFor(item.price);
-      $<HTMLButtonElement>('[data-action=buy-theme]').disabled = store.state.coins < item.price || conflict || store.recoveryRequired;
+      $<HTMLButtonElement>('[data-action=buy-theme]').disabled = store.state.coins < item.price || topupBusy || conflict || store.recoveryRequired;
       $('.purchase-shortage').textContent = shopMessage || (store.state.coins < item.price ? copy.shortage(item.price - store.state.coins) : copy.coinPurchase);
       $('[data-action=theme-topup]').hidden = store.state.coins >= item.price;
     }
@@ -540,7 +540,7 @@ async function boot(): Promise<void> {
       if (!store.buyHints(count)) return;
       analytics.event('hint_purchase', { count, price: hintOffers.find(o=>o.count===count)!.price, remaining: store.state.hints });
       showBalance(store.state.coins); closeHintShop(); notice(() => copy.hintBought); feedback.play('progress');
-    } catch { saveError('hint-purchase'); }
+    } catch { closeHintShop(); saveError('hint-purchase'); }
   }
   async function topup(placement: 'hint-coins' | 'theme-coins'): Promise<void> {
     if (topupBusy || !monetization || conflict || store.recoveryRequired) return;
@@ -551,7 +551,7 @@ async function boot(): Promise<void> {
   }
   function click(event: MouseEvent): void {
     const target = (event.target as Element).closest<HTMLButtonElement>('button[data-action]');
-    if (monetization?.busy || topupBusy) return;
+    if (monetization?.busy || topupBusy || monetization?.recoveryFailed && target?.dataset.action !== 'notice') return;
     if (!target || target.disabled || (activity.isBlocked() && target.dataset.action !== 'resume' && target.dataset.action !== 'notice' && target.dataset.action !== 'sound' && target.dataset.action !== 'vibration' && !(bonus && target.dataset.action === 'close-bonus') && !(pendingTheme && (target.dataset.action === 'buy-theme' || target.dataset.action === 'cancel-theme' || target.dataset.action === 'theme-topup')) && !(hintShop && ['buy-hints','hint-topup','close-hint-shop'].includes(target.dataset.action!)) && !(paused && (target.dataset.action === 'sets' || target.dataset.action === 'home' || target.dataset.action === 'themes' || target.dataset.action === 'language')))) return;
     feedback.play('button');
     switch (target.dataset.action) {
@@ -687,7 +687,7 @@ async function boot(): Promise<void> {
   monetization = new Monetization(store, localStorage, analytics, block,
     () => { clearTimeout(saveTimer); input.cancel(); invalidate(true); if (conflict) return false; try { store.reload(); saveFailed = false; } catch { return false; } return flush(); },
     () => { if (!disposed) { showBalance(store.state.coins); redraw(); } },
-    () => saveError('ad-receipt'), $('#banner-slot'));
+    () => { hintShop = false; pendingTheme = null; block('hint-shop', false); block('theme-confirm', false); saveError('ad-receipt'); redraw(); }, $('#banner-slot'));
   await monetization.init().catch(() => {});
   redraw();
   if (screen === 'game' && !result) analytics.enter(level, path.length, store.state.completed.includes(level.id));

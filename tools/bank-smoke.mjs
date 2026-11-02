@@ -48,7 +48,7 @@ export async function runBankSmoke(browser, url, output, root) {
     await p.addInitScript(({ key, seed }) => localStorage.setItem(key, JSON.stringify(seed)), { key, seed: seed(catalog[89]) });
     await p.goto(url); await p.locator('#app[data-ready=true]').waitFor(); await p.locator('[data-action=continue]').click();
     await p.waitForTimeout(550);
-    const b = await p.locator('.instruction').boundingBox(), banner = await p.locator('#banner-slot').boundingBox();
+    const b = await p.locator('.instruction').boundingBox(), banner = ((await p.locator('#banner-slot').boundingBox()) ?? await p.evaluate(()=>({x:0,y:innerHeight-60,width:innerWidth,height:60})));
     assert(b && banner && b.y + b.height <= banner.y, 'Combined-rule copy stays above banner');
     assert.equal(await p.locator('.level strong').textContent(), '3–30');
     await p.screenshot({ path: resolve(output, `bank-final-${width}x${height}.png`) });

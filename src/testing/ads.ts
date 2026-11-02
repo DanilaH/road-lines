@@ -18,7 +18,7 @@ export function testAds(): AdsBridge {
         const sequence = Number(localStorage.getItem('test-ad-seq') ?? 0) + 1;
         const r: AdReceipt = { schema: 1, id: session, session, stream: 'test-stream', sequence, amount: 150, placement: placement as AdReceipt['placement'] };
         localStorage.setItem('test-ad-seq', String(sequence)); localStorage.setItem('test-ad-pending', JSON.stringify(r));
-        if (live) emit(kind, 'earned');
+        if (live && mode !== 'crash') emit(kind, 'earned');
       }
       if (mode === 'crash') { location.reload(); return new Promise(() => {}); }
       await new Promise(r => setTimeout(r, 250)); if (live) emit(kind, 'dismiss');

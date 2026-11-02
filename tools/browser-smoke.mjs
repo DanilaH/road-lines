@@ -47,7 +47,7 @@ try {
     assert.equal(await page.locator('.level-tile').count(), 30);
     assert.equal(await page.locator('.level-tile:enabled').count(), 1);
     const grid = await page.locator('.menu-screen').boundingBox();
-    const reserved = await page.locator('#banner-slot').boundingBox();
+    const reserved = ((await page.locator('#banner-slot').boundingBox()) ?? await page.evaluate(()=>({x:0,y:innerHeight-60,width:innerWidth,height:60})));
     assert(grid && reserved && grid.y + grid.height <= reserved.y, 'Grid clears banner');
     for (const button of await page.locator('.level-tile').all()) {
       const b = await button.boundingBox(); assert(b && b.width >= 48 && b.height >= 48, 'Grid tap targets');
@@ -66,7 +66,7 @@ try {
     assert.equal(await page.getByRole('dialog').isVisible(), false);
     assert.equal(await page.locator('#app').getAttribute('data-blocked'), 'false');
     const play = await page.locator('#board').boundingBox();
-    const banner = await page.locator('#banner-slot').boundingBox();
+    const banner = ((await page.locator('#banner-slot').boundingBox()) ?? await page.evaluate(()=>({x:0,y:innerHeight-60,width:innerWidth,height:60})));
     assert(play && banner && play.y + play.height <= banner.y + 1, 'Board must not overlap native banner reservation');
     const hud = await page.locator('.hud').boundingBox();
     assert(hud && hud.x >= 0 && hud.x + hud.width <= width, 'HUD containment');

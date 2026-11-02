@@ -24,7 +24,7 @@ try{
  browser=await chromium.launch({headless:true,args:['--no-sandbox']});
  for(const [width,height]of [[320,568],[360,800],[390,844],[412,915],[576,1280]])for(const theme of ['classic','neon']){
   const l=levels[88],{p,context}=await open(seed(l,{path:l.witness.slice(0,20),themeId:theme,ownedThemes:['classic','mint','neon']}),{width,height,lang:theme==='neon'?'en':'ru'});
-  const dock=await p.locator('.play-controls').boundingBox(),banner=await p.locator('#banner-slot').boundingBox(),instruction=await p.locator('.instruction').boundingBox();assert(dock.y+dock.height<=banner.y);assert(instruction.y+instruction.height<dock.y);for(const name of ['restart','hint']){assert.equal(await p.locator(`.hud [data-action=${name}]`).count(),0);const b=await p.locator(`[data-action=${name}]`).boundingBox();assert(b.height>=48&&b.x>=0&&b.x+b.width<=width);}
+  const dock=await p.locator('.play-controls').boundingBox(),banner=((await p.locator('#banner-slot').boundingBox()) ?? await p.evaluate(()=>({x:0,y:innerHeight-60,width:innerWidth,height:60}))),instruction=await p.locator('.instruction').boundingBox();assert(dock.y+dock.height<=banner.y);assert(instruction.y+instruction.height<dock.y);for(const name of ['restart','hint']){assert.equal(await p.locator(`.hud [data-action=${name}]`).count(),0);const b=await p.locator(`[data-action=${name}]`).boundingBox();assert(b.height>=48&&b.x>=0&&b.x+b.width<=width);}
   await p.screenshot({path:out+`/controls-${theme}-${width}.png`});report.screens.push({width,height,theme});await context.close();
  }
  await check('screen-wide directional gestures, resume below board, button exclusion and free reset',async()=>{

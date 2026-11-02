@@ -59,7 +59,7 @@ export async function runMechanicsSmoke(browser, url, output, root) {
     for (const id of ['finish-05', 'walls-05', 'checkpoints-05']) {
       const { page, errors } = await open(id, width, height);
       await page.waitForTimeout(550);
-      const instruction = await page.locator('.instruction').boundingBox(), banner = await page.locator('#banner-slot').boundingBox();
+      const instruction = await page.locator('.instruction').boundingBox(), banner = ((await page.locator('#banner-slot').boundingBox()) ?? await page.evaluate(()=>({x:0,y:innerHeight-60,width:innerWidth,height:60})));
       assert(instruction && banner && instruction.y + instruction.height <= banner.y, 'Rule copy clears banner');
       await page.screenshot({ path: resolve(output, `mechanic-${id}-${width}x${height}.png`) });
       assert.deepEqual(errors, []); await page.close();

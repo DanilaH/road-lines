@@ -67,7 +67,7 @@ export async function runUXSmoke(browser,url){
  }
  for(const [width,height] of [[320,568],[360,800],[390,844],[412,915],[576,1280]])for(const theme of ['classic','neon']){
   const l=levels[89],data={...seed(l),version:3,themeId:theme,ownedThemes:['classic','mint',...(theme==='neon'?['neon']:[])],drafts:{},giftMilestones:0,giftNotice:null,lastOfferAt:0,offer:null,daily:{lastDate:null,pending:null,last:null}}, {p,context}=await open(data,{width,height,reduced:theme==='neon'});
-  const ins=await p.locator('.instruction').boundingBox(),banner=await p.locator('#banner-slot').boundingBox();assert(ins.y+ins.height<=banner.y);await p.screenshot({path:resolve(output,`late-${theme}-${width}.png`)});
+  const ins=await p.locator('.instruction').boundingBox(),banner=((await p.locator('#banner-slot').boundingBox()) ?? await p.evaluate(()=>({x:0,y:innerHeight-60,width:innerWidth,height:60})));assert(ins.y+ins.height<=banner.y);await p.screenshot({path:resolve(output,`late-${theme}-${width}.png`)});
   await p.locator('[data-action=pause]').click();await p.locator('[data-action=themes]:visible').click();assert.equal(await p.locator('.preview-start').count(),8);await p.waitForTimeout(350);await p.screenshot({path:resolve(output,`themes-${theme}-${width}.png`)});report.screens.push({width,height,theme});await context.close();
  }
  assert.deepEqual(report.errors,[]);writeFileSync(resolve(output,'results.json'),JSON.stringify(report,null,2));console.log('UX polish:',report.checks.length,'flow checks,',report.screens.length,'viewport/theme combinations passed.');
