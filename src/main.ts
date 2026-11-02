@@ -589,8 +589,9 @@ async function boot(): Promise<void> {
       case 'restart': input.cancel(); change([level.start], 'reset'); flush(); break;
       case 'hint': void requestHint(); break;
       case 'notice':
-        if (monetization?.recoveryFailed) { void monetization.recover().catch(() => {}); }
-        else if (conflict || store.recoveryRequired) location.reload();
+        if (conflict) location.reload();
+        else if (monetization?.recoveryFailed) { void monetization.recover().catch(() => {}); }
+        else if (store.recoveryRequired) location.reload();
         else if (saveFailed && screen === 'wheel') {
           try { store.reload(); saveFailed = false; notice(''); redraw(); if (store.state.daily.pending) void settleWheel(); } catch { saveError(); }
         }

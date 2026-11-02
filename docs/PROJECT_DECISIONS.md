@@ -160,3 +160,7 @@ GiftReveal владеет только presentation уже выданных100 �
 
 ## 2026-11-02: портретная ориентация без поворота
 Пользователь явно закрепил вертикальную игру без разворота при вращении телефона. Android Activity остаётся `android:screenOrientation="portrait"`; это уже задано в `tools/android.mjs` и подтверждено в текущем generated manifest. Не вводить landscape layout или предложение повернуть телефон. Поле, нижнее управление и banner рассчитываются в портретной области. Системное поведение рекламной Activity стороннего SDK проверяется отдельно и не считается управляемым нашей игровой Activity. Runtime не менялся; физический поворот устройства в этом шаге не тестировался.
+
+
+## 2026-11-02: Android ads bridge и GameSave v5
+Пакет MONETIZATION_PLAN реализован:60/150 hint shop, topup150, native SDK8.6.0, AppMetrica8.6.0, shared active cooldown, safe banner и защищённый Continue. Valuable ad ledger переносится в GameSave v5 с миграциями v1–v4; native journal фиксирует earned до JS, monotonic sequence и exact ack исключают повтор. Cadence хранится отдельно без копии кошелька; ошибка его хранения отключает принудительную рекламу. Web production не симулирует показы; ads-test исключён compile-time. Автоматический debug APK использует официальные demo blocks, отсутствие live IDs не скрывается. Подробности/ограничения — MONETIZATION_IMPLEMENTATION.md; физический показ и live delivery требуют отдельной приёмки.

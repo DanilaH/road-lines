@@ -73,10 +73,11 @@ export class Monetization {
       try {
         if (!this.quiesce()) throw Error('Cannot quiesce save');
         const { receipts } = await this.ads!.pending();
+        if (this.disposed) return;
         for (const r of receipts) { if (!validAdReceipt(r)) throw Error('Invalid native receipt'); await this.queue!.deliver(r); }
         this.recoveryFailed = false; this.block('ad-recovery-error', false);
-      } catch (e) { this.recoveryFailed = true; this.block('ad-recovery-error', true); this.error(); throw e; }
-      finally { this.block('ad-receipt', false); this.refresh(); }
+      } catch (e) { if (this.disposed) return; this.recoveryFailed = true; this.block('ad-recovery-error', true); this.error(); throw e; }
+      finally { if (!this.disposed) { this.block('ad-receipt', false); this.refresh(); } }
     })().finally(() => { this.recovery = undefined; });
     return this.recovery;
   }
