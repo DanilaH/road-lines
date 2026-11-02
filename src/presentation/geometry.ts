@@ -13,3 +13,24 @@ export function victoryLayout(from: BoardLayout, to: BoardLayout, elapsed: numbe
   return { ...to, x: lerp(start.x, to.x), y: lerp(start.y, to.y), cell: lerp(start.cell, to.cell),
     gap: lerp(start.gap, to.gap), width: lerp(start.width, to.width), height: lerp(start.height, to.height) };
 }
+
+/** A single arc-length phase for the whole polyline, including corner clearances. */
+export function routeDots(points: readonly { x: number; y: number }[], spacing: number, radius: number): { x: number; y: number }[] {
+  if (points.length < 2 || spacing <= 0) return [];
+  const segments = points.slice(1).map((b, i) => { const a = points[i]!; return { a, b, length: Math.hypot(b.x - a.x, b.y - a.y) }; });
+  const total = segments.reduce((n, s) => n + s.length, 0), out: { x: number; y: number }[] = [];
+  let offset = 0, target = spacing / 2;
+  for (const s of segments) {
+    if (!s.length) continue;
+    while (target < offset + s.length && target < total - spacing / 2) {
+      const t = (target - offset) / s.length, point = { x: s.a.x + (s.b.x - s.a.x) * t, y: s.a.y + (s.b.y - s.a.y) * t };
+      // At a right-angle bend arc-distance alone can make two dots look crowded.
+      // Keep phase; omit a dot instead of moving/restarting the downstream pattern.
+      const previous = out.at(-1);
+      if (!previous || Math.hypot(point.x - previous.x, point.y - previous.y) >= radius * 3) out.push(point);
+      target += spacing;
+    }
+    offset += s.length;
+  }
+  return out;
+}

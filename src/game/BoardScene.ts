@@ -5,7 +5,7 @@ import type { Level } from '../core/model';
 import { layoutReader, cellRect, type BoardLayout } from '../ui/layout';
 import { drawStartToken, drawFinishSocket } from '../presentation/markers';
 import { shadedRect } from '../presentation/material';
-import { victoryLayout } from '../presentation/geometry';
+import { victoryLayout, routeDots } from '../presentation/geometry';
 
 export class BoardScene extends Phaser.Scene {
   private readLayout = layoutReader();
@@ -175,14 +175,9 @@ export class BoardScene extends Phaser.Scene {
     ribbon(this.route, .78, true);
     ribbon(this.route, 1);
     g.fillStyle(colorNumber(this.theme.trail), 0.9);
-    for (let i = 1; i < this.route.length; i++) {
-      const a = rect(this.route[i - 1]!), b = rect(this.route[i]!);
-      const distance = Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
-      for (let d = 0; d < distance; d += this.miniature ? 5 : 8) {
-        const t = d / distance;
-        g.fillCircle(a.x + (b.x - a.x) * t + a.width / 2, a.y + (b.y - a.y) * t + a.height / 2, this.miniature ? 0.8 : 1.2);
-      }
-    }
+    const dotRadius = this.miniature ? .8 : 1.2;
+    const centers = this.route.map(c => { const r = rect(c); return { x: r.x + r.width / 2, y: r.y + r.height / 2 }; });
+    for (const dot of routeDots(centers, this.miniature ? 6 : 9, dotRadius)) g.fillCircle(dot.x, dot.y, dotRadius);
     if (!this.opening || age > 170) {
       if (!this.level.checkpoints?.includes(this.level.start)) {
         const start = rect(this.level.start);

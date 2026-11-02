@@ -1,22 +1,7 @@
 import { Capacitor, registerPlugin } from '@capacitor/core';
-import { getAccumulationPitchMultiplier } from '../../vendor/mini-games-kit/src/audio/pitch';
+import { soundBank, type Cue } from './sound-bank';
+export type { Cue } from './sound-bank';
 
-export type Cue = 'cell' | 'undo' | 'win' | 'star' | 'coin' | 'progress' | 'button' | 'reject';
-export interface Note { frequency: number; end?: number; delay: number; duration: number; gain: number; type: OscillatorType; }
-export function cueNotes(cue: Cue, progress = 0): Note[] {
-  const pitch = getAccumulationPitchMultiplier(progress, { startMultiplier: 0.9, endMultiplier: 1.45 }, 0.5);
-  const note = (frequency: number, duration: number, gain: number, delay = 0, type: OscillatorType = 'sine', end?: number): Note => ({ frequency, duration, gain, delay, type, end });
-  switch (cue) {
-    case 'cell': return [note(400 * pitch, 0.085, 0.075, 0, 'triangle', 310 * pitch), note(950 * pitch, 0.035, 0.018)];
-    case 'reject': return [note(210, 0.065, 0.035, 0, 'sine', 160)];
-    case 'undo': return [note(290, 0.08, 0.055, 0, 'triangle', 170)];
-    case 'win': return [note(135, 0.18, 0.16, 0, 'sine', 52), ...[523.25, 659.25, 783.99, 1046.5].map((f, i) => note(f, 0.34, 0.055, i * 0.045, 'triangle'))];
-    case 'star': { const f = [659.25, 783.99, 1046.5][Math.round(Math.max(0, Math.min(1, progress)) * 2)]!; return [note(f, 0.24, 0.1, 0, 'triangle'), note(f * 2, 0.18, 0.035, 0.03)]; }
-    case 'coin': return [note(950 * pitch, 0.09, 0.055, 0, 'sine', 1250 * pitch), note(1900 * pitch, 0.055, 0.018)];
-    case 'progress': return [note(780, 0.14, 0.055), note(1040, 0.2, 0.06, 0.065)];
-    case 'button': return [note(360, 0.045, 0.025, 0, 'triangle', 300)];
-  }
-}
 export class CueGate {
   private last = new Map<Cue, number>();
   accept(cue: Cue, now: number): boolean {
@@ -32,7 +17,13 @@ export class Feedback {
   settings: FeedbackSettings = { sound: true, vibration: true };
   private context?: AudioContext;
   private master?: GainNode;
-  private voices = new Set<OscillatorNode>();
+  private voices = new Set<AudioBufferSourceNode>();
+  private buffer?: AudioBuffer;
+  private bytes?: ArrayBuffer;
+  private load?: Promise<void>;
+  private decoding = false;
+  private abort = new AbortController();
+  private variant = 0;
   private gate = new CueGate();
   private blocked = false;
   private disposed = false;
@@ -40,6 +31,20 @@ export class Feedback {
     try { const s = JSON.parse(storage.getItem('road-lines.feedback.v1') ?? 'null');
       if (s && typeof s.sound === 'boolean' && typeof s.vibration === 'boolean') this.settings = s;
     } catch { /* Noncritical preferences may use defaults, unlike game progression. */ }
+    this.loadSamples();
+  }
+  private loadSamples(): void {
+    if (this.load || this.disposed || !this.settings.sound) return;
+    this.load = fetch(new URL('../assets/audio/feedback.wav', import.meta.url), { signal: this.abort.signal })
+      .then(response => { if (!response.ok) throw Error('Sound unavailable'); return response.arrayBuffer(); })
+      .then(bytes => { if (!this.disposed) { this.bytes = bytes; this.decodeSamples(); } }).catch(() => {});
+  }
+  private decodeSamples(): void {
+    const context = this.context;
+    if (!context || !this.bytes || this.buffer || this.decoding || this.disposed) return;
+    this.decoding = true;
+    void context.decodeAudioData(this.bytes.slice(0)).then(buffer => { if (!this.disposed) { this.buffer = buffer; this.bytes = undefined; } })
+      .catch(() => {}).finally(() => { this.decoding = false; });
   }
   prime(): void {
     if (this.disposed || this.blocked || !this.settings.sound) return;
@@ -51,6 +56,7 @@ export class Feedback {
         compressor.threshold.value = -10; compressor.knee.value = 12; compressor.ratio.value = 5;
         this.master.connect(compressor); compressor.connect(this.context.destination);
       }
+      this.loadSamples(); this.decodeSamples();
       if (this.context.state === 'suspended') void this.context.resume().catch(() => {});
     } catch { /* Audio support must not decide whether the puzzle works. */ }
   }
@@ -71,18 +77,17 @@ export class Feedback {
     this.prime();
     const context = this.context;
     if (!context || !this.master || context.state !== 'running') return;
-    for (const n of cueNotes(cue, progress)) {
-      if (this.voices.size >= 20) break;
-      const oscillator = context.createOscillator(), envelope = context.createGain(), at = context.currentTime + n.delay;
-      oscillator.type = n.type; oscillator.frequency.setValueAtTime(n.frequency, at);
-      if (n.end) oscillator.frequency.exponentialRampToValueAtTime(n.end, at + n.duration);
-      envelope.gain.setValueAtTime(0.0001, at); envelope.gain.exponentialRampToValueAtTime(n.gain, at + 0.005);
-      envelope.gain.exponentialRampToValueAtTime(0.0001, at + n.duration);
-      oscillator.connect(envelope); envelope.connect(this.master); this.voices.add(oscillator);
-      oscillator.onended = () => { this.voices.delete(oscillator); oscillator.disconnect(); envelope.disconnect(); };
-      oscillator.start(at); oscillator.stop(at + n.duration + 0.015);
-    }
+    if (!this.buffer || this.voices.size >= 20) return;
+    const variants = soundBank[cue], clip = variants[this.variant++ % variants.length]!;
+    const source = context.createBufferSource(), gain = context.createGain();
+    source.buffer = this.buffer;
+    source.playbackRate.value = cue === 'cell' || cue === 'coin' ? .94 + Math.max(0, Math.min(1, progress)) * .20 : 1;
+    gain.gain.value = cue === 'button' ? .32 : cue === 'cell' ? .52 : cue === 'undo' ? .42 : .65;
+    source.connect(gain); gain.connect(this.master); this.voices.add(source);
+    source.onended = () => { this.voices.delete(source); source.disconnect(); gain.disconnect(); };
+    source.start(context.currentTime, clip[0], clip[1]);
   }
+
   setBlocked(value: boolean): void {
     this.blocked = value;
     if (value) {
@@ -92,5 +97,5 @@ export class Feedback {
     // Resume only on the next real gesture, never replay queued cues after background.
   }
   private stopVoices(): void { for (const voice of this.voices) { try { voice.stop(); } catch {} voice.disconnect(); } this.voices.clear(); }
-  dispose(): void { this.setBlocked(true); this.disposed = true; void this.context?.close().catch(() => {}); }
+  dispose(): void { this.abort.abort(); this.buffer = undefined; this.bytes = undefined; this.setBlocked(true); this.disposed = true; void this.context?.close().catch(() => {}); }
 }

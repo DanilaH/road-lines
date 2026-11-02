@@ -1,3 +1,4 @@
+import { nextLevel } from '../core/progression';
 import { copy, themeName } from '../i18n';
 import { diamondPath } from '../presentation/markers';
 import { complete, type Level } from '../core/model';
@@ -43,7 +44,7 @@ export function renderMenu(host: HTMLElement, screen: Exclude<Screen, 'game'>, s
   let content: string;
   if (screen === 'home') {
     const continuing = save.path.length > 1;
-    const currentSet = getLevelSet(save.levelId), setFinished = currentSet.levels.every(l => save.completed.includes(l.id)) && currentSet.levels.at(-1)?.id === save.levelId && complete(currentSet.levels.at(-1)!, save.path);
+    const currentSet = getLevelSet(save.levelId), setFinished = !nextLevel(save.levelId) && currentSet.levels.every(l => save.completed.includes(l.id)) && currentSet.levels.at(-1)?.id === save.levelId && complete(currentSet.levels.at(-1)!, save.path);
     content = `<div class="home-hero"><h1 tabindex="-1">${copy.logoFirst}<span>${copy.logoSecond}</span><i aria-hidden="true">.</i></h1><p>${copy.homeTagline}</p>${emblem}</div>
       <div class="home-actions"><button class="primary-action home-play" data-action="${setFinished ? 'sets' : 'continue'}"><span class="play-glyph">${icon('play')}</span><span class="play-copy"><strong>${setFinished ? bankFinished ? copy.chooseTask : copy.chooseSet : save.completed.includes(save.levelId) && continuing ? copy.result : continuing ? copy.continue : copy.play}</strong><small>${setFinished ? bankFinished ? copy.bankDone : copy.setDone : copy.currentLevel(levelLabel(save.levelId))}</small></span><span class="play-arrow" aria-hidden="true">${icon('back')}</span></button>
       <button class="secondary-action home-levels" data-action="sets"><span class="nav-art">${icon('grid')}</span><span>${copy.levels}</span></button><button class="secondary-action home-themes" data-action="themes"><span class="nav-art">${icon('palette')}</span><span>${copy.appearance}</span></button></div>

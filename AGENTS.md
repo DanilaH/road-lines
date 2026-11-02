@@ -34,7 +34,7 @@ TypeScript + Phaser + Vite; Android via Capacitor; native Yandex Mobile Ads inte
 - Undo/reset are free. Pause, background, second pointer and ads do not destroy the path.
 - Hint search uses the actual prefix. FOUND, UNSOLVABLE and UNKNOWN are distinct. Timeouts are not proof of dead ends; never charge for an unusable hint.
 
-- Optional finish/walls/ordered-checkpoint rules are specified in docs/MECHANICS.md. Apply them consistently to input, solver, completion and restore; retain all original 15 IDs/versions. Current bank: 90 in three sets of 30; preserve all original 30 records. New sets unlock after three tutorials, independently; completing a set must never silently advance into another set.
+- Optional finish/walls/ordered-checkpoint rules are specified in docs/MECHANICS.md. Apply them consistently to input, solver, completion and restore; retain all original 15 IDs/versions. Current bank: 90 in three sets of 30; preserve original records except the explicitly approved numbered-intro revision below. New sets unlock after three tutorials, independently; Continue advances across set boundaries in bank order; only the final bank level returns to selection.
 
 ## Presentation acceptance
 - Reference composition: free space, compact top controls, square grey cells with gaps, theme-coloured ribbon. Scale by figure bounds with a sensible maximum cell size.
@@ -122,3 +122,9 @@ When adding the application, add and run actual app build and relevant model/flo
 - Web production is no-op. Diagnostic console capture exists only in the explicit `analytics-test` compile mode. Android SDK activation requires generated native API-key configuration; never put it in Vite variables or commit generated key assets. Debug CI uses `APPMETRICA_DEBUG_API_KEY`; missing key is disabled, not proof of live delivery.
 - Run `node tools/analytics-smoke.mjs`, `node tools/reload-touch-smoke.mjs` and localization smoke after lifecycle/analytics wiring changes. Readiness means the uncovered UI crossed a paint boundary; do not set ready in the callback that removes startup cover.
 - Chromium intentional-crash CI runs on Ubuntu 22.04 because upstream Playwright documents a missing crash event on Ubuntu 24.04. Preserve actual crash assertions rather than replacing them with reload/skip; distinguish local evidence, native compilation and dashboard/device acceptance.
+
+## Approved physical-playtest changes — 2 November 2026
+- User approved all seven findings: richer sampled sound, global arc-length route dots, screen-wide directional input, optional result theme preview/purchase, finish at last number in first numbered lessons, continuous bank progression, reset/hint thumb controls below board.
+- Preserve IDs, original first 15, earned progress/wallet/ownership. Numbered intro edits must bump level version and repair only old transient drafts. Historical immutable-30 rule is explicitly superseded for these lessons; retain an independent baseline check with an allowlist, not a blind hash update.
+- Absolute input near the route remains supported. A gesture can steer from surrounding play space and continue beyond figure/board; buttons/modals/banner never initiate route input. No teleport across walls/holes; model guards and sequential reverse always apply. Background/pointercancel/resize retain prefix.
+- Theme preview on result is session-only and free. Purchase remains explicit and atomic; Continue stays available, preview never grants ownership or changes saved equipment. Ads stay deferred.

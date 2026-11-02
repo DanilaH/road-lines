@@ -9,7 +9,7 @@ export async function runMechanicsSmoke(browser, url, output, root) {
   const open = async (id, width = 390, height = 844, themeId = 'classic') => {
     const level = levels.find(l => l.id === id), page = await browser.newPage({ viewport: { width, height } });
     await page.addInitScript(({ key, level, themeId }) => {
-      if (!localStorage.getItem(key)) localStorage.setItem(key, JSON.stringify({ version: 2, levelId: level.id, levelVersion: 1, path: [level.start], completed: [], coins: 0, hints: 3,
+      if (!localStorage.getItem(key)) localStorage.setItem(key, JSON.stringify({ version: 2, levelId: level.id, levelVersion: level.version, path: [level.start], completed: [], coins: 0, hints: 3,
         themeId, ownedThemes: ['classic', 'mint', ...(themeId === 'classic' ? [] : [themeId])] }));
     }, { key, level, themeId });
     const errors = []; page.on('pageerror', e => errors.push(e.message));
@@ -42,7 +42,7 @@ export async function runMechanicsSmoke(browser, url, output, root) {
       await page.getByRole('button', { name: 'Подсказка, осталось 3', exact: true }).click();
       await page.getByText('Бледная линия показывает продолжение.', { exact: true }).waitFor(); assert.equal((await save()).hints, 2);
     } else {
-      await drag([0, 1, 2, 5, 8]); assert.deepEqual((await save()).path, [0, 1, 2, 5], 'Number 3 cannot be visited before number 2');
+      await drag([0, 3, 6]); assert.deepEqual((await save()).path, [0, 3], 'The final numbered checkpoint is reserved for the end');
       await page.getByRole('button', { name: 'Начать заново', exact: true }).click();
       await drag([0, 1, 4]); await page.locator('.instruction').getByText(/Следующая точка — 3/).waitFor();
       await drag([4, 1]); await page.locator('.instruction').getByText(/Следующая точка — 2/).waitFor();

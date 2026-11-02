@@ -25,7 +25,7 @@ export async function runUXSmoke(browser,url){
   await drag(p,l,[0,1]);await p.getByRole('button',{name:'Подсказка, осталось 2',exact:true}).click();await p.getByText('Бледная линия показывает продолжение.',{exact:true}).waitFor();assert.equal((await save(p)).hints,1);
   await drag(p,l,[1,2,5]);await p.waitForTimeout(450);assert.deepEqual((await save(p)).path,[0,1,2,5]);await videoDone(p,context,'hint-resume');console.log('UX check complete');report.checks.push('Same-prefix hint charged once, changed prefix charged independently, release/resume');
  }
- for(const [id,path,next,copy] of [['finish-01',[0,1,2,5],8,'Финиш — после всех клеток'],['walls-01',[0,3,6,7],8,'Здесь стенка — обойди её'],['checkpoints-01',[0,1,2,5],8,'Сначала точка 2']]){
+ for(const [id,path,next,copy] of [['finish-01',[0,1,2,5],8,'Финиш — после всех клеток'],['walls-01',[0,3,6,7],8,'Здесь стенка — обойди её'],['checkpoints-01',[0,3],6,'Финиш — после всех клеток']]){
   const l=levels.find(l=>l.id===id),{p,context}=await open(seed(l,{path}),{width:360,height:779,video:id==='walls-01'});
   const writes=await p.evaluate(()=>__cssWrites);await drag(p,l,[path.at(-1),next]);await p.locator('.instruction.rejected').getByText(copy,{exact:true}).waitFor();assert.deepEqual((await save(p)).path,path);
   assert.equal(await p.evaluate(()=>__cssWrites),writes,'Rejected input does not reapply theme');await p.screenshot({path:resolve(output,'reject-'+id+'.png')});
@@ -54,7 +54,7 @@ export async function runUXSmoke(browser,url){
   await p.locator('[data-action=close-bonus]').click();assert.equal(await p.locator('.bonus-overlay').isVisible(),true);assert.equal((await save(p)).levelId,l.id);assert.equal((await save(p)).coins,500);await p.evaluate(()=>__restoreWrites());await p.locator('[data-action=notice]').click();await p.locator('#app[data-ready=true]').waitFor();await p.locator('[data-action=continue]').click();await p.locator('.next').click();await p.locator('[data-action=close-bonus]').click();await p.locator('.play').waitFor();assert.equal((await save(p)).coins,500);await context.close();console.log('UX check complete');report.checks.push('Failed gift acknowledgement retains reward and resumes after authoritative reload');
  }
  {
-  const l=levels[29],{p,context}=await open(seed(l,{path:l.witness,completed:levels.slice(0,29).map(l=>l.id),coins:680}));await p.locator('.next').click();await p.locator('.bank-complete').waitFor();assert.equal((await save(p)).levelId,l.id);await p.keyboard.press('Escape');await p.keyboard.press('Escape');assert.match(await p.locator('.home-play').textContent(),/Выбрать набор/);await p.locator('.home-play').click();assert.equal(await p.locator('#app').getAttribute('data-screen'),'sets');await context.close();console.log('UX check complete');report.checks.push('Set boundary stays explicit; home primary selects a set');
+  const l=levels[29],{p,context}=await open(seed(l,{path:l.witness,completed:levels.slice(0,29).map(l=>l.id),coins:680}));await p.locator('.next').click();await p.locator('.play').waitFor();assert.equal((await save(p)).levelId,levels[30].id);assert.equal(await p.locator('#app').getAttribute('data-screen'),'game');await context.close();console.log('UX check complete');report.checks.push('Continue crosses into the next set without menu detour');
  }
  {
   const l=levels[2],{p,context}=await open(seed(l,{completed:levels.slice(0,30).map(l=>l.id)}));

@@ -6,7 +6,15 @@ const catalog = JSON.parse(text.slice(text.indexOf('= ') + 2).trim().replace(/;$
 assert.equal(catalog.length, 90);
 const authorAudit = JSON.parse(readFileSync(new URL('../docs/BANK_CONTENT_AUDIT.json', import.meta.url), 'utf8'));
 assert.equal(authorAudit.levels.length, 60);
-assert.equal(createHash('sha256').update(JSON.stringify(catalog.slice(0, 30))).digest('hex'), authorAudit.legacy30Sha256, 'Existing 30 records changed');
+const before = JSON.parse(readFileSync(new URL('../docs/PRE_PLAYTEST_FIRST_30.json', import.meta.url), 'utf8'));
+assert.equal(createHash('sha256').update(JSON.stringify(before)).digest('hex'), authorAudit.legacy30Sha256, 'Frozen baseline changed');
+for (const [i, original] of before.entries()) {
+  const expected = structuredClone(original);
+  if (['checkpoints-01','checkpoints-02','checkpoints-03'].includes(original.id)) {
+    expected.version++; expected.finish = expected.witness.at(-1); expected.checkpoints[expected.checkpoints.length - 1] = expected.finish;
+  }
+  assert.deepEqual(catalog[i], expected, 'Unapproved original-level edit: ' + original.id);
+}
 const ids = new Set(), puzzles = new Set(), classicShapes = new Set(), newMasks = new Set(), audit = [];
 // Deliberately independent of the game model and solver.
 for (const l of catalog) {

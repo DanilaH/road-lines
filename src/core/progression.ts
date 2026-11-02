@@ -20,6 +20,8 @@ export const nextInSet = (id: string) => {
   const set = getLevelSet(id);
   return set.levels[set.levels.findIndex(l => l.id === id) + 1];
 };
+/** Continue follows the bank, independently from set-selection navigation. */
+export const nextLevel = (id: string) => { const i = levels.findIndex(l => l.id === id); return i >= 0 ? levels[i + 1] : undefined; };
 export function isLevelAvailable(id: string, completed: readonly string[]): boolean {
   const set = getLevelSet(id);
   if (!set) return false;

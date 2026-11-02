@@ -1077,7 +1077,7 @@ export const levels: readonly Level[] = [
   },
   {
     "id": "checkpoints-01",
-    "version": 1,
+    "version": 2,
     "width": 3,
     "height": 3,
     "cells": [
@@ -1108,12 +1108,13 @@ export const levels: readonly Level[] = [
     "checkpoints": [
       0,
       4,
-      8
-    ]
+      6
+    ],
+    "finish": 6
   },
   {
     "id": "checkpoints-02",
-    "version": 1,
+    "version": 2,
     "width": 4,
     "height": 3,
     "cells": [
@@ -1150,12 +1151,13 @@ export const levels: readonly Level[] = [
     "checkpoints": [
       3,
       8,
-      6
-    ]
+      5
+    ],
+    "finish": 5
   },
   {
     "id": "checkpoints-03",
-    "version": 1,
+    "version": 2,
     "width": 4,
     "height": 4,
     "cells": [
@@ -1197,8 +1199,9 @@ export const levels: readonly Level[] = [
       0,
       15,
       4,
-      8
-    ]
+      12
+    ],
+    "finish": 12
   },
   {
     "id": "checkpoints-04",

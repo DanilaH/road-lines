@@ -65,7 +65,7 @@ describe('finish, walls and ordered checkpoints', () => {
     const level = levels.find(l => l.id === 'checkpoints-01')!;
     const seed = { ...defaultSave(), levelId: level.id, levelVersion: level.version, path: level.witness.slice(0, 5), coins: 123, hints: 2, completed: ['intro-01'] };
     expect(decodeSave(JSON.stringify(seed))).toMatchObject({ path: seed.path, coins: 123, hints: 2, completed: seed.completed });
-    const broken = { ...seed, path: [0, 1, 2, 5, 8] };
+    const broken = { ...seed, path: [0, 3, 6] };
     expect(decodeSave(JSON.stringify(broken))).toMatchObject({ path: [0], coins: 123, hints: 2, completed: seed.completed });
   });
   it('cannot pay for a full geometric route that violates new rules', () => {

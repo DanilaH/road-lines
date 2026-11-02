@@ -62,10 +62,10 @@ try{
  }
  for(const [width,height]of [[320,568],[390,844]])for(const lang of ['ru','en'])for(const id of ['finish-01','walls-01','checkpoints-01','shapes-30']){
   const l=levels.find(l=>l.id===id);let path,next;
-  if(id==='finish-01'){path=[0,1,2,5];next=8;}else if(id==='walls-01'){path=[0,3,6,7];next=8;}else if(id==='checkpoints-01'){path=[0,1,2,5];next=8;}else path=l.witness.slice(0,l.witness.indexOf(l.checkpoints.at(-1))+1);
+  if(id==='finish-01'){path=[0,1,2,5];next=8;}else if(id==='walls-01'){path=[0,3,6,7];next=8;}else if(id==='checkpoints-01'){path=[0,3];next=6;}else path=l.witness.slice(0,l.witness.indexOf(l.checkpoints.at(-1))+1);
   const {p,context}=await open(lang,seed(l,{path,themeId:lang==='en'?'dusk':'classic',ownedThemes:['classic','mint','dusk']}),width,height);await p.locator('[data-action=continue]').tap();await p.waitForTimeout(100);
   const instruction=await p.locator('.instruction').boundingBox(),banner=await p.locator('#banner-slot').boundingBox();assert(instruction.y+instruction.height<=banner.y+1,'Long rule caption clears banner');await shot(p,`rule-${id}-${lang}-${width}`,lang);
-  if(next!==undefined){await touchPath(p,l,[path.at(-1),next]);const expected=lang==='ru'?id==='finish-01'?'Финиш — после всех клеток':id==='walls-01'?'Здесь стенка — обойди её':'Сначала точка 2':id==='finish-01'?'Reach the finish after every cell':id==='walls-01'?'There is a wall — go around it':'Visit number 2 first';assert.equal(await p.locator('.instruction').textContent(),expected);assert.deepEqual((await save(p)).path,path);}else assert((await p.locator('.instruction').textContent()).includes(lang==='ru'?'Номера пройдены':'Numbers done'));
+  if(next!==undefined){await touchPath(p,l,[path.at(-1),next]);const expected=lang==='ru'?id==='finish-01'?'Финиш — после всех клеток':id==='walls-01'?'Здесь стенка — обойди её':'Финиш — после всех клеток':id==='finish-01'?'Reach the finish after every cell':id==='walls-01'?'There is a wall — go around it':'Reach the finish after every cell';assert.equal(await p.locator('.instruction').textContent(),expected);assert.deepEqual((await save(p)).path,path);}else assert((await p.locator('.instruction').textContent()).includes(lang==='ru'?'Номера пройдены':'Numbers done'));
   report.checks.push(`Rule caption/rejection ${id} ${lang} ${width}`);await context.close();flush();
  }
  assert.deepEqual(report.errors,[]);console.log('Localization smoke passed:',report.screens.length,'viewport/language combinations,',report.checks.length,'extra flows');

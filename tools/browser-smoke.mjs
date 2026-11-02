@@ -110,11 +110,11 @@ try {
   const gameplay = await gameplayContext.newPage();
   await gameplay.addInitScript(() => {
     const Base = window.AudioContext;
-    window.__audioProbe = { oscillators: 0, active: 0, contexts: [] };
+    window.__audioProbe = { sources: 0, active: 0, contexts: [] };
     window.AudioContext = class extends Base {
       constructor(...args) { super(...args); window.__audioProbe.contexts.push(this); }
-      createOscillator() {
-        const node = super.createOscillator(); window.__audioProbe.oscillators++; window.__audioProbe.active++;
+      createBufferSource() {
+        const node = super.createBufferSource(); window.__audioProbe.sources++; window.__audioProbe.active++;
         node.addEventListener('ended', () => window.__audioProbe.active--, { once: true }); return node;
       }
     };
@@ -159,7 +159,7 @@ try {
     return { count, width: canvas.getBoundingClientRect().width, height: canvas.getBoundingClientRect().height };
   });
   assert(painted.count > 20 && painted.width === 390 && painted.height === 844);
-  assert(await gameplay.evaluate(() => window.__audioProbe.oscillators > 8 && window.__audioProbe.contexts.length === 1));
+  assert(await gameplay.evaluate(() => window.__audioProbe.sources > 3 && window.__audioProbe.contexts.length === 1));
   await gameplay.screenshot({ path: resolve(output, 'win-celebration.png') });
   await gameplay.reload(); await enterGame(gameplay);
   assert.equal((await readSave()).coins, 20);
@@ -170,7 +170,7 @@ try {
   await gameplay.getByRole('button', { name: 'Звук: вкл', exact: true }).click();
   await gameplay.getByRole('button', { name: 'Вибрация: вкл', exact: true }).click();
   await gameplay.getByRole('button', { name: 'ПРОДОЛЖИТЬ', exact: true }).click();
-  const mutedCount = await gameplay.evaluate(() => window.__audioProbe.oscillators);
+  const mutedCount = await gameplay.evaluate(() => window.__audioProbe.sources);
 
   // All actual witnesses through the production input; reject no legal authored turn.
   for (let index = 1; index < catalog.length; index++) {
@@ -184,7 +184,7 @@ try {
     await gameplay.mouse.up(); await gameplay.locator('.result').waitFor();
     assert.equal((await readSave()).completed.length, index + 1);
     if (index === 1) {
-      assert.equal(await gameplay.evaluate(() => window.__audioProbe.oscillators), mutedCount, 'Mute creates no new voices');
+      assert.equal(await gameplay.evaluate(() => window.__audioProbe.sources), mutedCount, 'Mute creates no new voices');
       await gameplay.evaluate(() => { Object.defineProperty(document, 'hidden', { configurable: true, value: true }); document.dispatchEvent(new Event('visibilitychange')); });
       assert.equal(await gameplay.locator('.flying-coin').count(), 0);
       assert.equal(await gameplay.locator('.balance').textContent(), '40');
@@ -194,18 +194,12 @@ try {
       assert.equal((await readSave()).coins, 40);
     }
     if (index < catalog.length - 1) {
-      const nextLabel = (index + 1) % 30 === 0 ? 'К ВЫБОРУ УРОВНЕЙ' : 'ДАЛЬШЕ';
+      const nextLabel = 'ДАЛЬШЕ';
       await gameplay.getByRole('button', { name: nextLabel, exact: true }).click({ clickCount: index === 2 ? 2 : 1 });
       if (await gameplay.locator('.bonus-overlay').isVisible()) {
         await gameplay.locator('[data-action=close-bonus]').click();
       }
-      if ((index + 1) % 30 === 0) {
-        await gameplay.locator('.bank-complete').waitFor();
-        assert.equal(await gameplay.locator('.level-tile.completed').count(), 30);
-        await gameplay.getByRole('button', { name: 'Выбрать набор', exact: true }).click();
-        await gameplay.locator(`[data-action=open-set][data-set=${index === 29 ? 'turns' : 'shapes'}]`).click();
-        await gameplay.getByRole('button', { name: 'Уровень 1, доступен', exact: true }).click();
-      }
+      if ((index + 1) % 30 === 0) assert.equal(await gameplay.locator('.bank-complete').isVisible(), false, 'Set boundary has no menu detour');
       if (index === 3) {
         await gameplay.evaluate(() => { Object.defineProperty(document, 'hidden', { configurable: true, value: true }); document.dispatchEvent(new Event('visibilitychange')); });
         await gameplay.waitForTimeout(700);

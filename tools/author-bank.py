@@ -125,6 +125,6 @@ def main():
                 print(l['id'],len(l['cells']),family,'solutions',count,'/',len(pool),flush=True);break
             else:raise RuntimeError(('No suitable candidate',set_id,index))
     file.write_text("import type { Level } from '../core/model';\n\nexport const levels: readonly Level[] = "+json.dumps(base+added,ensure_ascii=False,indent=2)+';\n')
-    (ROOT/'docs/BANK_CONTENT_AUDIT.json').write_text(json.dumps(dict(seed=20261031,attempts=attempts,levels=audit,legacy30Sha256=hashlib.sha256(json.dumps(base,ensure_ascii=False,separators=(',', ':')).encode()).hexdigest()),ensure_ascii=False,indent=2)+'\n')
+    (ROOT/'docs/BANK_CONTENT_AUDIT.json').write_text(json.dumps(dict(seed=20261031,attempts=attempts,levels=audit,legacy30Sha256=hashlib.sha256(json.dumps(json.loads((ROOT/'docs/PRE_PLAYTEST_FIRST_30.json').read_text()),ensure_ascii=False,separators=(',', ':')).encode()).hexdigest()),ensure_ascii=False,indent=2)+'\n')
     print('Selected',len(added),'different masks in',attempts,'walk attempts.')
 if __name__=='__main__':main()
