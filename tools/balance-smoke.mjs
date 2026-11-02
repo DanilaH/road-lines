@@ -56,7 +56,7 @@ try{
   report.ui.push({check:'Free zero-budget nearest rollback and reload',id,width,height,notice,rollback});await context.close();flush();
  }
  {
-  const l=levels[2],{p,context}=await open(l,[0,1],1);await p.locator('[data-action=hint]').tap();await p.getByText('Бледная линия показывает продолжение.',{exact:true}).waitFor();assert.equal((await save(p)).hints,0);await p.locator('[data-action=hint]').tap();assert.equal((await save(p)).hints,0);await p.reload();await p.locator('#app[data-ready=true]').waitFor();await p.locator('[data-action=continue]').tap();await p.locator('[data-action=hint]').tap();await p.getByText('Подсказки закончились. Проведи по линии назад или начни заново.',{exact:true}).waitFor();assert.equal((await save(p)).hints,0);assert.deepEqual((await save(p)).path,[0,1]);assert.equal(await p.evaluate(()=>__perf.scene.hint.length),0);
+  const l=levels[2],{p,context}=await open(l,[0,1],1);await p.locator('[data-action=hint]').tap();await p.getByText('Бледная линия показывает продолжение.',{exact:true}).waitFor();assert.equal((await save(p)).hints,0);await p.locator('[data-action=hint]').tap();assert.equal((await save(p)).hints,0);await p.reload();await p.locator('#app[data-ready=true]').waitFor();await p.locator('[data-action=continue]').tap();await p.locator('[data-action=hint]').tap();await p.locator('.hint-overlay:visible').waitFor();assert.equal(await p.locator('[data-action=buy-hints][data-count=\"1\"]').isDisabled(),true);assert.equal((await save(p)).hints,0);assert.deepEqual((await save(p)).path,[0,1]);assert.equal(await p.evaluate(()=>__perf.scene.hint.length),0);
   report.ui.push({check:'Paid last hint becomes zero; same-session repeat is free, reload does not reveal a new paid hint'});await context.close();
  }
  {

@@ -1,0 +1,1121 @@
+{
+  "date": "2026-11-02",
+  "runtimeCommit": "87478e1109786e4beb7a565149de55a6eecda120",
+  "unit": {
+    "result": "PASS",
+    "tests": 427,
+    "files": 64
+  },
+  "monetization": {
+    "checks": [
+      "one earned video funds exactly one three-hint pack; double tap and reload do not duplicate",
+      "SDK-sized banner reservation clears dock and follows background even under an existing pause blocker",
+      "single60 purchase is available independently and does not automatically spend the hint",
+      "dismiss does not grant money and returns to usable shop",
+      "unavailable does not grant money and returns to usable shop",
+      "pending earned receipt recovers after renderer restart exactly once",
+      "failed durable grant retains native pending; retry restores exactly150",
+      "theme shortage uses same150 topup, free preview is not ownership",
+      "Continue after earned interstitial advances once and persists draft",
+      "Continue after unavailable interstitial advances once and persists draft",
+      "dismissal while backgrounded defers exactly one next-level transition until foreground",
+      "gift transition is protected even when interstitial would otherwise be eligible",
+      "dead-end diagnostic remains free at zero and does not open shop"
+    ],
+    "screens": [
+      {
+        "width": 320,
+        "height": 568,
+        "lang": "ru"
+      },
+      {
+        "width": 320,
+        "height": 568,
+        "lang": "en"
+      },
+      {
+        "width": 360,
+        "height": 800,
+        "lang": "ru"
+      },
+      {
+        "width": 360,
+        "height": 800,
+        "lang": "en"
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "lang": "ru"
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "lang": "en"
+      },
+      {
+        "width": 412,
+        "height": 915,
+        "lang": "ru"
+      },
+      {
+        "width": 412,
+        "height": 915,
+        "lang": "en"
+      },
+      {
+        "width": 576,
+        "height": 1280,
+        "lang": "ru"
+      },
+      {
+        "width": 576,
+        "height": 1280,
+        "lang": "en"
+      }
+    ],
+    "errors": []
+  },
+  "persistence": {
+    "checks": [
+      "clear 1: reload at 0ms",
+      "clear 1: reload at 80ms",
+      "clear 1: reload at 400ms",
+      "clear 1: reload at 1200ms",
+      "clear 20: reload at 0ms",
+      "clear 20: reload at 80ms",
+      "clear 20: reload at 400ms",
+      "clear 20: reload at 1200ms",
+      "navigation immediately after durable clear write",
+      "clear write before: recovery and retry",
+      "clear write unreadable: recovery and retry",
+      "theme purchase before: wallet and ownership stay atomic",
+      "theme purchase unreadable: wallet and ownership stay atomic",
+      "hint cancelled by pause never charges; confirmed hint debit survives restart",
+      "second tab cannot write; closing owner transfers lock after reload",
+      "without Web Locks: storage event blocks stale window and preserves reward",
+      "renderer crash with wheel staged: fixed prize once",
+      "renderer crash with wheel committed: fixed prize once"
+    ],
+    "errors": [],
+    "crashCount": 2
+  },
+  "celebrations": {
+    "checks": [
+      "budget-aware free preview, no disabled purchase trap, rotating result candidates across levels/reload",
+      "affordable result purchase confirms once and preserves the equipped theme after reload",
+      "theme target is durable before animation, reload awards it once, Apply is free",
+      "legacy sector 7 remains 300 coins; all-owned rare sector substitutes 300",
+      "gift sound is allowed under its own modal, background cancels it without replay or loss",
+      "gift acknowledgement failure retains its notice; reload recovery cannot grant it twice",
+      "gift reveal demonstration and complete cleanup on Continue",
+      "rare theme wheel demonstration, specific reward and immediate Apply"
+    ],
+    "screens": [
+      {
+        "width": 320,
+        "height": 568,
+        "lang": "ru",
+        "theme": "classic"
+      },
+      {
+        "width": 320,
+        "height": 568,
+        "lang": "en",
+        "theme": "neon"
+      },
+      {
+        "width": 360,
+        "height": 800,
+        "lang": "ru",
+        "theme": "classic"
+      },
+      {
+        "width": 360,
+        "height": 800,
+        "lang": "en",
+        "theme": "neon"
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "lang": "ru",
+        "theme": "classic"
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "lang": "en",
+        "theme": "neon"
+      },
+      {
+        "width": 412,
+        "height": 915,
+        "lang": "ru",
+        "theme": "classic"
+      },
+      {
+        "width": 412,
+        "height": 915,
+        "lang": "en",
+        "theme": "neon"
+      },
+      {
+        "width": 576,
+        "height": 1280,
+        "lang": "ru",
+        "theme": "classic"
+      },
+      {
+        "width": 576,
+        "height": 1280,
+        "lang": "en",
+        "theme": "neon"
+      }
+    ],
+    "errors": []
+  },
+  "analytics": {
+    "checks": [
+      "visits, first move, resets, pause/background and explicit exit have no redraw duplicates",
+      "confirmed win once, double Continue once, reload of result never repeats completion",
+      "hint cancelled, spent, repeated, and failed write are distinct outcomes",
+      "hint no budget: diagnostic outcome without debit",
+      "hint dead end: diagnostic outcome without debit",
+      "hint worker unavailable: diagnostic outcome without debit",
+      "new daily claim reports once after commit, not again on Back/reload",
+      "purchase reports only after durable grant; selecting owned theme is separate",
+      "pending wheel recovery is attributed once across subsequent reload",
+      "corrupt save emits categorical boot error and leaves raw bytes intact"
+    ],
+    "errors": [],
+    "externalRequests": [],
+    "events": [
+      {
+        "event": "app_ready",
+        "params": {
+          "schema": 1,
+          "language": "ru"
+        }
+      },
+      {
+        "event": "level_start",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "resumed": false,
+          "replay": false
+        }
+      },
+      {
+        "event": "first_move",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "active_ms": 56
+        }
+      },
+      {
+        "event": "level_reset",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1
+        }
+      },
+      {
+        "event": "level_pause",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "active_ms": 198,
+          "filled": 1
+        }
+      },
+      {
+        "event": "language_change",
+        "params": {
+          "schema": 1,
+          "language": "en",
+          "saved": true
+        }
+      },
+      {
+        "event": "level_pause",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "active_ms": 205,
+          "filled": 1
+        }
+      },
+      {
+        "event": "level_pause",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "active_ms": 245,
+          "filled": 1
+        }
+      },
+      {
+        "event": "level_exit",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "active_ms": 245,
+          "reason": "home",
+          "filled": 1,
+          "resets": 1,
+          "undo_cells": 1
+        }
+      },
+      {
+        "event": "level_start",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 2,
+          "resumed": false,
+          "replay": false
+        }
+      },
+      {
+        "event": "app_ready",
+        "params": {
+          "schema": 1,
+          "language": "ru"
+        }
+      },
+      {
+        "event": "level_start",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-01",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 3,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "resumed": true,
+          "replay": false
+        }
+      },
+      {
+        "event": "first_move",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-01",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 3,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "active_ms": 86
+        }
+      },
+      {
+        "event": "level_complete",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-01",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 3,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "active_ms": 87,
+          "first_clear": true,
+          "reward": 20,
+          "resets": 0,
+          "undo_cells": 0
+        }
+      },
+      {
+        "event": "app_ready",
+        "params": {
+          "schema": 1,
+          "language": "ru"
+        }
+      },
+      {
+        "event": "result_continue",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-01",
+          "first_clear": false
+        }
+      },
+      {
+        "event": "level_start",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-02",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 3,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "resumed": false,
+          "replay": false
+        }
+      },
+      {
+        "event": "ad_next_level",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-02"
+        }
+      },
+      {
+        "event": "app_ready",
+        "params": {
+          "schema": 1,
+          "language": "ru"
+        }
+      },
+      {
+        "event": "level_start",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "resumed": false,
+          "replay": false
+        }
+      },
+      {
+        "event": "hint_request",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false
+        }
+      },
+      {
+        "event": "level_pause",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "active_ms": 7,
+          "filled": 1
+        }
+      },
+      {
+        "event": "hint_result",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "outcome": "cancelled"
+        }
+      },
+      {
+        "event": "hint_request",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false
+        }
+      },
+      {
+        "event": "hint_spent",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "remaining": 2
+        }
+      },
+      {
+        "event": "hint_result",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "outcome": "found"
+        }
+      },
+      {
+        "event": "hint_repeat",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false
+        }
+      },
+      {
+        "event": "first_move",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "active_ms": 110
+        }
+      },
+      {
+        "event": "hint_request",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false
+        }
+      },
+      {
+        "event": "hint_result",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "outcome": "save_failed"
+        }
+      },
+      {
+        "event": "save_error",
+        "params": {
+          "schema": 1,
+          "operation": "hint"
+        }
+      },
+      {
+        "event": "app_ready",
+        "params": {
+          "schema": 1,
+          "language": "ru"
+        }
+      },
+      {
+        "event": "level_start",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "resumed": false,
+          "replay": false
+        }
+      },
+      {
+        "event": "hint_request",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false
+        }
+      },
+      {
+        "event": "hint_result",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "outcome": "no_budget"
+        }
+      },
+      {
+        "event": "level_pause",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "active_ms": 107,
+          "filled": 1
+        }
+      },
+      {
+        "event": "app_ready",
+        "params": {
+          "schema": 1,
+          "language": "ru"
+        }
+      },
+      {
+        "event": "level_start",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "resumed": true,
+          "replay": false
+        }
+      },
+      {
+        "event": "hint_request",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false
+        }
+      },
+      {
+        "event": "hint_result",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "outcome": "dead_end"
+        }
+      },
+      {
+        "event": "app_ready",
+        "params": {
+          "schema": 1,
+          "language": "ru"
+        }
+      },
+      {
+        "event": "level_start",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "attempt": 1,
+          "resumed": false,
+          "replay": false
+        }
+      },
+      {
+        "event": "hint_request",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false
+        }
+      },
+      {
+        "event": "hint_result",
+        "params": {
+          "schema": 1,
+          "level_id": "intro-03",
+          "level_version": 1,
+          "set_id": "intro",
+          "cells": 6,
+          "finish": false,
+          "walls": false,
+          "checkpoints": false,
+          "outcome": "unknown"
+        }
+      },
+      {
+        "event": "app_ready",
+        "params": {
+          "schema": 1,
+          "language": "ru"
+        }
+      },
+      {
+        "event": "wheel_reward",
+        "params": {
+          "schema": 1,
+          "sector": 6,
+          "amount": 200,
+          "recovered": false
+        }
+      },
+      {
+        "event": "app_ready",
+        "params": {
+          "schema": 1,
+          "language": "ru"
+        }
+      },
+      {
+        "event": "app_ready",
+        "params": {
+          "schema": 1,
+          "language": "ru"
+        }
+      },
+      {
+        "event": "theme_purchase",
+        "params": {
+          "schema": 1,
+          "theme": "dusk",
+          "price": 500
+        }
+      },
+      {
+        "event": "theme_selected",
+        "params": {
+          "schema": 1,
+          "theme": "mint"
+        }
+      },
+      {
+        "event": "theme_selected",
+        "params": {
+          "schema": 1,
+          "theme": "dusk"
+        }
+      },
+      {
+        "event": "wheel_reward",
+        "params": {
+          "schema": 1,
+          "sector": 5,
+          "amount": 150,
+          "recovered": true
+        }
+      },
+      {
+        "event": "app_ready",
+        "params": {
+          "schema": 1,
+          "language": "ru"
+        }
+      },
+      {
+        "event": "app_ready",
+        "params": {
+          "schema": 1,
+          "language": "ru"
+        }
+      },
+      {
+        "event": "startup_error",
+        "params": {
+          "schema": 1,
+          "reason": "save_or_boot"
+        }
+      }
+    ]
+  },
+  "localization": {
+    "errors": [],
+    "checks": [
+      "Actual touch release/resume and reverse coaching ru",
+      "Actual touch release/resume and reverse coaching en",
+      "Confirmed free rollback relocalizes and remains usable across pause/language change",
+      "Paid hint repeat remains free after language change",
+      "Preference I/O failure is nonfatal, does not alter progress, and supports retry",
+      "Startup ownership error is translated",
+      "Corrupt save stays intact and shows translated recovery ru",
+      "Corrupt save stays intact and shows translated recovery en",
+      "Rule caption/rejection finish-01 ru 320",
+      "Rule caption/rejection walls-01 ru 320",
+      "Rule caption/rejection checkpoints-01 ru 320",
+      "Rule caption/rejection shapes-30 ru 320",
+      "Rule caption/rejection finish-01 en 320",
+      "Rule caption/rejection walls-01 en 320",
+      "Rule caption/rejection checkpoints-01 en 320",
+      "Rule caption/rejection shapes-30 en 320",
+      "Rule caption/rejection finish-01 ru 390",
+      "Rule caption/rejection walls-01 ru 390",
+      "Rule caption/rejection checkpoints-01 ru 390",
+      "Rule caption/rejection shapes-30 ru 390",
+      "Rule caption/rejection finish-01 en 390",
+      "Rule caption/rejection walls-01 en 390",
+      "Rule caption/rejection checkpoints-01 en 390",
+      "Rule caption/rejection shapes-30 en 390"
+    ],
+    "screens": [
+      {
+        "width": 320,
+        "height": 568,
+        "lang": "ru"
+      },
+      {
+        "width": 320,
+        "height": 568,
+        "lang": "en"
+      },
+      {
+        "width": 360,
+        "height": 800,
+        "lang": "ru"
+      },
+      {
+        "width": 360,
+        "height": 800,
+        "lang": "en"
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "lang": "ru"
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "lang": "en"
+      },
+      {
+        "width": 412,
+        "height": 915,
+        "lang": "ru"
+      },
+      {
+        "width": 412,
+        "height": 915,
+        "lang": "en"
+      },
+      {
+        "width": 576,
+        "height": 1280,
+        "lang": "ru"
+      },
+      {
+        "width": 576,
+        "height": 1280,
+        "lang": "en"
+      }
+    ]
+  },
+  "performance": {
+    "errors": [],
+    "checks": [
+      "Idle has no Phaser frames or FillPath work",
+      "Endpoint pulse/sparks render without rebuilding either cached texture",
+      "Hidden result CSS animations are paused",
+      "Background pauses all CSS animation timelines",
+      "Sleeping renderer disposal removes canvases and WebGL context",
+      "Active renderer disposal also completes; disposed screen has no running CSS animations"
+    ],
+    "runs": [
+      {
+        "name": "after",
+        "idle": {
+          "frames": 0,
+          "fills": 0,
+          "rebuilds": 0,
+          "baseBakes": 0,
+          "routeBakes": 0,
+          "renderer": [],
+          "loop": false
+        },
+        "allocation": {
+          "sampledBytes": 0,
+          "intervalMs": 2400,
+          "method": "V8 allocation sampling including collected objects, not retained RAM"
+        },
+        "drags": [
+          {
+            "frames": 77,
+            "fills": 4705,
+            "rebuilds": 18,
+            "baseBakes": 0,
+            "routeBakes": 18,
+            "renderer": {
+              "n": 77,
+              "median": 0.5,
+              "p95": 1.2999999970197678,
+              "total": 54.29999999329448
+            },
+            "warmup": true
+          },
+          {
+            "frames": 81,
+            "fills": 4750,
+            "rebuilds": 18,
+            "baseBakes": 0,
+            "routeBakes": 18,
+            "renderer": {
+              "n": 81,
+              "median": 0.3999999985098839,
+              "p95": 0.8000000007450581,
+              "total": 35.50000002607703
+            },
+            "warmup": false
+          },
+          {
+            "frames": 77,
+            "fills": 4687,
+            "rebuilds": 18,
+            "baseBakes": 0,
+            "routeBakes": 18,
+            "renderer": {
+              "n": 77,
+              "median": 0.30000000074505806,
+              "p95": 0.8000000007450581,
+              "total": 31.399999998509884
+            },
+            "warmup": false
+          },
+          {
+            "frames": 81,
+            "fills": 4774,
+            "rebuilds": 18,
+            "baseBakes": 0,
+            "routeBakes": 18,
+            "renderer": {
+              "n": 81,
+              "median": 0.30000000074505806,
+              "p95": 0.6000000014901161,
+              "total": 28.99999998882413
+            },
+            "warmup": false
+          }
+        ]
+      }
+    ]
+  },
+  "performanceProbe": {
+    "sourceCommit": "87478e1109786e4beb7a565149de55a6eecda120",
+    "sourceSha256": "19deb02d66e741b51fa36bdae4b11659352ed8c34fff1a475c8106ec9dbae94d",
+    "mode": "main",
+    "probe": "Isolated production source copy; sole source change exposes existing objects. Instrumentation/ablation added at runtime. Normal release globals untouched."
+  },
+  "apk": {
+    "source": "87478e1109786e4beb7a565149de55a6eecda120",
+    "name": "road-lines-monetization-demo.apk",
+    "bytes": 10607495,
+    "sha256": "b569b0e6b9013047d682d7ed558b6c8331a17deeaa1f5234f49cf39bb1d91ce8",
+    "githubRun": 41493029682,
+    "artifactId": 13164843055,
+    "zipSha256": "8194413f3015a307aec8529106dc39b24806c49f736d000242bcffa8956c45ed",
+    "embeddedAssetsMatchProduction": true,
+    "mode": "demo",
+    "package": "com.danilah.roadlines.playtest",
+    "mainActivityOrientation": "portrait",
+    "certificateSha256": "4dcd2fd9420531301e277b679c956ede74f2d2eeb2a6e01b47e014fae6203b88",
+    "sameSigningCertificateAsPrevious": true,
+    "permissions": [
+      "android.permission.INTERNET",
+      "android.permission.VIBRATE",
+      "android.permission.ACCESS_NETWORK_STATE",
+      "com.google.android.gms.permission.AD_ID",
+      "com.danilah.roadlines.playtest.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION",
+      "com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE"
+    ]
+  },
+  "ci": {
+    "runtimeCommit": "87478e1109786e4beb7a565149de55a6eecda120",
+    "androidRun": 41493029682,
+    "android": "success",
+    "appRun": 41493029706,
+    "mobileFlows": {
+      "persistence": "success",
+      "localization": "success",
+      "analytics": "success",
+      "reload-touch": "success",
+      "playtest": "success",
+      "celebrations": "success",
+      "monetization": "success"
+    },
+    "sequentialBaseline": "in progress at recording; stale no-budget UI assertion updated separately"
+  },
+  "library": {
+    "apk": {
+      "id": "libfile_29b4a5addff48191a1ae199a7cf5e2d1",
+      "version": 4,
+      "saveConfirmed": true
+    },
+    "gif": {
+      "id": "libfile_c0e67d31f340819193a9aa2b6e638acd",
+      "version": 0,
+      "saveConfirmed": true
+    }
+  },
+  "gif": {
+    "name": "road-lines-monetization.gif",
+    "bytes": 396494,
+    "sha256": "44663066288807abd0b77be2f39a4189a1640ab182fad12ee6267936f7dde585",
+    "kind": "Actual renderer UI, explicit ads-test fixture; not a video of native SDK/inventory"
+  },
+  "limits": [
+    "Official demo ad units in the APK; live placement IDs and dashboard delivery not confirmed",
+    "No physical-device native ad/layout/process-death acceptance in this environment",
+    "No new full memory soak; six targeted renderer resource regressions only",
+    "Historical localization CI timeout was not reproduced locally; no unproven root-cause fix claimed"
+  ],
+  "browser": {
+    "production": {
+      "result": "PASS",
+      "levels": 90,
+      "viewports": 5,
+      "liveResize": true,
+      "sourceNote": "Before final independent-blocker redraw sync; normal bundle all90 passed"
+    },
+    "inspect": {
+      "result": "PASS",
+      "levels": 90,
+      "viewports": 5,
+      "liveResize": true,
+      "source": "87478e1109786e4beb7a565149de55a6eecda120"
+    },
+    "ux": {
+      "result": "PASS",
+      "flowChecks": 10,
+      "viewportThemeCombinations": 10
+    },
+    "balance": {
+      "result": "PASS",
+      "oracleCases": 587,
+      "cpuRates": [
+        1,
+        4
+      ],
+      "uiChecks": 8,
+      "source": "87478e1109786e4beb7a565149de55a6eecda120",
+      "harnessChange": "No-budget FOUND now opens the coin hint shop, with no clue revealed or debit; replaces obsolete notice expectation"
+    }
+  }
+}
