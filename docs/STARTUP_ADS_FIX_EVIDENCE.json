@@ -1,0 +1,85 @@
+{
+  "date": "2026-11-02",
+  "runtimeCommit": "5b636c7e7cb506760bc27e9fd434f9dbb8c70227",
+  "before": {
+    "result": "REPRODUCED",
+    "fixture": "native status never resolves",
+    "observed": "No data-ready after16s; startup15s warning matches user text",
+    "deviceLogsAvailable": false
+  },
+  "after": {
+    "checks": [
+      "startup-status-hang",
+      "startup-pending-delay",
+      "startup-pending-hang"
+    ],
+    "errors": []
+  },
+  "unit": {
+    "tests": 427,
+    "files": 64,
+    "result": "PASS"
+  },
+  "regression": {
+    "monetizationGroups": 13,
+    "languageViewportCombinations": 10,
+    "persistenceScenarios": 18,
+    "result": "PASS"
+  },
+  "ci": {
+    "androidRun": 41499036810,
+    "android": "success",
+    "appRun": 41499036742,
+    "mobileFlows": {
+      "startup-ads": "success",
+      "monetization": "success",
+      "persistence": "success",
+      "analytics": "success",
+      "reload-touch": "success",
+      "localization": "success",
+      "playtest": "success",
+      "celebrations": "success"
+    },
+    "sequentialBaseline": "in progress at recording"
+  },
+  "apk": {
+    "source": "5b636c7e7cb506760bc27e9fd434f9dbb8c70227",
+    "name": "RoadLines-startup-fixed.apk",
+    "bytes": 10607751,
+    "sha256": "4df705aeac2713e9c51b0654a6b14cc498b1a40487ef997e5b3ef4dda4d8b6dc",
+    "githubRun": 41499036810,
+    "artifactId": 13167233367,
+    "zipSha256": "bddfdc16a908e6d6f42c3822fc2f782267a71249db9c238732256f4b044ae00f",
+    "embeddedAssetsMatchProduction": true,
+    "mode": "demo",
+    "package": "com.danilah.roadlines.playtest",
+    "mainActivityOrientation": "portrait",
+    "certificateSha256": "4dcd2fd9420531301e277b679c956ede74f2d2eeb2a6e01b47e014fae6203b88",
+    "sameSigningCertificateAsPrevious": true,
+    "permissions": [
+      "android.permission.INTERNET",
+      "android.permission.VIBRATE",
+      "android.permission.ACCESS_NETWORK_STATE",
+      "com.google.android.gms.permission.AD_ID",
+      "com.danilah.roadlines.playtest.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION",
+      "com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE"
+    ]
+  },
+  "limits": [
+    "Native cold launch on the user device still needs confirmation",
+    "Native RPC reason on that device was not established without logs",
+    "No save reset or economy change"
+  ],
+  "library": {
+    "apk": {
+      "id": "libfile_31ef447035788191a56fd79a1f082218",
+      "version": 1,
+      "saved": true
+    },
+    "zip": {
+      "id": "libfile_6b4a0af1940881918ee7c96d644b04cd",
+      "version": 1,
+      "saved": true
+    }
+  }
+}

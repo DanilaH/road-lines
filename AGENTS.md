@@ -145,3 +145,8 @@ When adding the application, add and run actual app build and relevant model/flo
 ## Gift artwork correction — 2 November 2026
 - User rejected the flat SVG replacement. GiftReveal must use original gift.webp for the literal lid/bow and outside/front faces, split with SVG clips. The reference-derived gift-interior.webp supplies hidden rear walls/floor behind them. All four walls and depth must remain visible when open.
 - Light originates in the aperture, occluded by front faces. Two bounded bright confetti bursts include chips/circles/ribbons; keep title/value/Continue legible. Reduced motion, skip/background/resize/dispose settle and remove particles/timers.
+
+
+## Startup and optional native ads
+- Native ad init/listener/status cannot gate core lifecycle installation or the first visible frame. Pending earned receipts still protect valuable mutations; an unavailable recovery must show bounded retry rather than an endless startup cover. Do not clear pending receipts or guess rewards on timeout.
+- Do not sleep the renderer before its first postrender when readiness depends on that event. Run `node tools/startup-ads-smoke.mjs` for startup/native timing changes, including never-resolving status and delayed/pending receipt calls.
