@@ -19,6 +19,7 @@ export class Monetization {
   private disposed = false;
   private refreshing = false;
   private statusSettled = false;
+  private statusAttempts = 0;
   private preparedLevel = '';
   private view: View = { playing: false, banner: false, completed: 0, levelId: '' };
   constructor(private store: GameStore, storage: SyncStorage, private analytics: GameAnalytics,
@@ -49,7 +50,8 @@ export class Monetization {
   async refreshStatus(): Promise<void> {
     if (!this.ads || this.disposed || this.refreshing || this.statusSettled) return;
     this.refreshing = true;
-    try { const s = await this.ads.status(); if (!this.disposed) { this.statusSettled = s.mode === 'disabled' || s.mode === 'test' || Boolean(s.ready); if (JSON.stringify(s) !== JSON.stringify(this.enabled)) { this.enabled = s; this.refresh(); } } }
+    if (++this.statusAttempts >= 30) this.statusSettled = true;
+    try { const s = await this.ads.status(); if (!this.disposed) { this.statusSettled = this.statusSettled || s.mode === 'disabled' || s.mode === 'test' || Boolean(s.ready); if (JSON.stringify(s) !== JSON.stringify(this.enabled)) { this.enabled = s; this.refresh(); } } }
     catch { /* Native unavailable never prevents boot. */ }
     finally { this.refreshing = false; }
   }

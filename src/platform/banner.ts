@@ -12,7 +12,7 @@ export class NativeBanner {
     this.observer = new ResizeObserver(() => this.schedule()); this.observer.observe(slot);
   }
   setVisible(visible: boolean): void {
-    if (this.visible === visible) return;
+    if (this.visible === visible) { if (visible) this.schedule(); return; }
     this.visible = visible; this.key = ''; this.generation++;
     if (!visible) void this.ads.hideBanner().catch(() => {}); else this.schedule();
   }

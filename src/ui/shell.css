@@ -283,3 +283,4 @@ button:focus-visible { outline: 3px solid var(--ribbon); outline-offset: 5px; }
 #app .surface.play #board { bottom:calc(170px + var(--banner-extra,0px) + env(safe-area-inset-bottom,0px)); }
 @media(max-height:679px) { #banner-slot { display:none!important; } }
 .wheel-extra,.wheel-ad-note { display:none!important; }
+#app[data-screen=levels] .menu-screen,.pause-overlay { bottom:calc(60px + var(--banner-extra,0px) + env(safe-area-inset-bottom,0px)); }

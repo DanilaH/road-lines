@@ -12,10 +12,11 @@ import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const inspect = !process.argv.includes('--production');
-const build = spawnSync(process.execPath, ['node_modules/vite/bin/vite.js', 'build', ...(inspect ? ['--mode', 'inspect'] : [])], { cwd: root, stdio: 'inherit' });
+const buildDir = `.test-output/browser-${inspect ? 'inspect' : 'production'}-dist`;
+const build = spawnSync(process.execPath, ['node_modules/vite/bin/vite.js', 'build', '--outDir', buildDir, ...(inspect ? ['--mode', 'inspect'] : [])], { cwd: root, stdio: 'inherit' });
 if (build.status !== 0) process.exit(build.status ?? 1);
 const port = 4189;
-const server = spawn(process.execPath, ['node_modules/vite/bin/vite.js', 'preview', '--host', '127.0.0.1', '--port', String(port), '--strictPort'], { cwd: root, stdio: ['ignore', 'pipe', 'pipe'] });
+const server = spawn(process.execPath, ['node_modules/vite/bin/vite.js', 'preview', '--outDir', buildDir, '--host', '127.0.0.1', '--port', String(port), '--strictPort'], { cwd: root, stdio: ['ignore', 'pipe', 'pipe'] });
 const url = `http://127.0.0.1:${port}`;
 const results = [];
 const enterGame = async page => {

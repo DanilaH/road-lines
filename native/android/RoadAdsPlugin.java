@@ -33,7 +33,7 @@ public class RoadAdsPlugin extends Plugin {
     private int bannerWidth;
     private long bannerGeneration;
     private boolean ready, destroyed, background, preparing, bannerLoaded, bannerWanted;
-    private long bannerRetryAt;
+    private long bannerRetryAt, interRetryAt;
     private Session session;
     private static class Session {
         final PluginCall call; final String kind, placement, id;
@@ -66,7 +66,7 @@ public class RoadAdsPlugin extends Plugin {
     }); }
     @PluginMethod public void prepareInterstitial(PluginCall call) { handler.post(() -> {
         call.resolve();
-        if (!available("interstitial") || preparing || interstitial!=null || session!=null || background) return;
+        if (!available("interstitial") || preparing || interstitial!=null || session!=null || background || android.os.SystemClock.elapsedRealtime()<interRetryAt) return;
         preparing=true; event("interstitial","request");
         interLoader.loadAd(new AdRequest.Builder(unit("interstitial")).build(),new InterstitialAdLoadListener() {
             public void onAdLoaded(@NonNull InterstitialAd ad) {
@@ -74,7 +74,7 @@ public class RoadAdsPlugin extends Plugin {
                 if (destroyed) { ad.setAdEventListener(null); return; }
                 interstitial=ad; event("interstitial","loaded");
             }
-            public void onAdFailedToLoad(@NonNull AdRequestError error) { preparing=false; if (!destroyed) event("interstitial","load_error"); }
+            public void onAdFailedToLoad(@NonNull AdRequestError error) { preparing=false; interRetryAt=android.os.SystemClock.elapsedRealtime()+30000; if (!destroyed) event("interstitial","load_error"); }
         });
     }); }
     @PluginMethod public void show(PluginCall call) { handler.post(() -> {
