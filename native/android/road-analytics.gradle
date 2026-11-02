@@ -1,5 +1,5 @@
 // Pinned official Android analytics SDK, without optional ad/location/product SDKs.
-dependencies { implementation 'io.appmetrica.analytics:analytics:8.5.1' }
+dependencies { implementation 'io.appmetrica.analytics:analytics:8.6.0' }
 configurations.configureEach {
     ['identifiers', 'location', 'appsetid', 'ad-revenue', 'billing', 'screenshot', 'ndkcrashes'].each { module ->
         exclude group: 'io.appmetrica.analytics', module: "analytics-${module}"

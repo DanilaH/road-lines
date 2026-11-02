@@ -6,6 +6,13 @@ type LevelInfo = { level_id: string; level_version: number; set_id: string; cell
 export const levelInfo = (l: Level): LevelInfo => ({ level_id: l.id, level_version: l.version, set_id: getLevelSet(l.id).id, cells: l.cells.length,
   finish: l.finish !== undefined, walls: Boolean(l.walls?.length), checkpoints: Boolean(l.checkpoints?.length) });
 export interface Events {
+  ad_offer: { placement: string };
+  ad_event: { format: 'banner' | 'interstitial' | 'rewarded'; phase: string };
+  ad_reward_granted: { placement: string; amount: number; recovered: boolean };
+  hint_purchase: { count: number; price: number; remaining: number };
+  result_continue: { level_id: string; first_clear: boolean };
+  ad_next_level: { level_id: string };
+
   app_ready: { language: string };
   startup_error: { reason: 'ownership' | 'save_or_boot' };
   level_start: LevelInfo & { attempt: number; resumed: boolean; replay: boolean };

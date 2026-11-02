@@ -1,3 +1,5 @@
+import { Monetization } from './services/monetization';
+import { hintOffers } from './core/monetization';
 import { copy, language, loadLanguage, setLanguage, chooseLanguage, isLanguage, translateMarkup, themeName } from './i18n';
 import { instruction, type GestureCoach } from './ui/instructions';
 import Phaser from 'phaser';
@@ -61,6 +63,10 @@ async function boot(): Promise<void> {
   let screen: Screen = fixture || (inspect && params.has('level')) ? 'game' : 'home';
   let themeOrigin: { screen: Screen; paused: boolean } = { screen: 'home', paused: false };
   let pendingTheme: string | null = null, previewTheme: string | null = null;
+  let hintShop = false, shopMessage = '', topupBusy = false;
+  let monetization: Monetization | undefined;
+  let nextForeground: ((ok: boolean) => void) | undefined;
+  const foreground = (): Promise<boolean> => disposed ? Promise.resolve(false) : !activity.isBlocked() ? Promise.resolve(true) : new Promise(resolve => { nextForeground = resolve; });
   let resultThemeIndex = 0, suggestionKey = '';
   let suggestedThemes: Theme[] = [];
   let lastSuggested: string | null = null;
@@ -115,8 +121,9 @@ async function boot(): Promise<void> {
       <section class="theme-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="theme-title"><div class="theme-purchase">
         <button class="tool purchase-close" data-action="cancel-theme" data-i18n-aria="closePurchase" aria-label="${copy.closePurchase}">${icon('close')}</button>
         <h2 id="theme-title"></h2><div class="purchase-preview"></div><p class="purchase-balance"></p>
-        <button class="primary-action" data-action="buy-theme"></button><p class="purchase-shortage" role="status"></p>
+        <button class="primary-action" data-action="buy-theme"></button><button class="ad-topup" data-action="theme-topup">${icon('play')}<span></span></button><p class="purchase-shortage" role="status"></p>
       </div></section>
+      <section class="hint-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="hint-shop-title"><div class="hint-shop-card"><button class="tool purchase-close" data-action="close-hint-shop" data-i18n-aria="closePurchase" aria-label="${copy.closePurchase}">${icon('close')}</button><h2 id="hint-shop-title"></h2><p class="hint-shop-caption"></p><p class="hint-shop-balance"></p><button data-action="buy-hints" data-count="1"></button><button data-action="buy-hints" data-count="3"></button><button class="ad-topup" data-action="hint-topup">${icon('play')}<span></span></button><p class="hint-shop-status" role="status"></p></div></section>
       <section class="bonus-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="bonus-title"><div class="bonus-card"><h2 id="bonus-title"></h2><div class="bonus-art"></div><p class="bonus-copy"></p><button class="bonus-video" disabled>${icon('play')} <span data-i18n="openVideo">${copy.openVideo}</span></button><p class="bonus-video-note" data-i18n="videoUnavailable">${copy.videoUnavailable}</p><button class="bonus-close" data-action="close-bonus"></button></div></section>
       <div class="notice" hidden role="status"><span></span><button data-action="notice"></button></div>
     </section><div id="startup" role="status">${copy.loading}</div>`;
@@ -192,18 +199,36 @@ async function boot(): Promise<void> {
     host.classList.toggle('multi-rule', ruleCount > 1);
     root.dataset.screen = screen;
     $('.game-content').style.visibility = screen === 'game' ? 'visible' : 'hidden';
-    $('.game-content').inert = screen !== 'game' || paused || bonus !== null || pendingTheme !== null;
-    $('.game-content').setAttribute('aria-hidden', String(screen !== 'game' || paused || bonus !== null || pendingTheme !== null));
+    $('.game-content').inert = screen !== 'game' || paused || bonus !== null || pendingTheme !== null || hintShop;
+    $('.game-content').setAttribute('aria-hidden', String(screen !== 'game' || paused || bonus !== null || pendingTheme !== null || hintShop));
     $('.menu-screen').hidden = screen === 'game' || screen === 'wheel';
     $('.wheel-screen').hidden = screen !== 'wheel';
-    $('.wheel-screen').inert = bonus !== null;
+    $('.wheel-screen').inert = bonus !== null || hintShop;
     if (screen === 'wheel') wheelView.render(store.state, wheelBusy);
-    $('.menu-screen').inert = paused || pendingTheme !== null || bonus !== null;
+    $('.menu-screen').inert = paused || pendingTheme !== null || bonus !== null || hintShop;
     if (screen !== 'game' && screen !== 'wheel') renderMenu($('.menu-screen'), screen, store.state, viewSetId);
     $('.pause-navigation').hidden = screen !== 'game';
     $('#pause-title').textContent = screen === 'game' ? copy.pause : copy.settings;
     $('[data-action=resume]').textContent = screen === 'game' ? copy.resume : copy.done;
     $('.result-menu').hidden = !result; $('.result-theme').hidden = !result;
+    $('.hint-overlay').hidden = !hintShop;
+    if (hintShop) {
+      $('#hint-shop-title').textContent = copy.hintShop;
+      $('.hint-shop-caption').textContent = copy.hintShopCaption;
+      $('.hint-shop-balance').textContent = copy.balance(store.state.coins);
+      for (const offer of hintOffers) {
+        const b = $<HTMLButtonElement>(`[data-action=buy-hints][data-count="${offer.count}"]`);
+        b.textContent = offer.count === 1 ? copy.buyHintSingle : copy.buyHintPack;
+        b.disabled = store.state.coins < offer.price || topupBusy || conflict || store.recoveryRequired;
+      }
+      $('.hint-shop-status').textContent = shopMessage || (store.state.coins < 60 ? copy.shortage(60-store.state.coins) : '');
+    }
+    for (const action of ['hint-topup', 'theme-topup']) {
+      const b = $<HTMLButtonElement>(`[data-action=${action}]`);
+      b.querySelector('span')!.textContent = topupBusy ? copy.adLoading : copy.adCoins;
+      b.disabled = topupBusy || !monetization?.enabled.rewarded || conflict || store.recoveryRequired;
+    }
+    $('[data-action=hint-topup]').hidden = store.state.coins >= 150;
     $('.theme-overlay').hidden = pendingTheme === null;
     if (pendingTheme) {
       const item = getTheme(pendingTheme);
@@ -212,7 +237,8 @@ async function boot(): Promise<void> {
       $('.purchase-balance').textContent = copy.balance(store.state.coins);
       $('[data-action=buy-theme]').textContent = copy.buyFor(item.price);
       $<HTMLButtonElement>('[data-action=buy-theme]').disabled = store.state.coins < item.price || conflict || store.recoveryRequired;
-      $('.purchase-shortage').textContent = store.state.coins < item.price ? copy.shortage(item.price - store.state.coins) : copy.coinPurchase;
+      $('.purchase-shortage').textContent = shopMessage || (store.state.coins < item.price ? copy.shortage(item.price - store.state.coins) : copy.coinPurchase);
+      $('[data-action=theme-topup]').hidden = store.state.coins >= item.price;
     }
     $('.bonus-overlay').hidden = bonus === null; $('.bonus-overlay').dataset.kind = bonus ?? '';
     if (bonus) {
@@ -252,8 +278,14 @@ async function boot(): Promise<void> {
       $('.result-theme-copy small').textContent = owned ? copy.themes : !affordable ? copy.shortage(candidate.price - store.state.coins) : tried ? copy.previewFree : copy.themePrice(candidate.price);
       const action = $<HTMLButtonElement>('[data-action=try-result-theme]');
       action.textContent = owned ? copy.chooseTheme : tried ? affordable ? copy.buyFor(candidate.price) : copy.previewActive : copy.tryTheme;
-      action.disabled = !owned && tried && !affordable;
+      action.disabled = false;
+      if (!owned && tried && !affordable) action.textContent = copy.getCoins;
     }
+    const bannerEligible = innerHeight >= 680 && (screen === 'levels' || screen === 'game' && !result) && !bonus && !pendingTheme && !hintShop && !topupBusy && root.dataset.background !== 'true' && !conflict && !monetization?.recoveryFailed && (!activity.isBlocked() || paused && feedbackBlockers.size === 1);
+    $('#banner-slot').hidden = !bannerEligible || !monetization?.enabled.banner;
+    const extraBanner = $('#banner-slot').hidden ? 0 : Math.max(0, $('#banner-slot').getBoundingClientRect().height - 60);
+    root.style.setProperty('--banner-extra', `${extraBanner}px`);
+    monetization?.update({ playing: screen === 'game' && !result && !activity.isBlocked() && root.dataset.ready === 'true', banner: bannerEligible, completed: store.state.completed.length, levelId: level.id });
     updateRouteUI();
     activity.setGameplayDesired(screen === 'game' && !result);
     if (inspect) { host.dataset.path = path.join(','); host.dataset.level = level.id; }
@@ -306,6 +338,7 @@ async function boot(): Promise<void> {
   const input = installRouteInput(host, () => ({ level, path, layout: layout(), blocked: screen !== 'game' || result || activity.isBlocked() || conflict || complete(level, path) }), next => { if (next.length < path.length) coach.backtracked = true; change(next); }, () => { if (!complete(level, path)) { if (path.length > 1) coach.released = true; flush(); scene.resumeHead(); updateRouteUI(); } }, rejectMove, $('.surface'));
   const unsubscribe = activity.onBlockedChange(blocked => {
     root.dataset.blocked = String(blocked); analytics.block(blocked);
+    if (!blocked && nextForeground) { const done = nextForeground; nextForeground = undefined; queueMicrotask(() => done(true)); }
     // Confirmed help still describes the same prefix across lifecycle blockers.
     if (blocked) { screens.stop(); cancelWheel(); invalidate(true); input.cancel(); flush(); motion.stop(); scene.settle(); showBalance(store.state.coins); }
     redraw();
@@ -319,6 +352,8 @@ async function boot(): Promise<void> {
     (value ? $('[data-action=resume]') : screen === 'game' ? $('[data-action=pause]') : $('[data-action=menu-settings]')).focus();
   }
   function onBack(): void {
+    if (monetization?.busy || monetization?.recoveryFailed) return;
+    if (hintShop) { closeHintShop(); return; }
     if (bonus) { closeBonus(false); return; }
     if (pendingTheme) { closeThemePurchase(); return; }
     if (activity.isBlocked() && !paused) return;
@@ -397,14 +432,14 @@ async function boot(): Promise<void> {
     const candidate = resultTheme();
     if (store.state.ownedThemes.includes(candidate.id)) { openThemes(); return; }
     if (previewTheme !== candidate.id) { previewTheme = candidate.id; redraw(); return; }
-    if (store.state.coins < candidate.price) return;
-    pendingTheme = candidate.id; redraw(); block('theme-confirm', true);
+
+    shopMessage = ''; pendingTheme = candidate.id; redraw(); block('theme-confirm', true);
     ($<HTMLButtonElement>('[data-action=buy-theme]').disabled ? $('[data-action=cancel-theme]') : $('[data-action=buy-theme]')).focus();
   }
   function selectTheme(id: string): void {
     if (screen !== 'themes' || conflict || store.recoveryRequired) return;
     if (!store.state.ownedThemes.includes(id)) {
-      pendingTheme = getTheme(id).id; redraw(); block('theme-confirm', true);
+      shopMessage = ''; pendingTheme = getTheme(id).id; redraw(); block('theme-confirm', true);
       ($<HTMLButtonElement>('[data-action=buy-theme]').disabled ? $('[data-action=cancel-theme]') : $('[data-action=buy-theme]')).focus();
       return;
     }
@@ -425,7 +460,7 @@ async function boot(): Promise<void> {
     if ((kind === 'gift' && !store.state.giftNotice) || (kind === 'offer' && !store.state.offer)) return;
     if (!flush()) return;
     motion.stop(); showBalance(store.state.coins); bonus = kind; block('reward-modal', true); redraw();
-    if (kind === 'gift') giftView.start();
+    if (kind === 'gift') { monetization?.protect(level.id); giftView.start(); }
     $('.bonus-close').focus();
   }
   function closeBonus(proceed = true): void {
@@ -478,7 +513,7 @@ async function boot(): Promise<void> {
     if (disposed || token !== revision || !answer || result || activity.isBlocked()) { analytics.event('hint_result', { ...info, outcome: 'cancelled' }); return; }
     busy = false;
     if (answer.kind === 'FOUND') {
-      if (!store.state.hints) { analytics.event('hint_result', { ...info, outcome: 'no_budget' }); notice(() => copy.noHints); redraw(); return; }
+      if (!store.state.hints) { analytics.event('hint_result', { ...info, outcome: 'no_budget' }); notice(''); openHintShop(); return; }
       try { store.write({ ...store.state, levelId: level.id, levelVersion: level.version, path: [...path], hints: store.state.hints - 1 });
         analytics.event('hint_spent', { ...info, remaining: store.state.hints }); analytics.event('hint_result', { ...info, outcome: 'found' });
         hint = answer.path.slice(path.length - 1, path.length + 3); paidHint = { key, path: [...hint] }; notice(() => copy.hintShown); }
@@ -491,11 +526,39 @@ async function boot(): Promise<void> {
     } else { analytics.event('hint_result', { ...info, outcome: 'unknown' }); notice(() => copy.unknown); }
     redraw();
   }
+  function openHintShop(): void {
+    if (!flush()) return;
+    shopMessage = ''; hintShop = true; block('hint-shop', true); redraw();
+    $('[data-action=close-hint-shop]').focus();
+  }
+  function closeHintShop(): void {
+    hintShop = false; block('hint-shop', false); redraw(); $('[data-action=hint]').focus();
+  }
+  function buyHints(count: number): void {
+    if (!hintShop || topupBusy || conflict || store.recoveryRequired) return;
+    try {
+      if (!store.buyHints(count)) return;
+      analytics.event('hint_purchase', { count, price: hintOffers.find(o=>o.count===count)!.price, remaining: store.state.hints });
+      showBalance(store.state.coins); closeHintShop(); notice(() => copy.hintBought); feedback.play('progress');
+    } catch { saveError('hint-purchase'); }
+  }
+  async function topup(placement: 'hint-coins' | 'theme-coins'): Promise<void> {
+    if (topupBusy || !monetization || conflict || store.recoveryRequired) return;
+    topupBusy = true; shopMessage = ''; redraw();
+    try { shopMessage = await monetization.topup(placement) ? copy.adGranted : copy.adUnavailable; }
+    catch { shopMessage = copy.adUnavailable; }
+    finally { topupBusy = false; if (!disposed) { showBalance(store.state.coins); redraw(); } }
+  }
   function click(event: MouseEvent): void {
     const target = (event.target as Element).closest<HTMLButtonElement>('button[data-action]');
-    if (!target || target.disabled || (activity.isBlocked() && target.dataset.action !== 'resume' && target.dataset.action !== 'notice' && target.dataset.action !== 'sound' && target.dataset.action !== 'vibration' && !(bonus && target.dataset.action === 'close-bonus') && !(pendingTheme && (target.dataset.action === 'buy-theme' || target.dataset.action === 'cancel-theme')) && !(paused && (target.dataset.action === 'sets' || target.dataset.action === 'home' || target.dataset.action === 'themes' || target.dataset.action === 'language')))) return;
+    if (monetization?.busy || topupBusy) return;
+    if (!target || target.disabled || (activity.isBlocked() && target.dataset.action !== 'resume' && target.dataset.action !== 'notice' && target.dataset.action !== 'sound' && target.dataset.action !== 'vibration' && !(bonus && target.dataset.action === 'close-bonus') && !(pendingTheme && (target.dataset.action === 'buy-theme' || target.dataset.action === 'cancel-theme' || target.dataset.action === 'theme-topup')) && !(hintShop && ['buy-hints','hint-topup','close-hint-shop'].includes(target.dataset.action!)) && !(paused && (target.dataset.action === 'sets' || target.dataset.action === 'home' || target.dataset.action === 'themes' || target.dataset.action === 'language')))) return;
     feedback.play('button');
     switch (target.dataset.action) {
+      case 'buy-hints': buyHints(Number(target.dataset.count)); break;
+      case 'close-hint-shop': closeHintShop(); break;
+      case 'hint-topup': void topup('hint-coins'); break;
+      case 'theme-topup': void topup('theme-coins'); break;
       case 'wheel': navigate('wheel'); break;
       case 'spin': void spinWheel(); break;
       case 'apply-wheel-theme': {
@@ -526,7 +589,8 @@ async function boot(): Promise<void> {
       case 'restart': input.cancel(); change([level.start], 'reset'); flush(); break;
       case 'hint': void requestHint(); break;
       case 'notice':
-        if (conflict || store.recoveryRequired) location.reload();
+        if (monetization?.recoveryFailed) { void monetization.recover().catch(() => {}); }
+        else if (conflict || store.recoveryRequired) location.reload();
         else if (saveFailed && screen === 'wheel') {
           try { store.reload(); saveFailed = false; notice(''); redraw(); if (store.state.daily.pending) void settleWheel(); } catch { saveError(); }
         }
@@ -553,24 +617,27 @@ async function boot(): Promise<void> {
     if (store.state.offer?.levelId === level.id) { try { store.dismissOffer(); } catch { saveError(); return; } }
     collecting = true; $<HTMLButtonElement>('.next').disabled = true;
     const token = revision, done = await motion.collect();
-    collecting = false;
-    if (!done || disposed || activity.isBlocked() || token !== revision) return;
+    if (!done || disposed || activity.isBlocked() || token !== revision) { collecting = false; return; }
     const next = nextLevel(level.id);
-    if (!next) { navigate('levels'); return; }
+    if (!next) { collecting = false; navigate('levels'); return; }
+    analytics.event('result_continue', { level_id: level.id, first_clear: reward > 0 });
+    await monetization?.interstitial(level.id, reward > 0);
+    if (disposed || !(await foreground()) || monetization?.recoveryFailed) { collecting = false; return; }
+    collecting = false;
     const draft = store.state.drafts[next.id]?.path ?? [next.start];
     const nextPath = complete(next, draft) ? [next.start] : [...draft];
     try { store.path(next, nextPath); } catch { $<HTMLButtonElement>('.next').disabled = false; saveError(); return; }
     motion.stop(); scene.settle(); showBalance(store.state.coins);
     previewTheme = null; invalidate(); input.cancel(); level = next; feedback.setLevel(level.id); path = nextPath; result = false; reward = 0;
-    notice(''); redraw(); analytics.enter(level, path.length, store.state.completed.includes(level.id)); scene.open(); screens.stop(); screens.enterGame(root);
+    notice(''); redraw(); analytics.enter(level, path.length, store.state.completed.includes(level.id)); analytics.event('ad_next_level', { level_id: level.id }); scene.open(); screens.stop(); screens.enterGame(root);
   }
   const prime = (): void => feedback.prime();
   root.addEventListener('pointerdown', prime, true); root.addEventListener('keydown', prime, true);
   root.addEventListener('click', click);
   const disposeThumbControls = installThumbControls(root);
   const trapFocus = (event: KeyboardEvent): void => {
-    if (event.key === 'Tab' && (paused || pendingTheme || bonus)) {
-      event.preventDefault(); const buttons = [...root.querySelectorAll<HTMLButtonElement>(bonus ? '.bonus-card button' : pendingTheme ? '.theme-purchase button' : '.pause-card button')].filter(button => !button.disabled && button.getClientRects().length > 0);
+    if (event.key === 'Tab' && (paused || pendingTheme || bonus || hintShop)) {
+      event.preventDefault(); const buttons = [...root.querySelectorAll<HTMLButtonElement>(hintShop ? '.hint-shop-card button' : bonus ? '.bonus-card button' : pendingTheme ? '.theme-purchase button' : '.pause-card button')].filter(button => !button.disabled && button.getClientRects().length > 0);
       const index = buttons.indexOf(document.activeElement as HTMLButtonElement);
       buttons[(index + (event.shiftKey ? -1 : 1) + buttons.length) % buttons.length]!.focus();
     }
@@ -595,6 +662,8 @@ async function boot(): Promise<void> {
     if (disposed || root.dataset.background === 'true') return;
     if (calendar !== localDate()) { calendar = localDate(); redraw(); }
     if (screen === 'wheel') wheelView.tick(store.state);
+    monetization?.tick();
+    if (root.dataset.ready === 'true' && !monetization?.enabled.rewarded) void monetization?.refreshStatus();
   }, 1000);
   let rendererReady = false, platformReady = false, readyReported = false;
   const deadline = setTimeout(() => { const startup = root.querySelector('#startup'); if (startup) startup.textContent = copy.slowStart; }, 15_000);
@@ -608,19 +677,24 @@ async function boot(): Promise<void> {
       // Publish readiness after the uncovered UI has crossed a paint boundary.
       frame = requestAnimationFrame(() => { secondFrame = requestAnimationFrame(() => {
         if (disposed) return;
-        timeline.mark('ready'); root.dataset.ready = 'true';
+        timeline.mark('ready'); root.dataset.ready = 'true'; redraw();
         if (!readyReported) { readyReported = true; analytics.event('app_ready', { language }); }
         if (inspect) console.info('Road Lines startup', timeline.snapshot({ startToReadyMs: ['start', 'ready'] }));
       }); });
     }); });
   }
   game.events.once('postrender', () => { if (!result) scene.open(); rendererReady = true; timeline.mark('renderer'); presentable(); });
+  monetization = new Monetization(store, localStorage, analytics, block,
+    () => { clearTimeout(saveTimer); input.cancel(); invalidate(true); if (conflict) return false; try { store.reload(); saveFailed = false; } catch { return false; } return flush(); },
+    () => { if (!disposed) { showBalance(store.state.coins); redraw(); } },
+    () => saveError('ad-receipt'), $('#banner-slot'));
+  await monetization.init().catch(() => {});
   redraw();
   if (screen === 'game' && !result) analytics.enter(level, path.length, store.state.completed.includes(level.id));
 
   function dispose(): void {
     if (disposed) return;
-    input.dispose(); flush(); analytics.dispose(); disposed = true; root.dataset.background = 'true'; invalidate(); clearTimeout(saveTimer); clearTimeout(rejectionTimer); clearTimeout(deadline);
+    monetization?.dispose(); nextForeground?.(false); nextForeground = undefined; input.dispose(); flush(); analytics.dispose(); disposed = true; root.dataset.background = 'true'; invalidate(); clearTimeout(saveTimer); clearTimeout(rejectionTimer); clearTimeout(deadline);
     cancelAnimationFrame(frame); cancelAnimationFrame(secondFrame); cancelAnimationFrame(resizeFrame); cancelAnimationFrame(renderFrame);
     clearInterval(clock); wheelToken++; wheelView.dispose(); wheelService.dispose();
     resize.disconnect(); disposeRuntime(); unsubscribe(); screens.dispose(); motion.dispose(); giftView.dispose(); feedback.dispose(); disposeThumbControls(); root.removeEventListener('click', click);

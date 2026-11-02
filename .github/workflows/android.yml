@@ -32,6 +32,10 @@ jobs:
         env:
           APPMETRICA_API_KEY: ${{ secrets.APPMETRICA_DEBUG_API_KEY }}
           ROAD_LINES_PLAYTEST: 'true'
+          ROAD_LINES_AD_MODE: 'demo'
+          YANDEX_BANNER_AD_UNIT_ID: ${{ secrets.YANDEX_BANNER_AD_UNIT_ID }}
+          YANDEX_INTERSTITIAL_AD_UNIT_ID: ${{ secrets.YANDEX_INTERSTITIAL_AD_UNIT_ID }}
+          YANDEX_REWARDED_AD_UNIT_ID: ${{ secrets.YANDEX_REWARDED_AD_UNIT_ID }}
       - uses: actions/upload-artifact@v4
         with:
           name: road-lines-playtest-debug

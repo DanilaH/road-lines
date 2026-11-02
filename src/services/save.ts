@@ -1,22 +1,23 @@
+import { initialAdLedger, validAdLedger, validAdReceipt, hintOffers, type AdLedger, type AdReceipt } from '../core/monetization';
 import { complete, validPath, type Level } from '../core/model';
 import { levels } from '../content/levels';
 import { themes, getTheme, defaultTheme, freeThemeIds } from '../content/themes';
 import { initialRewards, giftReward, offerDue, validDate, wheelPrizes, wheelCoinReward, rareThemeSector, type RewardState, type WheelSpin } from '../core/rewards';
 export const SAVE_KEY = 'road-lines.save.v1';
 export interface GameSave extends RewardState {
-  version: 4; levelId: string; levelVersion: number; path: number[];
+  version: 5; adLedger: AdLedger; levelId: string; levelVersion: number; path: number[];
   completed: string[]; coins: number; hints: number;
   themeId: string; ownedThemes: string[];
   drafts: Record<string, { version: number; path: number[] }>;
 }
 export interface SyncStorage { getItem(key: string): string | null; setItem(key: string, value: string): void; }
-export const defaultSave = (): GameSave => ({ ...initialRewards(), version: 4, levelId: levels[0]!.id, levelVersion: 1,
+export const defaultSave = (): GameSave => ({ ...initialRewards(), version: 5, adLedger: initialAdLedger(), levelId: levels[0]!.id, levelVersion: 1,
   path: [levels[0]!.start], completed: [], coins: 0, hints: 3, drafts: {}, themeId: defaultTheme.id, ownedThemes: [...freeThemeIds] });
 export function decodeSave(raw: string): GameSave {
   const data: unknown = JSON.parse(raw);
   if (!data || typeof data !== 'object') throw Error('Invalid save');
   const d = data as Record<string, unknown>;
-  if ((d.version !== 1 && d.version !== 2 && d.version !== 3 && d.version !== 4) || !Array.isArray(d.completed) || d.completed.some(id => typeof id !== 'string' || !levels.some(l => l.id === id)) ||
+  if ((d.version !== 1 && d.version !== 2 && d.version !== 3 && d.version !== 4 && d.version !== 5) || !Array.isArray(d.completed) || d.completed.some(id => typeof id !== 'string' || !levels.some(l => l.id === id)) ||
     new Set(d.completed).size !== d.completed.length || !Number.isSafeInteger(d.coins) || (d.coins as number) < 0 ||
     !Number.isSafeInteger(d.hints) || (d.hints as number) < 0) throw Error('Invalid progression');
   const level = levels.find(l => l.id === d.levelId);
@@ -29,7 +30,7 @@ export function decodeSave(raw: string): GameSave {
     new Set(ownedThemes).size !== ownedThemes.length || !freeThemeIds.every(id => ownedThemes.includes(id)) ||
     typeof themeId !== 'string' || !ownedThemes.includes(themeId)) throw Error('Invalid theme ownership');
   let rewards = initialRewards();
-  if (d.version === 3 || d.version === 4) {
+  if (d.version === 3 || d.version === 4 || d.version === 5) {
     const count = d.completed.length;
     if (!Number.isSafeInteger(d.giftMilestones) || (d.giftMilestones as number) < 0 || (d.giftMilestones as number) !== Math.floor(count / 20) ||
       (d.giftNotice !== null && (!Number.isSafeInteger(d.giftNotice) || (d.giftNotice as number) < 20 || (d.giftNotice as number) % 20 !== 0 || (d.giftNotice as number) > (d.giftMilestones as number) * 20)) ||
@@ -57,7 +58,9 @@ export function decodeSave(raw: string): GameSave {
     }
   }
   drafts[level.id] = { version: level.version, path: [...path] };
-  return { ...rewards, version: 4, levelId: level.id, levelVersion: level.version, path: [...path],
+  const adLedger = d.version === 5 ? d.adLedger : initialAdLedger();
+  if (!validAdLedger(adLedger)) throw Error('Invalid ad ledger');
+  return { ...rewards, version: 5, adLedger: { ...adLedger }, levelId: level.id, levelVersion: level.version, path: [...path],
     completed: [...d.completed] as string[], coins: d.coins as number, hints: d.hints as number, drafts, themeId, ownedThemes: [...ownedThemes] };
 }
 /** One synchronous document writer. Memory follows confirmed atomic replacement. */
@@ -104,6 +107,28 @@ export class GameStore {
       ownedThemes: spin.themeId && !duplicate ? [...this.state.ownedThemes, spin.themeId] : this.state.ownedThemes,
       offer: spin.themeId && this.state.offer?.themeId === spin.themeId ? null : this.state.offer,
       daily: { ...this.state.daily, pending: null, last } });
+  }
+  buyHints(count: number): boolean {
+    const offer = hintOffers.find(o => o.count === count);
+    if (!offer) throw Error('Unknown hint pack');
+    if (this.state.coins < offer.price) return false;
+    this.write({ ...this.state, coins: this.state.coins - offer.price, hints: this.state.hints + offer.count });
+    return true;
+  }
+  commitAdReceipt(receipt: AdReceipt): 'applied' | 'already-applied' {
+    if (!validAdReceipt(receipt)) throw Error('Invalid ad receipt');
+    // Reload the sole authoritative document; pending ordinary producers are quiesced by the caller.
+    this.reload();
+    const a = this.state.adLedger;
+    if (a.stream !== null && a.stream !== receipt.stream) throw Error('Receipt stream mismatch');
+    if (receipt.sequence <= a.sequence) {
+      if (receipt.sequence === a.sequence && receipt.id !== a.id) throw Error('Receipt identity mismatch');
+      return 'already-applied';
+    }
+    if (receipt.sequence !== a.sequence + 1) throw Error('Receipt sequence gap');
+    this.write({ ...this.state, coins: this.state.coins + receipt.amount,
+      adLedger: { stream: receipt.stream, sequence: receipt.sequence, id: receipt.id } });
+    return 'applied';
   }
   dismissOffer(): void { if (this.state.offer) this.write({ ...this.state, offer: null }); }
   acknowledgeGift(): void { if (this.state.giftNotice) this.write({ ...this.state, giftNotice: null }); }

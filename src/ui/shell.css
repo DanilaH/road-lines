@@ -269,3 +269,17 @@ button:focus-visible { outline: 3px solid var(--ribbon); outline-offset: 5px; }
 .wheel-theme-prize button:disabled { background: var(--soft); color: var(--muted); }
 .wheel-body:has(.wheel-theme-prize:not([hidden])) .wheel-result { margin-top: 14px; margin-bottom: 5px; }
 @media(max-height:680px) { [data-kind=gift] .bonus-card { padding-top: 35px; } [data-kind=gift] .bonus-card h2 { font-size: 32px; }.gift-stage { height: 260px; }.gift-box { width: 260px; height: 260px; bottom: -10px; }.gift-prize { top: 5px; font-size: 48px; }.gift-light-cone { bottom: 118px; height: 175px; width: 220px; }.gift-light-halo { top: 54px; width: 240px; height: 180px; }.gift-rays { top: 10px; width: 240px; height: 240px; }[data-kind=gift] .bonus-copy { font-size: 14px; margin: 10px 0 18px; }.wheel-body:has(.wheel-theme-prize:not([hidden])) .wheel-assembly { width: 185px; }.wheel-body:has(.wheel-theme-prize:not([hidden])) .wheel-clock { margin: 10px 0; }.wheel-odds { margin-bottom: 8px; font-size: 11px; } }
+/* Coin purchases share the theme sheet's proportions and visual language. */
+.hint-overlay { position:absolute; inset:0; z-index:21; display:grid; place-items:center; padding:18px; background:#19132388; }
+.hint-shop-card { position:relative; width:min(100%,340px); display:flex; flex-direction:column; gap:12px; padding:28px 22px 22px; border-radius:26px; background:var(--background); box-shadow:0 18px 60px #19132338; }
+.hint-shop-card h2 { margin:8px 42px 0 0; font-size:28px; }
+.hint-shop-card p { margin:0; color:var(--muted); font-size:14px; line-height:1.4; }
+.hint-shop-card button:not(.tool) { min-height:52px; border-radius:15px; background:var(--soft); color:var(--ink); font-weight:850; padding:12px; }
+.hint-shop-card button[data-count="3"] { background:var(--primary); color:var(--primaryInk); }
+.ad-topup { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; min-height:50px; margin-top:8px; padding:12px; border-radius:14px; background:var(--soft); color:var(--ink); font-weight:800; }
+.ad-topup:disabled,.hint-shop-card button:disabled { opacity:.48; }
+.hint-shop-status { min-height:20px; }
+#app .play-controls { bottom:calc(72px + var(--banner-extra,0px) + env(safe-area-inset-bottom,0px)); }
+#app .surface.play #board { bottom:calc(170px + var(--banner-extra,0px) + env(safe-area-inset-bottom,0px)); }
+@media(max-height:679px) { #banner-slot { display:none!important; } }
+.wheel-extra,.wheel-ad-note { display:none!important; }

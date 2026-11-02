@@ -14,6 +14,7 @@ public class MainActivity extends BridgeActivity {
     public void onCreate(Bundle savedInstanceState) {
         registerPlugin(RoadFeedbackPlugin.class);
         registerPlugin(RoadAnalyticsPlugin.class);
+        registerPlugin(RoadAdsPlugin.class);
         super.onCreate(savedInstanceState);
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView())

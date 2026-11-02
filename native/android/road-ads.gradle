@@ -1,0 +1,2 @@
+// Official SDK 8 API; versions verified against Yandex documentation 2026-11-02.
+dependencies { implementation 'com.yandex.android:mobileads:8.6.0' }

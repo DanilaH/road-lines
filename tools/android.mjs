@@ -32,6 +32,21 @@ for (const name of ['RoadAnalyticsPlugin.java', 'RoadApplication.java']) copyFil
 const analyticsKey = process.env.APPMETRICA_API_KEY?.trim() ?? '';
 if (analyticsKey && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(analyticsKey)) throw Error('Invalid AppMetrica API key format');
 const assets = resolve(app, 'assets'); mkdirSync(assets, { recursive: true });
+// Explicit demo mode is only allowed in the side-by-side debug build. Missing live IDs disable formats.
+const adMode = process.env.ROAD_LINES_AD_MODE ?? 'live';
+if (!['demo', 'live'].includes(adMode)) throw Error('Unknown ad mode');
+if (adMode === 'demo' && process.env.ROAD_LINES_PLAYTEST !== 'true') throw Error('Demo ads require the playtest build');
+const adConfig = { mode: adMode };
+for (const [kind, name] of [['banner','YANDEX_BANNER_AD_UNIT_ID'],['interstitial','YANDEX_INTERSTITIAL_AD_UNIT_ID'],['rewarded','YANDEX_REWARDED_AD_UNIT_ID']]) {
+  const id = adMode === 'demo' ? `demo-${kind}-yandex` : process.env[name]?.trim() ?? '';
+  if (id && adMode === 'live' && !/^R-M-[A-Za-z0-9-]+$/.test(id)) throw Error(`Invalid ${kind} ad configuration`);
+  adConfig[kind] = id;
+  console.info(`${kind} ads: ${id ? adMode : 'disabled (ID absent)'}`);
+}
+writeFileSync(resolve(assets, 'road-ads.json'), JSON.stringify(adConfig));
+copyFileSync(resolve(root, 'native/android/RoadAdsPlugin.java'), resolve(javaDir, 'RoadAdsPlugin.java'));
+copyFileSync(resolve(root, 'native/android/road-ads.gradle'), resolve(root, 'android/app/road-ads.gradle'));
+
 writeFileSync(resolve(assets, 'road-analytics.json'), JSON.stringify({ apiKey: analyticsKey }));
 console.info(analyticsKey ? 'Native analytics configured.' : 'Native analytics disabled: APPMETRICA_API_KEY is absent.');
 copyFileSync(resolve(root, 'native/android/road-analytics.gradle'), resolve(root, 'android/app/road-analytics.gradle'));
@@ -48,6 +63,7 @@ if (playtest && build && !existsSync(debugKey)) {
 }
 writeFileSync(resolve(root, 'android/app/road-playtest.gradle'), playtest
   ? "android { signingConfigs { debug { storeFile rootProject.file('../.test-output/android-signing/debug.keystore'); storePassword 'android'; keyAlias 'androiddebugkey'; keyPassword 'android' } }; buildTypes { debug { applicationIdSuffix '.playtest'; versionNameSuffix '-playtest'; signingConfig signingConfigs.debug } } }\n" : '');
+if (!gradle.includes("apply from: 'road-ads.gradle'")) gradle += "\napply from: 'road-ads.gradle'\n";
 if (!gradle.includes("apply from: 'road-playtest.gradle'")) gradle += "\napply from: 'road-playtest.gradle'\n";
 const stringsPath = resolve(app, 'res/values/strings.xml');
 let strings = readFileSync(stringsPath, 'utf8').replaceAll(' · тест', '');

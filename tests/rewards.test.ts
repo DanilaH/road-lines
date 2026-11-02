@@ -33,7 +33,7 @@ describe('gift and offer policy', () => {
     for (const l of levels.slice(0, 10)) all.finish(l, l.witness); expect(all.state.offer).toBeNull();
   });
   it('migrates v2 without resetting ownership or progression', () => {
-    expect(decodeSave(JSON.stringify({ ...defaultSave(), version: 2, coins: 70, themeId: 'mint', completed: ['intro-01'] }))).toMatchObject({ version: 4, coins: 70, themeId: 'mint', completed: ['intro-01'], ...initialRewards() });
+    expect(decodeSave(JSON.stringify({ ...defaultSave(), version: 2, coins: 70, themeId: 'mint', completed: ['intro-01'] }))).toMatchObject({ version: 5, coins: 70, themeId: 'mint', completed: ['intro-01'], ...initialRewards() });
   });
 });
 describe('durable daily wheel', () => {
