@@ -1,0 +1,283 @@
+{
+  "source": "49acd08ef14164495b7f89494a633df9cf74f9f3",
+  "date": "2026-11-03",
+  "checks": {
+    "npm_run_check": {
+      "tests": 239,
+      "files": 31,
+      "result": "pass"
+    },
+    "sample_audit": {
+      "sha256": "b4ca32dec36531074d0510f15468979d5b673bc750ed1af26a7005cf2c10bec6",
+      "bytes": 499244,
+      "peak": 0.47998046875,
+      "cell_samples": [
+        {
+          "fundamental_hz": 523.1443657528588,
+          "error_cents": -0.3532793135529538
+        },
+        {
+          "fundamental_hz": 523.1435202167748,
+          "error_cents": -0.3560774360923762
+        },
+        {
+          "fundamental_hz": 523.1425739159059,
+          "error_cents": -0.359209023703189
+        },
+        {
+          "fundamental_hz": 523.1415422802153,
+          "error_cents": -0.3626230157657215
+        },
+        {
+          "fundamental_hz": 523.1710020531362,
+          "error_cents": -0.26513443599435604
+        },
+        {
+          "fundamental_hz": 523.1706511969295,
+          "error_cents": -0.26629546061665044
+        },
+        {
+          "fundamental_hz": 523.1702476922719,
+          "error_cents": -0.2676307061431661
+        },
+        {
+          "fundamental_hz": 523.1696892644737,
+          "error_cents": -0.26947861270573076
+        },
+        {
+          "fundamental_hz": 523.1158664601024,
+          "error_cents": -0.4475941780335693
+        },
+        {
+          "fundamental_hz": 523.1145161830955,
+          "error_cents": -0.4520628793231975
+        },
+        {
+          "fundamental_hz": 523.1128524581526,
+          "error_cents": -0.457568943025509
+        },
+        {
+          "fundamental_hz": 523.1111484305895,
+          "error_cents": -0.4632084055788688
+        }
+      ],
+      "cell_rms_spread_ratio": 1.0000168617027423,
+      "deterministic_regeneration": true
+    },
+    "audio_browser": {
+      "checks": [
+        "rapid route/undo: shared density limit, immediate starts, at most two crossfading voices, no queued replay",
+        "background stops all sources and suspends output; resume drains ended events without replay",
+        "one context, clean disposal"
+      ],
+      "errors": [],
+      "route": {
+        "created": 1,
+        "closed": 0,
+        "live": 0,
+        "peak": 2,
+        "starts": [
+          {
+            "at": 129.59999999962747,
+            "rate": 1,
+            "offset": 1.68
+          },
+          {
+            "at": 210.59999999962747,
+            "rate": 1.2599210739135742,
+            "offset": 1.26
+          },
+          {
+            "at": 332.3999999994412,
+            "rate": 1,
+            "offset": 2.04
+          },
+          {
+            "at": 413.3999999994412,
+            "rate": 1.1224620342254639,
+            "offset": 1.54
+          },
+          {
+            "at": 535.2999999998137,
+            "rate": 1,
+            "offset": 1.8
+          },
+          {
+            "at": 616.5,
+            "rate": 1,
+            "offset": 1.12
+          }
+        ],
+        "stops": [
+          0.1419047619047619,
+          0.34217687074829933,
+          0.5424489795918368
+        ],
+        "accepted": [
+          0.20000000018626451,
+          0.20000000018626451,
+          0.5,
+          0.19999999925494194,
+          0.5,
+          0.20000000018626451
+        ]
+      }
+    },
+    "celebrations": {
+      "checks": [
+        "budget-aware free preview, no disabled purchase trap, rotating result candidates across levels/reload",
+        "affordable result purchase confirms once and preserves the equipped theme after reload",
+        "theme target is durable before animation, reload awards it once, Apply is free",
+        "legacy sector 7 remains 300 coins; all-owned rare sector substitutes 300",
+        "gift sound is allowed under its own modal, background cancels it without replay or loss",
+        "gift acknowledgement failure retains its notice; reload recovery cannot grant it twice",
+        "gift reveal demonstration and complete cleanup on Continue",
+        "rare theme wheel demonstration, specific reward and immediate Apply"
+      ],
+      "screens": [
+        {
+          "width": 320,
+          "height": 568,
+          "lang": "ru",
+          "theme": "classic"
+        },
+        {
+          "width": 320,
+          "height": 568,
+          "lang": "en",
+          "theme": "neon"
+        },
+        {
+          "width": 360,
+          "height": 800,
+          "lang": "ru",
+          "theme": "classic"
+        },
+        {
+          "width": 360,
+          "height": 800,
+          "lang": "en",
+          "theme": "neon"
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "lang": "ru",
+          "theme": "classic"
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "lang": "en",
+          "theme": "neon"
+        },
+        {
+          "width": 412,
+          "height": 915,
+          "lang": "ru",
+          "theme": "classic"
+        },
+        {
+          "width": 412,
+          "height": 915,
+          "lang": "en",
+          "theme": "neon"
+        },
+        {
+          "width": 576,
+          "height": 1280,
+          "lang": "ru",
+          "theme": "classic"
+        },
+        {
+          "width": 576,
+          "height": 1280,
+          "lang": "en",
+          "theme": "neon"
+        }
+      ],
+      "errors": []
+    }
+  },
+  "ci": {
+    "android_run": 41600373259,
+    "app_run": 41600373257,
+    "audio_flow": "success",
+    "jobs_at_capture": [
+      {
+        "name": "kit-baseline",
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "name": "mobile-flows (celebrations)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "mobile-flows (analytics)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "mobile-flows (startup-ads)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "mobile-flows (monetization)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "mobile-flows (playtest)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "mobile-flows (persistence)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "mobile-flows (audio)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "mobile-flows (reload-touch)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "mobile-flows (localization)",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "android_result": "success"
+  },
+  "limitations": [
+    "No subjective listening acceptance on physical Android",
+    "No claim of live ad fill/dashboard acceptance; debug uses official demo blocks",
+    "This pass changes audio only; no new full resource soak"
+  ],
+  "apk": {
+    "source": "49acd08ef14164495b7f89494a633df9cf74f9f3",
+    "run_id": 41600373259,
+    "artifact_id": 13214153639,
+    "apk_bytes": 10386327,
+    "apk_sha256": "17416db41acd348e36ecfd1de9185e80266883f06421fbece38a18320be4ab77",
+    "zip_sha256": "311186e9ea5557c262a6bec54c1db46a257be9a96653d7cf98f665b7e5ccf12f",
+    "signer_sha256": "4dcd2fd9420531301e277b679c956ede74f2d2eeb2a6e01b47e014fae6203b88",
+    "package": "com.danilah.roadlines.playtest",
+    "portrait": true,
+    "ad_config": {
+      "mode": "demo",
+      "banner": "demo-banner-yandex",
+      "interstitial": "demo-interstitial-yandex",
+      "rewarded": "demo-rewarded-yandex"
+    },
+    "matching_web_files": 12
+  }
+}
