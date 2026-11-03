@@ -17,18 +17,28 @@ try {
  for(let i=0;;i++){try{if((await fetch('http://127.0.0.1:4253/.test-output/audio/probe.html')).ok)break;}catch{}if(i>80)throw Error('server');await new Promise(r=>setTimeout(r,100));}
  browser=await chromium.launch({headless:true,args:['--no-sandbox']});const page=await browser.newPage({hasTouch:true,isMobile:true,viewport:{width:390,height:844}});page.on('pageerror',e=>report.errors.push(e.message));
  await page.addInitScript(()=>{
-  const Base=AudioContext;window.audit={created:0,closed:0,live:0,peak:0,starts:[],stops:[],contexts:[]};
+  const Base=AudioContext;window.audit={created:0,closed:0,live:0,peak:0,starts:[],stops:[],contexts:[],resumes:[]};
   window.AudioContext=class extends Base {
    constructor(...a){super(...a);audit.created++;audit.contexts.push(this);} close(){audit.closed++;return super.close();}
+   resume(){const r={at:performance.now(),end:null};audit.resumes.push(r);return super.resume().then(v=>{r.end=performance.now();return v;});}
    createBufferSource(){const s=super.createBufferSource(),start=s.start.bind(s),stop=s.stop.bind(s);let started=false;
-    s.start=(...a)=>{started=true;audit.live++;audit.peak=Math.max(audit.peak,audit.live);audit.starts.push({at:performance.now(),rate:s.playbackRate.value,offset:a[1]});return start(...a);};
+    s.start=(...a)=>{started=true;audit.live++;audit.peak=Math.max(audit.peak,audit.live);audit.starts.push({at:performance.now(),rate:s.playbackRate.value,offset:a[1],duration:s.buffer.duration});return start(...a);};
     s.stop=(...a)=>{audit.stops.push(a[0]??0);return stop(...a);};
     s.addEventListener('ended',()=>{if(started)audit.live--;},{once:true});return s;
    }
   };
  });
+ if(process.argv.includes('--slow'))await (await page.context().newCDPSession(page)).send('Emulation.setCPUThrottlingRate',{rate:4});
  await page.goto('http://127.0.0.1:4253/.test-output/audio/probe.html');await page.locator('#prime').click();
  await page.waitForFunction(()=>feedback.buffer&&feedback.context.state==='running');
+ const cold=await page.evaluate(()=>{
+  const buffer=feedback.buffer;feedback.buffer=undefined;feedback.setUIAllowed(true);
+  const at=performance.now();feedback.playButton();feedback.buffer=buffer;
+  return{voice:audit.starts.at(-1),latency:performance.now()-at};
+ });
+ assert(Math.abs(cold.voice.duration-.065)<.0001);assert(cold.latency<50);
+ await page.waitForTimeout(150);await page.evaluate(()=>{feedback.setUIAllowed(false);audit.starts=[];audit.stops=[];audit.peak=0;});
+ report.checks.push('cold button starts immediately without the large decoded sprite or a callback queue');
  const route=await page.evaluate(async()=>{
   feedback.setLevel('intro-01');const accepted=[];
   for(let i=0;i<30;i++){
@@ -58,10 +68,11 @@ try {
  },levels[2]);
  await page.goto('http://127.0.0.1:4253/');await page.locator('#app[data-ready=true]').waitFor();
  const offsets=bank.button.map(x=>x[0]);
- const count=()=>page.evaluate(offsets=>audit.starts.filter(x=>offsets.includes(x.offset)).length,offsets);
+ const count=()=>page.evaluate(offsets=>audit.starts.filter(x=>offsets.includes(x.offset)||Math.abs(x.duration-.065)<.0001).length,offsets);
  async function pop(selector,keyboard=false){
   const before=await count();const button=page.locator(selector);if(keyboard){await button.focus();await page.keyboard.press('Enter');}else await button.tap();
-  await page.waitForFunction(({offsets,before})=>audit.starts.filter(x=>offsets.includes(x.offset)).length>before,{offsets,before});
+  try {await page.waitForFunction(({offsets,before})=>audit.starts.filter(x=>offsets.includes(x.offset)||Math.abs(x.duration-.065)<.0001).length>before,{offsets,before},{timeout:2000});}
+  catch(e){report.missingPop={selector,details:await page.evaluate(()=>({resumes:audit.resumes,contexts:audit.contexts.map(c=>c.state),starts:audit.starts,blocked:document.querySelector('#app').dataset.blocked,hidden:document.hidden}))};throw e;}
   await page.waitForTimeout(130);assert.equal(await count(),before+1,selector+' emits once');
  }
  await pop('[data-action=continue]');await pop('[data-action=pause]');

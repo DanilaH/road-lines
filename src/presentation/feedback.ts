@@ -41,9 +41,9 @@ export class Feedback {
   private load?: Promise<void>;
   private decoding?: Promise<void>;
   private uiAllowed = false;
-  private buttonToken = 0;
-  private preparingButton = false;
-  private pendingButton?: { token: number; at: number };
+  private buttonBuffer?: AudioBuffer;
+  private buttonVoice?: AudioBufferSourceNode;
+  private buttonDeadline?: ReturnType<typeof setTimeout>;
   private abort = new AbortController();
   private sequence = new SoundSequence();
   private lastHaptic = -Infinity;
@@ -72,27 +72,21 @@ export class Feedback {
       .catch(() => {}).finally(() => { this.decoding = undefined; });
     return this.decoding;
   }
-  setUIAllowed(value: boolean): void {
-    this.uiAllowed = value;
-    if (!value) { this.buttonToken++; this.pendingButton = undefined; }
+  setUIAllowed(value: boolean): void { this.uiAllowed = value; }
+  playButton(): void { if (this.uiAllowed) this.play('button', 0, true); }
+  private prepareButton(context: AudioContext): AudioBuffer {
+    if (this.buttonBuffer) return this.buttonBuffer;
+    // Tiny C4 contact body prepared once, so the first button never waits for the full sprite decoder.
+    const buffer = context.createBuffer(1, Math.ceil(context.sampleRate * .065), context.sampleRate), data = buffer.getChannelData(0);
+    let peak = 0;
+    for (let i = 0; i < data.length; i++) {
+      const t = i/context.sampleRate, fade = Math.min(1, (data.length-1-i)/(context.sampleRate*.012));
+      data[i] = (Math.sin(2*Math.PI*261.625565*t)+.04*Math.sin(2*Math.PI*523.25113*t))*(1-Math.exp(-1250*t))*Math.exp(-72*t)*fade;
+      peak = Math.max(peak, Math.abs(data[i]));
+    }
+    for (let i = 0; i < data.length; i++) data[i] *= .45 / peak;
+    return this.buttonBuffer = buffer;
   }
-  playButton(): void {
-    if (this.disposed || !this.uiAllowed) return;
-    const token = ++this.buttonToken, at = performance.now();
-    this.prime(true);
-    if (!this.settings.sound || this.buffer && this.context?.state === 'running') { this.play('button', 0, true); return; }
-    this.pendingButton = { token, at };
-    if (this.preparingButton) return;
-    this.preparingButton = true;
-    // Keep one preparation even if loading stalls; newer taps replace the pending gesture.
-    void (this.load ?? Promise.resolve()).then(() => this.decodeSamples()).then(async () => {
-      const pending = this.pendingButton;
-      if (!pending || this.disposed || !this.uiAllowed || pending.token !== this.buttonToken || performance.now()-pending.at > 100) return;
-      if (this.context?.state === 'suspended') await this.context.resume();
-      if (!this.disposed && this.uiAllowed && pending.token === this.buttonToken && performance.now()-pending.at <= 100) this.play('button', 0, true);
-    }).catch(() => {}).finally(() => { this.preparingButton = false; this.pendingButton = undefined; });
-  }
-
   prime(ui = false): void {
     if (this.disposed || this.blocked && !(ui && this.uiAllowed) || !this.settings.sound) return;
     try {
@@ -114,6 +108,7 @@ export class Feedback {
     if (!this.settings.vibration && Capacitor.isNativePlatform()) void native.cancel().catch(() => {});
   }
   play(cue: Cue, progress = 0, ui = false): void {
+    ui = ui && cue === 'button' && this.uiAllowed;
     if (this.disposed || this.blocked && !(ui && cue === 'button' && this.uiAllowed) || !this.gate.accept(cue, performance.now())) return;
     const now = performance.now(), celebration = cue === 'win' || cue === 'gift';
     if (this.settings.vibration && (celebration || now >= this.hapticUntil) && now - this.lastHaptic >= (cue === 'coin' ? 90 : celebration ? 20 : 70)) {
@@ -126,22 +121,28 @@ export class Feedback {
     if (!this.settings.sound || !this.soundGate.accept(cue, now)) return;
     this.prime(ui);
     const context = this.context;
-    if (!context || !this.master || context.state !== 'running') return;
-    if (!this.buffer || this.voices.size >= 20) return;
+    if (!context || !this.master || context.state !== 'running' && !(ui && context.state === 'suspended')) return;
+    if (!this.buffer && !ui || this.voices.size >= 20) return;
     if (cue === 'cell' || cue === 'undo' || cue === 'win' || cue === 'gift') this.fadeRoute();
     const variants = soundBank[cue], choice = this.sequence.next(cue, progress), clip = variants[choice.index]!;
     const source = context.createBufferSource(), gain = context.createGain();
-    source.buffer = this.buffer;
+    const coldButton = ui && !this.buffer;
+    source.buffer = coldButton ? this.prepareButton(context) : this.buffer!;
+    if (ui) { try { this.buttonVoice?.stop(); } catch {} this.buttonVoice = source; }
     source.playbackRate.value = choice.rate;
     gain.gain.value = (cue === 'button' ? .42 : cue === 'cell' ? .44 : cue === 'undo' ? .28 : cue === 'coin' ? .34 : .52) * choice.gain;
     source.connect(gain); gain.connect(this.master); this.voices.add(source);
     if (cue === 'cell' || cue === 'undo') this.routeVoice = { source, gain };
+    const deadline = ui && context.state === 'suspended' ? setTimeout(() => { if (context.state !== 'running') { try { source.stop(); } catch {} } }, 100) : undefined;
+    if (ui) { clearTimeout(this.buttonDeadline); this.buttonDeadline = deadline; }
     source.onended = () => {
+      clearTimeout(deadline);
+      if (this.buttonVoice === source) this.buttonVoice = undefined;
       if (this.routeVoice?.source === source) this.routeVoice = undefined;
       this.voices.delete(source); source.disconnect(); gain.disconnect();
       if (ui && this.blocked && !this.disposed && !this.voices.size && context.state === 'running') void context.suspend().catch(() => {});
     };
-    source.start(context.currentTime, clip[0], clip[1]);
+    source.start(context.currentTime, coldButton ? 0 : clip[0], coldButton ? .065 : clip[1]);
   }
 
   private fadeRoute(): void {
@@ -164,6 +165,6 @@ export class Feedback {
     this.stopVoices(); this.hapticUntil = 0;
     if (Capacitor.isNativePlatform()) void native.cancel().catch(() => {}); else navigator.vibrate?.(0);
   }
-  private stopVoices(): void { this.buttonToken++; this.pendingButton = undefined; this.routeVoice = undefined; for (const voice of this.voices) { try { voice.stop(); } catch {} voice.disconnect(); } this.voices.clear(); }
-  dispose(): void { this.abort.abort(); this.buffer = undefined; this.bytes = undefined; this.setBlocked(true); this.disposed = true; void this.context?.close().catch(() => {}); }
+  private stopVoices(): void { clearTimeout(this.buttonDeadline); this.buttonDeadline = undefined; this.buttonVoice = undefined; this.routeVoice = undefined; for (const voice of this.voices) { try { voice.stop(); } catch {} voice.disconnect(); } this.voices.clear(); }
+  dispose(): void { this.abort.abort(); this.buffer = undefined; this.buttonBuffer = undefined; this.bytes = undefined; this.setBlocked(true); this.disposed = true; void this.context?.close().catch(() => {}); }
 }

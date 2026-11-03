@@ -160,4 +160,4 @@ When adding the application, add and run actual app build and relevant model/flo
 
 ## UI button feedback — 3 November 2026
 - Accepted interface activations use short, soft rounded pops after the action establishes its final modal state. Pause/hint-shop/theme-confirm/reward-modal may allow button feedback only; gameplay cues stay blocked. Background/visibility, ads, startup and save conflicts silence every channel. Disabled/cancelled/compatibility duplicate activations stay silent.
-- Honor sound mute, one AudioContext and token cancellation. A current UI gesture may wait at most100ms for decode/resume; retain one pending preparation, never a callback queue. Test real touch/keyboard buttons under pause/shop and background in audio-smoke.
+- Honor sound mute, one AudioContext and token cancellation. A tiny cached C4 PCM fallback makes cold buttons independent of the large sprite decoder. UI may schedule its current source during resume with a100ms cancellation guard; newer UI actions replace old pending voices. Never queue Promise callbacks for button presses. Test real touch/keyboard buttons under pause/shop and background in audio-smoke.
