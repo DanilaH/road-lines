@@ -1,0 +1,157 @@
+{
+  "source": "2d42e6c8477c6622bb139c81e6594f4c19e84b0f",
+  "run_id": 41595504126,
+  "artifact_id": 13211633481,
+  "apk_bytes": 10607903,
+  "apk_sha256": "d1b65e26f315533bf690780b3a93489e897f831beadc68b3b74e91179019206d",
+  "zip_sha256": "26c8668472c6281796ceced1171962d66f162f10b44583cdd06ceaa06ffd95ff",
+  "signer_sha256": "4dcd2fd9420531301e277b679c956ede74f2d2eeb2a6e01b47e014fae6203b88",
+  "package": "com.danilah.roadlines.playtest",
+  "portrait": true,
+  "ad_config": {
+    "mode": "demo",
+    "banner": "demo-banner-yandex",
+    "interstitial": "demo-interstitial-yandex",
+    "rewarded": "demo-rewarded-yandex"
+  },
+  "matching_web_files": 12,
+  "local_checks": {
+    "application": {
+      "tests": 238,
+      "files": 31,
+      "command": "npm run check"
+    },
+    "kit": {
+      "tests": 97,
+      "files": 17,
+      "command": "npx vitest run --root vendor/mini-games-kit"
+    },
+    "background_faults": 5,
+    "localization": {
+      "viewports_languages": 10,
+      "extra_flows": 24
+    },
+    "analytics": 10,
+    "reload_touch": 4,
+    "startup-ads": {
+      "checks": [
+        "startup-status-hang",
+        "startup-pending-delay",
+        "startup-pending-hang",
+        "startup-pending-error"
+      ],
+      "errors": []
+    },
+    "monetization": {
+      "checks": [
+        "one earned video funds exactly one three-hint pack; double tap and reload do not duplicate",
+        "SDK-sized banner reservation clears dock and follows background even under an existing pause blocker",
+        "single60 purchase is available independently and does not automatically spend the hint",
+        "dismiss does not grant money and returns to usable shop",
+        "unavailable does not grant money and returns to usable shop",
+        "pending earned receipt recovers after renderer restart exactly once",
+        "failed durable grant retains native pending; retry restores exactly150",
+        "missing native ack leaves earned money usable and Back returns to play",
+        "theme shortage uses same150 topup, free preview is not ownership",
+        "Continue after earned interstitial advances once and persists draft",
+        "Continue after unavailable interstitial advances once and persists draft",
+        "dismissal while backgrounded defers exactly one next-level transition until foreground",
+        "gift transition is protected even when interstitial would otherwise be eligible",
+        "dead-end diagnostic remains free at zero and does not open shop"
+      ],
+      "screens": [
+        {
+          "width": 320,
+          "height": 568,
+          "lang": "ru"
+        },
+        {
+          "width": 320,
+          "height": 568,
+          "lang": "en"
+        },
+        {
+          "width": 360,
+          "height": 800,
+          "lang": "ru"
+        },
+        {
+          "width": 360,
+          "height": 800,
+          "lang": "en"
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "lang": "ru"
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "lang": "en"
+        },
+        {
+          "width": 412,
+          "height": 915,
+          "lang": "ru"
+        },
+        {
+          "width": 412,
+          "height": 915,
+          "lang": "en"
+        },
+        {
+          "width": 576,
+          "height": 1280,
+          "lang": "ru"
+        },
+        {
+          "width": 576,
+          "height": 1280,
+          "lang": "en"
+        }
+      ],
+      "errors": []
+    },
+    "persistence": {
+      "checks": [
+        "clear 1: reload at 0ms",
+        "clear 1: reload at 80ms",
+        "clear 1: reload at 400ms",
+        "clear 1: reload at 1200ms",
+        "clear 20: reload at 0ms",
+        "clear 20: reload at 80ms",
+        "clear 20: reload at 400ms",
+        "clear 20: reload at 1200ms",
+        "navigation immediately after durable clear write",
+        "clear write before: recovery and retry",
+        "clear write unreadable: recovery and retry",
+        "theme purchase before: wallet and ownership stay atomic",
+        "theme purchase unreadable: wallet and ownership stay atomic",
+        "hint cancelled by pause never charges; confirmed hint debit survives restart",
+        "second tab cannot write; closing owner transfers lock after reload",
+        "without Web Locks: storage event blocks stale window and preserves reward",
+        "renderer crash with wheel staged: fixed prize once",
+        "renderer crash with wheel committed: fixed prize once"
+      ],
+      "errors": [],
+      "crashCount": 2
+    }
+  },
+  "ci": {
+    "android": {
+      "run": 41595504126,
+      "conclusion": "success"
+    },
+    "app": {
+      "run": 41595504123,
+      "mobile_flows": "all 8 success",
+      "baseline": "still in progress at evidence capture"
+    }
+  },
+  "limitations": [
+    "Physical Android launch and actual native callbacks not observed in this run",
+    "Official SDK demo ad blocks; no live fill/revenue/dashboard claim",
+    "No new full resource soak"
+  ]
+}
