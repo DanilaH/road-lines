@@ -136,7 +136,11 @@ export class Feedback {
     gain.gain.value = (cue === 'button' ? .42 : cue === 'cell' ? .44 : cue === 'undo' ? .28 : cue === 'coin' ? .34 : .52) * choice.gain;
     source.connect(gain); gain.connect(this.master); this.voices.add(source);
     if (cue === 'cell' || cue === 'undo') this.routeVoice = { source, gain };
-    source.onended = () => { if (this.routeVoice?.source === source) this.routeVoice = undefined; this.voices.delete(source); source.disconnect(); gain.disconnect(); };
+    source.onended = () => {
+      if (this.routeVoice?.source === source) this.routeVoice = undefined;
+      this.voices.delete(source); source.disconnect(); gain.disconnect();
+      if (ui && this.blocked && !this.disposed && !this.voices.size && context.state === 'running') void context.suspend().catch(() => {});
+    };
     source.start(context.currentTime, clip[0], clip[1]);
   }
 

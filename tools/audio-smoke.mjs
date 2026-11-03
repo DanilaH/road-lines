@@ -17,9 +17,9 @@ try {
  for(let i=0;;i++){try{if((await fetch('http://127.0.0.1:4253/.test-output/audio/probe.html')).ok)break;}catch{}if(i>80)throw Error('server');await new Promise(r=>setTimeout(r,100));}
  browser=await chromium.launch({headless:true,args:['--no-sandbox']});const page=await browser.newPage({hasTouch:true,isMobile:true,viewport:{width:390,height:844}});page.on('pageerror',e=>report.errors.push(e.message));
  await page.addInitScript(()=>{
-  const Base=AudioContext;window.audit={created:0,closed:0,live:0,peak:0,starts:[],stops:[]};
+  const Base=AudioContext;window.audit={created:0,closed:0,live:0,peak:0,starts:[],stops:[],contexts:[]};
   window.AudioContext=class extends Base {
-   constructor(...a){super(...a);audit.created++;} close(){audit.closed++;return super.close();}
+   constructor(...a){super(...a);audit.created++;audit.contexts.push(this);} close(){audit.closed++;return super.close();}
    createBufferSource(){const s=super.createBufferSource(),start=s.start.bind(s),stop=s.stop.bind(s);let started=false;
     s.start=(...a)=>{started=true;audit.live++;audit.peak=Math.max(audit.peak,audit.live);audit.starts.push({at:performance.now(),rate:s.playbackRate.value,offset:a[1]});return start(...a);};
     s.stop=(...a)=>{audit.stops.push(a[0]??0);return stop(...a);};
@@ -50,7 +50,7 @@ try {
  report.checks.push('background stops all sources and suspends output; resume drains ended events without replay');
  await page.evaluate(()=>{feedback.setBlocked(false);feedback.dispose();});await page.waitForTimeout(100);
  const disposed=await page.evaluate(()=>audit);assert.equal(disposed.created,1);assert.equal(disposed.closed,1);assert.equal(disposed.live,0);
- report.checks.push('one context, clean disposal');report.route=route;
+ report.checks.push('one context, clean disposal');report.route={...route,contexts:undefined};
  // Actual application buttons: accepted activation once, including under pause/shop blockers.
  await page.evaluate(l=>{
   localStorage.setItem('road-lines.feedback.v1',JSON.stringify({sound:true,vibration:false}));
@@ -65,6 +65,7 @@ try {
   await page.waitForTimeout(130);assert.equal(await count(),before+1,selector+' emits once');
  }
  await pop('[data-action=continue]');await pop('[data-action=pause]');
+ await page.waitForFunction(()=>audit.contexts.every(c=>c.state==='suspended'));assert.equal(await page.locator('#app').getAttribute('data-blocked'),'true');
  await pop('[data-action=language][data-language=en]');
  const muted=await count();await page.locator('[data-action=sound]').tap();await page.waitForTimeout(150);assert.equal(await count(),muted);
  await pop('[data-action=sound]');await pop('[data-action=resume]',true);

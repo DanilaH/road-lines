@@ -167,3 +167,4 @@ Android41600373259 —SUCCESS; все9 mobile flows41600373257, включая �
 
 ## Кнопочные попы и граница production — 3 ноября2026
 Добавлены три коротких мягких65мс UI pops, без pitch sweep. Вынесено разрешение UI-feedback под pause/shop/theme modal, не разблокирующее игру; accepted activation звучит после действия. Decoder/resume ограничены актуальным жестом100мс с одним pending preparation. Hard blockers/mute/dispose подавляют UI тоже. Audio smoke6 групп с реальным touch/keyboard/mute/disabled/background —PASS; celebrations8/10 и analytics10 —PASS. Release readiness —RELEASE_READINESS_2026-11-03.md; debug/demo APK не является production-релизом.
+В паузе/окне AudioContext снова усыпляется после завершения последнего UI pop; это проверено реальным context.state, не только отсутствием voices.
