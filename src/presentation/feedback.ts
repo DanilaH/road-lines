@@ -11,6 +11,21 @@ export class CueGate {
     this.last.set(cue, now); return true;
   }
 }
+/** Sound density is independent of tactile feedback; never queue skipped route/coin cues. */
+export class SoundGate {
+  private route = -Infinity;
+  private coin = -Infinity;
+  accept(cue: Cue, now: number): boolean {
+    if (cue === 'cell' || cue === 'undo') {
+      if (now - this.route < 65) return false;
+      this.route = now;
+    } else if (cue === 'coin') {
+      if (now - this.coin < 60) return false;
+      this.coin = now;
+    }
+    return true;
+  }
+}
 interface NativeFeedback { pulse(options: { cue: Cue; issuedAt: number }): Promise<void>; cancel(): Promise<void>; }
 const native = registerPlugin<NativeFeedback>('RoadFeedback');
 export interface FeedbackSettings { sound: boolean; vibration: boolean; }
@@ -19,6 +34,8 @@ export class Feedback {
   private context?: AudioContext;
   private master?: GainNode;
   private voices = new Set<AudioBufferSourceNode>();
+  private routeVoice?: { source: AudioBufferSourceNode; gain: GainNode };
+  private soundGate = new SoundGate();
   private buffer?: AudioBuffer;
   private bytes?: ArrayBuffer;
   private load?: Promise<void>;
@@ -80,19 +97,30 @@ export class Feedback {
       // Web vibration is a limited fallback; native builds never rely on it.
       else if (navigator.vibrate) navigator.vibrate(cue === 'gift' ? [32,45,42,50,70,70,100] : cue === 'win' ? [34,45,42,55,62] : cue === 'undo' ? [14,22,20] : cue === 'reject' ? [24,28,24] : cue === 'star' ? [26,28,30] : cue === 'cell' ? 24 : 14);
     }
-    if (!this.settings.sound) return;
+    if (!this.settings.sound || !this.soundGate.accept(cue, now)) return;
     this.prime();
     const context = this.context;
     if (!context || !this.master || context.state !== 'running') return;
     if (!this.buffer || this.voices.size >= 20) return;
+    if (cue === 'cell' || cue === 'undo' || cue === 'win' || cue === 'gift') this.fadeRoute();
     const variants = soundBank[cue], choice = this.sequence.next(cue, progress), clip = variants[choice.index]!;
     const source = context.createBufferSource(), gain = context.createGain();
     source.buffer = this.buffer;
     source.playbackRate.value = choice.rate;
-    gain.gain.value = (cue === 'button' ? .32 : cue === 'cell' ? .52 : cue === 'undo' ? .42 : .65) * choice.gain;
+    gain.gain.value = (cue === 'button' ? .25 : cue === 'cell' ? .44 : cue === 'undo' ? .28 : cue === 'coin' ? .34 : .52) * choice.gain;
     source.connect(gain); gain.connect(this.master); this.voices.add(source);
-    source.onended = () => { this.voices.delete(source); source.disconnect(); gain.disconnect(); };
+    if (cue === 'cell' || cue === 'undo') this.routeVoice = { source, gain };
+    source.onended = () => { if (this.routeVoice?.source === source) this.routeVoice = undefined; this.voices.delete(source); source.disconnect(); gain.disconnect(); };
     source.start(context.currentTime, clip[0], clip[1]);
+  }
+
+  private fadeRoute(): void {
+    const voice = this.routeVoice, context = this.context;
+    if (!voice || !context) return;
+    this.routeVoice = undefined;
+    // A short crossfade preserves the contact transient without stacking old melody tails.
+    voice.gain.gain.setTargetAtTime(0, context.currentTime, .004);
+    try { voice.source.stop(context.currentTime + .020); } catch { /* Already ended. */ }
   }
 
   setBlocked(value: boolean): void {
@@ -106,6 +134,6 @@ export class Feedback {
     this.stopVoices(); this.hapticUntil = 0;
     if (Capacitor.isNativePlatform()) void native.cancel().catch(() => {}); else navigator.vibrate?.(0);
   }
-  private stopVoices(): void { for (const voice of this.voices) { try { voice.stop(); } catch {} voice.disconnect(); } this.voices.clear(); }
+  private stopVoices(): void { this.routeVoice = undefined; for (const voice of this.voices) { try { voice.stop(); } catch {} voice.disconnect(); } this.voices.clear(); }
   dispose(): void { this.abort.abort(); this.buffer = undefined; this.bytes = undefined; this.setBlocked(true); this.disposed = true; void this.context?.close().catch(() => {}); }
 }

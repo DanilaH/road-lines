@@ -153,3 +153,7 @@ When adding the application, add and run actual app build and relevant model/flo
 
 ## Ad failure policy — user correction 3 November 2026
 - No ad-receipt/ad-recovery-error activity blockers or mandatory retry dialogs. No receipt query may cancel a gesture or hint search. Ad unavailability does not require internet to play. Late rewards rebase on the latest synchronous GameStore state; only actual save conflicts/ambiguous storage failures may protect valuable mutations. Missing callbacks must not accumulate native RPCs.
+
+## Sound harmony correction — user playtest 3 November 2026
+- User rejected off-key, uneven pitched variations. Cell variants must share one tuned C5 root; variation changes timbre/attack, never arbitrary base frequency. Use discrete C-major pentatonic movement with <=3-semitone adjacent steps; no random detuning or level key changes. All rewards/UI/coins stay in the same key. No continuous coin pitch sweep.
+- Keep short, loudness-matched, harmonic samples; crossfade route tails over20ms and limit shared forward/reverse audio density independently of haptics. Never queue sounds behind a fast gesture. Preserve existing haptic strength/lifecycle. Run audio-smoke plus celebrations; subjective phone listening remains separate from tuning/cleanup checks.

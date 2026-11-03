@@ -66,14 +66,20 @@ describe('cosmetic suggestions and sound variation', () => {
     expect(themeSuggestions(themes.map(t => t.id), 1000, last)).toEqual([]);
     for (const theme of themeSuggestions(['classic','mint','lagoon'], 500, null)) expect(theme.id).not.toBe('lagoon');
   });
-  it('keeps strikes nonrepeating and pitch bounded, with a different family on adjacent levels', () => {
-    const sound = new SoundSequence(() => 0); let previous = -1, family = -1;
-    for (let level = 1; level < 30; level++) {
-      sound.beginLevel('intro-' + level); const first = sound.next('cell', 0);
-      expect(Math.floor(first.index / 4)).not.toBe(family); family = Math.floor(first.index / 4); previous = first.index;
-      for (let i = 0; i < 40; i++) {
-        const choice = sound.next('cell', i / 40); expect(choice.index).not.toBe(previous); previous = choice.index;
-        expect(choice.rate).toBeGreaterThanOrEqual(.82); expect(choice.rate).toBeLessThanOrEqual(1.28);
+  it('uses discrete consonant notes and same-pitch strike variants without detuning any cue', () => {
+    for (const random of [() => 0, () => .999]) {
+      const sound = new SoundSequence(random);
+      for (let level = 1; level < 30; level++) {
+        sound.beginLevel('intro-' + level); let previousIndex = -1, previousNote: number | undefined;
+        for (let i = 0; i < 40; i++) {
+          const choice = sound.next('cell', i / 40), note = 12 * Math.log2(choice.rate);
+          expect(choice.index).not.toBe(previousIndex); previousIndex = choice.index;
+          expect([0,2,4,7].some(n => Math.abs(n-note) < 1e-9)).toBe(true);
+          if (previousNote !== undefined) expect(Math.abs(note-previousNote)).toBeLessThanOrEqual(3.000001);
+          previousNote = note;
+        }
+        for (const cue of ['coin','button','undo','win','progress','star','gift','reject'] as const)
+          for (let i = 0; i < 20; i++) expect(sound.next(cue, i/20).rate).toBe(1);
       }
     }
   });

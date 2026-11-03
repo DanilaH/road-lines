@@ -1,6 +1,6 @@
 import { soundBank } from '../src/presentation/sound-bank';
 import { describe, it, expect } from 'vitest';
-import { CueGate, Feedback } from '../src/presentation/feedback';
+import { CueGate, SoundGate, Feedback } from '../src/presentation/feedback';
 import { victoryLayout } from '../src/presentation/geometry';
 import { boardLayout } from '../src/ui/layout';
 import { readFileSync } from 'node:fs';
@@ -23,6 +23,14 @@ describe('presentation limits', () => {
     expect(gate.accept('win', 20)).toBe(true); expect(gate.accept('cell', 46)).toBe(true);
     expect(gate.accept('reject', 0)).toBe(true); expect(gate.accept('reject', 100)).toBe(false); expect(gate.accept('reject', 380)).toBe(true);
     expect(gate.accept('coin', 0)).toBe(true); expect(gate.accept('coin', 10)).toBe(false);
+  });
+  it('bounds audio density across forward/reverse gestures without delaying wins or haptics', () => {
+    const audio = new SoundGate(), tactile = new CueGate();
+    expect(audio.accept('cell', 0)).toBe(true);
+    expect(audio.accept('undo', 46)).toBe(false); expect(tactile.accept('undo',46)).toBe(true);
+    expect(audio.accept('cell', 65)).toBe(true); expect(audio.accept('win',65)).toBe(true);
+    expect(audio.accept('coin', 0)).toBe(true); expect(audio.accept('coin',45)).toBe(false);
+    expect(audio.accept('coin',60)).toBe(true);
   });
   it('persists sound and vibration independently', () => {
     let raw = JSON.stringify({ sound: false, vibration: true });
