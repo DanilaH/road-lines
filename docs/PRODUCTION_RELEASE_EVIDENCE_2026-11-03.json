@@ -1,0 +1,128 @@
+{
+  "source": "fe0739e678048c03750f270e90c8fd3598df4480",
+  "date": "2026-11-03",
+  "ci": {
+    "release_run": 41627264848,
+    "release_result": "success",
+    "app_run": 41627265066,
+    "jobs_at_capture": [
+      {
+        "name": "kit-baseline",
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "name": "mobile-flows (analytics)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "mobile-flows (reload-touch)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "mobile-flows (monetization)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "mobile-flows (celebrations)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "mobile-flows (playtest)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "mobile-flows (localization)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "mobile-flows (persistence)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "mobile-flows (audio)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "mobile-flows (startup-ads)",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "verification": {
+    "source": "fe0739e678048c03750f270e90c8fd3598df4480",
+    "package": "com.danilah.roadlines",
+    "versionCode": 1,
+    "versionName": "1.0.0",
+    "debuggable": false,
+    "portrait": true,
+    "permissions": [
+      "android.permission.INTERNET",
+      "android.permission.VIBRATE",
+      "android.permission.ACCESS_NETWORK_STATE",
+      "com.google.android.gms.permission.AD_ID",
+      "com.danilah.roadlines.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION",
+      "com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE"
+    ],
+    "sdk": {
+      "minSdkVersion": 24,
+      "targetSdkVersion": 36
+    },
+    "ad_mode": "live",
+    "ad_formats": {
+      "banner": true,
+      "interstitial": true,
+      "rewarded": true
+    },
+    "analytics_configured": true,
+    "certificate_sha256": "b70932dd6ca71f50c458f8272324c7139b0b00bc3a72b66d2f5837f4fa554d55",
+    "signature_verified": true,
+    "zipalign_16k_verified": true,
+    "matching_web_files": 12,
+    "apk_bytes": 8625252,
+    "apk_sha256": "d1b81b0dedf44dec6ce07ca8885fc8d6938d178bfb31a7049a7eff79d23a5030",
+    "limitations": [
+      "Native fill, earned/dismiss callbacks, phone feel and dashboard delivery require device acceptance; embedded config is not live delivery proof",
+      "Release uses the Capacitor template minify setting; R8 acceptance is not claimed"
+    ]
+  },
+  "independent_local_payload_check": {
+    "source": "fe0739e678048c03750f270e90c8fd3598df4480",
+    "run_id": 41627264848,
+    "artifact_id": 13226507071,
+    "apk_bytes": 8625252,
+    "apk_sha256": "d1b81b0dedf44dec6ce07ca8885fc8d6938d178bfb31a7049a7eff79d23a5030",
+    "zip_sha256": "967ed05aa63900d07131adf2a16fb06da26470bc62d598221515ee31472e0e89",
+    "signer_sha256": "b70932dd6ca71f50c458f8272324c7139b0b00bc3a72b66d2f5837f4fa554d55",
+    "package": "com.danilah.roadlines",
+    "portrait": true,
+    "ad_config": {
+      "mode": "live",
+      "banner": true,
+      "interstitial": true,
+      "rewarded": true
+    },
+    "matching_web_files": 12
+  },
+  "local_checks": {
+    "application_tests": 239,
+    "release_config_tests": 5,
+    "native_sync": "pass",
+    "production_web_build": "pass"
+  },
+  "artifact": {
+    "id": 13226507071,
+    "sha256": "967ed05aa63900d07131adf2a16fb06da26470bc62d598221515ee31472e0e89"
+  },
+  "delivered_zip_sha256": "a0d1aa0a8dadad1679da1457997abb028baf684112e774216596e19ace3efaa9",
+  "store_publish": "not performed"
+}

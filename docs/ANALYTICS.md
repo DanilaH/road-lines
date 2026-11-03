@@ -1,6 +1,6 @@
 # Аналитика Road Lines
 
-Реализация: runtime `03562ee6c0a169c9c648faf0e325e723af31cbcd`. `GameAnalytics` использует интерфейс `AnalyticsAdapter` из закреплённого kit, без изменения vendor. Android transport — собственный Capacitor plugin и официальный AppMetrica SDK 8.5.1. Обычная web-сборка ничего не отправляет; diagnostic sink доступен только в отдельном compile mode `analytics-test`, не через URL/storage/window.
+Реализация: runtime `03562ee6c0a169c9c648faf0e325e723af31cbcd`. `GameAnalytics` использует интерфейс `AnalyticsAdapter` из закреплённого kit, без изменения vendor. Android transport — собственный Capacitor plugin и официальный AppMetrica SDK 8.6.0 (актуальный native Gradle recipe). Обычная web-сборка ничего не отправляет; diagnostic sink доступен только в отдельном compile mode `analytics-test`, не через URL/storage/window.
 
 ## События и чтение отчётов
 
@@ -45,7 +45,7 @@ SDK сам управляет своим буфером/сессиями. При
 
 Для GitHub debug APK workflow использует **`APPMETRICA_DEBUG_API_KEY`** secret и передаёт его генератору как `APPMETRICA_API_KEY`. Нужен отдельный тестовый проект AppMetrica, чтобы debug не загрязнял production. Отсутствие ключа явно отражается в build log как disabled; приложение работает, SDK не активируется. В repo нет подставного ключа или автоматической регистрации чужого проекта. Для будущей release-сборки использовать собственный production API key в build environment.
 
-Включённые ограничения: location tracking и advertising identifiers tracking выключены; auto crash/native crash reporting выключены; опциональные modules identifiers/location/appsetid/ad-revenue/billing/screenshot/ndkcrashes исключены. Это не утверждение об отсутствии SDK installation/device/network metadata: при активации это нужно учитывать в описании обработки данных и декларациях RuStore. Рекламный SDK не добавлен.
+Включённые ограничения: location tracking и advertising identifiers tracking выключены; auto crash/native crash reporting выключены; опциональные modules identifiers/location/appsetid/ad-revenue/billing/screenshot/ndkcrashes исключены. Это не утверждение об отсутствии SDK installation/device/network metadata: при активации это нужно учитывать в описании обработки данных и декларациях RuStore. В монетизационном проходе2 ноября добавлен Yandex Mobile Ads8.6.0; при декларации данных учитывать оба SDK.
 
 Native plugin `status()` сообщает, активирован ли SDK. Компиляция и mock/diagnostic events не доказывают доставку в AppMetrica. Для live acceptance после настройки ключа: установить соответствующий APK, пройти сценарии, проверить реальные events/params/session в кабинете, перезапустить и сверить отсутствие повторного первого clear и wheel reward. Пока это не сделано, dashboard delivery остаётся открытой.
 

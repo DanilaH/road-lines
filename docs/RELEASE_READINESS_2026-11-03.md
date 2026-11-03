@@ -12,7 +12,7 @@
 
 | Шаг | Текущее основание / следующий результат |
 |---|---|
-| Production signing/build | Добавлен отдельный Android release candidate workflow. Восемь secrets обязательны; assembleRelease, закреплённый сертификат и проверка APK. Первый production CI-прогон и его evidence ожидаются; debug остаётся отдельным. |
+| Production signing/build | Добавлен отдельный Android release candidate workflow. Восемь secrets обязательны; assembleRelease, закреплённый сертификат и проверка APK. Первый production CI41627264848 —SUCCESS; подпись/manifest/live-конфигурация/16KB alignment и web payload проверены. Evidence —PRODUCTION_RELEASE_EVIDENCE_2026-11-03.json; debug остаётся отдельным. |
 | Live ad configuration | Release workflow передаёт три YANDEX_*_AD_UNIT_ID в live-режиме; готовый APK сверяется с inputs без вывода значений. Наличие/корректность конфигурации подтверждается успешной сборкой и verifier, не чтением secrets API. Нужны свои Android banner/interstitial/rewarded IDs, live-config и проверка без сети/no-fill на телефоне. |
 | Production analytics | Отдельный release workflow использует APPMETRICA_API_KEY, debug —APPMETRICA_DEBUG_API_KEY. Embedded production config проверяется; подтверждённая доставка в dashboard остаётся отдельной. |
 | Store materials/privacy | В исходниках не найдены отдельный готовый комплект карточки и URL опубликованной privacy policy. Подготовить название/описание/иконку/скриншоты и декларации по фактическим SDK/конфигурации; публикация в кабинете не выполнялась. |
