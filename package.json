@@ -10,7 +10,7 @@
     "verify:kit": "node tools/verify-kit.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "check": "npm run verify:kit && npm run validate:levels && npm run typecheck && npm test",
+    "check": "npm run verify:kit && npm run validate:levels && npm run typecheck && npm test && node --test tools/check-android-release.mjs",
     "dev": "vite",
     "build": "vite build",
     "build:inspect": "vite build --mode inspect",
@@ -18,7 +18,8 @@
     "test:browser": "node tools/browser-smoke.mjs",
     "android:sync": "npm run build && node tools/android.mjs",
     "android:build": "node tools/android.mjs --build",
-    "validate:levels": "node tools/validate-levels.mjs"
+    "validate:levels": "node tools/validate-levels.mjs",
+    "android:release": "node tools/android.mjs --build --release"
   },
   "devDependencies": {
     "typescript": "5.9.3",

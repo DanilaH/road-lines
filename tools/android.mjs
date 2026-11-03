@@ -1,10 +1,16 @@
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, readFileSync, writeFileSync, copyFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync, copyFileSync, chmodSync, unlinkSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
+import { releaseOptions, releaseGradle } from './android-release.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const build = process.argv.includes('--build');
+const release = process.argv.includes('--release');
+const releaseIdentity = JSON.parse(readFileSync(resolve(root,'native/android/release-identity.json'),'utf8'));
+const releaseConfig = release ? releaseOptions(process.env, releaseIdentity) : null;
+if (releaseConfig) for (const [name,value] of Object.entries(releaseConfig.values)) process.env[name] = value;
 function run(command, args, cwd = root) {
   const result = spawnSync(command, args, { cwd, stdio: 'inherit' });
   if (result.error) throw result.error;
@@ -63,6 +69,16 @@ if (playtest && build && !existsSync(debugKey)) {
 }
 writeFileSync(resolve(root, 'android/app/road-playtest.gradle'), playtest
   ? "android { signingConfigs { debug { storeFile rootProject.file('../.test-output/android-signing/debug.keystore'); storePassword 'android'; keyAlias 'androiddebugkey'; keyPassword 'android' } }; buildTypes { debug { applicationIdSuffix '.playtest'; versionNameSuffix '-playtest'; signingConfig signingConfigs.debug } } }\n" : '');
+const releaseKey = resolve(root, '.test-output/android-signing/release.jks');
+if (releaseConfig) {
+  mkdirSync(dirname(releaseKey), { recursive: true, mode: 0o700 });
+  process.on('exit', () => { try { unlinkSync(releaseKey); } catch {} });
+  writeFileSync(releaseKey, releaseConfig.key, { mode: 0o600 }); chmodSync(releaseKey,0o600);
+  const cert = spawnSync('keytool', ['-exportcert','-keystore',releaseKey,'-storepass:env','ANDROID_KEYSTORE_PASSWORD','-alias',process.env.ANDROID_KEY_ALIAS], { encoding: null });
+  if (cert.status !== 0 || createHash('sha256').update(cert.stdout ?? '').digest('hex') !== releaseIdentity.certificateSha256) throw Error('Release keystore does not match the committed signing certificate');
+}
+writeFileSync(resolve(root,'android/app/road-release.gradle'), releaseConfig ? releaseGradle(releaseIdentity) : '');
+if (!gradle.includes("apply from: 'road-release.gradle'")) gradle += "\napply from: 'road-release.gradle'\n";
 if (!gradle.includes("apply from: 'road-ads.gradle'")) gradle += "\napply from: 'road-ads.gradle'\n";
 if (!gradle.includes("apply from: 'road-playtest.gradle'")) gradle += "\napply from: 'road-playtest.gradle'\n";
 const stringsPath = resolve(app, 'res/values/strings.xml');
@@ -85,4 +101,4 @@ if (!manifest.includes('android:screenOrientation="portrait"'))
 if (!manifest.includes('android.permission.VIBRATE')) manifest = manifest.replace('</manifest>', '    <uses-permission android:name="android.permission.VIBRATE" />\n</manifest>');
 writeFileSync(manifestPath, manifest);
 run(process.execPath, [...cap, 'sync', 'android']);
-if (build) run(process.platform === 'win32' ? 'gradlew.bat' : './gradlew', ['--no-daemon', 'assembleDebug'], resolve(root, 'android'));
+if (build) run(process.platform === 'win32' ? 'gradlew.bat' : './gradlew', ['--no-daemon', release ? 'assembleRelease' : 'assembleDebug'], resolve(root, 'android'));

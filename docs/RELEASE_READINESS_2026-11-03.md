@@ -12,9 +12,9 @@
 
 | Шаг | Текущее основание / следующий результат |
 |---|---|
-| Production signing/build | В проверенном workflow только debug и cached debug keystore. Нужна постоянная release-подпись и отдельный проверяемый release-процесс; не выдавать debug APK за store-релиз. |
-| Live ad configuration | Генератор умеет live и три YANDEX_*_AD_UNIT_ID, но текущий APK содержит demo-* blocks. Наличие/корректность secrets через доступные инструменты не подтверждены. Нужны свои Android banner/interstitial/rewarded IDs, live-config и проверка без сети/no-fill на телефоне. |
-| Production analytics | Workflow использует APPMETRICA_DEBUG_API_KEY. Нужны production app/key и подтверждённая доставка событий отдельно от тестового проекта. |
+| Production signing/build | Добавлен отдельный Android release candidate workflow. Восемь secrets обязательны; assembleRelease, закреплённый сертификат и проверка APK. Первый production CI-прогон и его evidence ожидаются; debug остаётся отдельным. |
+| Live ad configuration | Release workflow передаёт три YANDEX_*_AD_UNIT_ID в live-режиме; готовый APK сверяется с inputs без вывода значений. Наличие/корректность конфигурации подтверждается успешной сборкой и verifier, не чтением secrets API. Нужны свои Android banner/interstitial/rewarded IDs, live-config и проверка без сети/no-fill на телефоне. |
+| Production analytics | Отдельный release workflow использует APPMETRICA_API_KEY, debug —APPMETRICA_DEBUG_API_KEY. Embedded production config проверяется; подтверждённая доставка в dashboard остаётся отдельной. |
 | Store materials/privacy | В исходниках не найдены отдельный готовый комплект карточки и URL опубликованной privacy policy. Подготовить название/описание/иконку/скриншоты и декларации по фактическим SDK/конфигурации; публикация в кабинете не выполнялась. |
 | Final device check | Короткий прогон именно release candidate: запуск/офлайн/жесты/reset/hint/пауза/звук/фон, покупка, награда и real banner/fullscreen, затем restart. Нет утверждения, что это уже пройдено на физическом телефоне. |
 
