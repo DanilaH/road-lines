@@ -1,0 +1,251 @@
+{
+  "source": "c170846d47df26f0f29f96ad02a5532b6424ec53",
+  "date": "2026-11-03",
+  "scope": "soft interface pops with modal-only UI channel; no store publication",
+  "checks": {
+    "application": {
+      "command": "npm run check",
+      "tests": 239,
+      "files": 31,
+      "result": "pass"
+    },
+    "audio": {
+      "checks": [
+        "cold button starts immediately without the large decoded sprite or a callback queue",
+        "rapid route/undo: shared density limit, immediate starts, at most two crossfading voices, no queued replay",
+        "background stops all sources and suspends output; resume drains ended events without replay",
+        "one context, clean disposal",
+        "real touch/keyboard menu and pause buttons emit once; mute respected and enabling sound is audible",
+        "shop close is audible; disabled purchase is silent",
+        "background suppresses UI sounds too"
+      ],
+      "errors": [],
+      "route": {
+        "created": 1,
+        "closed": 0,
+        "live": 0,
+        "peak": 2,
+        "starts": [
+          {
+            "at": 484.59999999962747,
+            "rate": 1,
+            "offset": 1.68,
+            "duration": 7.77
+          },
+          {
+            "at": 569,
+            "rate": 1.2599210739135742,
+            "offset": 1.54,
+            "duration": 7.77
+          },
+          {
+            "at": 692,
+            "rate": 1,
+            "offset": 1.92,
+            "duration": 7.77
+          },
+          {
+            "at": 775.6999999992549,
+            "rate": 1.1224620342254639,
+            "offset": 1.12,
+            "duration": 7.77
+          },
+          {
+            "at": 900.3999999985099,
+            "rate": 1,
+            "offset": 2.04,
+            "duration": 7.77
+          },
+          {
+            "at": 983.7999999988824,
+            "rate": 1,
+            "offset": 1.26,
+            "duration": 7.77
+          }
+        ],
+        "stops": [
+          0.3624943310657597,
+          0.5714739229024943,
+          0.7804535147392291
+        ],
+        "resumes": [],
+        "accepted": [
+          1.099999999627471,
+          2.100000001490116,
+          0.2000000011175871,
+          0.8000000007450581,
+          1.199999999254942,
+          0.6999999992549419
+        ]
+      }
+    },
+    "celebrations": {
+      "checks": [
+        "budget-aware free preview, no disabled purchase trap, rotating result candidates across levels/reload",
+        "affordable result purchase confirms once and preserves the equipped theme after reload",
+        "theme target is durable before animation, reload awards it once, Apply is free",
+        "legacy sector 7 remains 300 coins; all-owned rare sector substitutes 300",
+        "gift sound is allowed under its own modal, background cancels it without replay or loss",
+        "gift acknowledgement failure retains its notice; reload recovery cannot grant it twice",
+        "gift reveal demonstration and complete cleanup on Continue",
+        "rare theme wheel demonstration, specific reward and immediate Apply"
+      ],
+      "screens": [
+        {
+          "width": 320,
+          "height": 568,
+          "lang": "ru",
+          "theme": "classic"
+        },
+        {
+          "width": 320,
+          "height": 568,
+          "lang": "en",
+          "theme": "neon"
+        },
+        {
+          "width": 360,
+          "height": 800,
+          "lang": "ru",
+          "theme": "classic"
+        },
+        {
+          "width": 360,
+          "height": 800,
+          "lang": "en",
+          "theme": "neon"
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "lang": "ru",
+          "theme": "classic"
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "lang": "en",
+          "theme": "neon"
+        },
+        {
+          "width": 412,
+          "height": 915,
+          "lang": "ru",
+          "theme": "classic"
+        },
+        {
+          "width": 412,
+          "height": 915,
+          "lang": "en",
+          "theme": "neon"
+        },
+        {
+          "width": 576,
+          "height": 1280,
+          "lang": "ru",
+          "theme": "classic"
+        },
+        {
+          "width": 576,
+          "height": 1280,
+          "lang": "en",
+          "theme": "neon"
+        }
+      ],
+      "errors": []
+    },
+    "analytics": {
+      "groups": 10,
+      "result": "pass"
+    },
+    "typecheck": "pass",
+    "audio_cpu_throttle": 4
+  },
+  "audio_sprite": {
+    "bytes": 497324,
+    "sha256": "48402fa344c5881971d9f2cb332b36eff0887c7864011d1ad6d7c6b3e8de46ce"
+  },
+  "ci": {
+    "android_run": 41616116089,
+    "app_run": 41616115423,
+    "earlier_failed_audio_run": 41614926006,
+    "earlier_failed_case": "timeout at sound-on/resume pair; local CPU4 reproduced missing cold Continue while sprite decoder was not ready",
+    "resolution": "UI cold PCM fallback; synchronous source scheduling during resume; bounded source cancellation, not a longer test wait",
+    "jobs_at_capture": [
+      {
+        "name": "kit-baseline",
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "name": "mobile-flows (reload-touch)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "mobile-flows (monetization)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "mobile-flows (celebrations)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "mobile-flows (startup-ads)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "mobile-flows (persistence)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "mobile-flows (audio)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "mobile-flows (playtest)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "mobile-flows (localization)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "mobile-flows (analytics)",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "android_result": "success"
+  },
+  "limitations": [
+    "Phone speaker acceptance not observed by this run",
+    "Debug/demo build is not a production store release",
+    "Live IDs, permanent release signing and production analytics not verified by current tools"
+  ],
+  "apk": {
+    "source": "c170846d47df26f0f29f96ad02a5532b6424ec53",
+    "run_id": 41616116089,
+    "artifact_id": 13221507052,
+    "apk_bytes": 10384983,
+    "apk_sha256": "29b55875cae0a08a11e6c8c3bcc6f9d79d8a62cd3a7e0496e063a6864f5a3b9b",
+    "zip_sha256": "128f5f6b2b860f23f746cc2868e99cd82ddbed9cd197ae3d134ed9747b5cc0d6",
+    "signer_sha256": "4dcd2fd9420531301e277b679c956ede74f2d2eeb2a6e01b47e014fae6203b88",
+    "package": "com.danilah.roadlines.playtest",
+    "portrait": true,
+    "ad_config": {
+      "mode": "demo",
+      "banner": "demo-banner-yandex",
+      "interstitial": "demo-interstitial-yandex",
+      "rewarded": "demo-rewarded-yandex"
+    },
+    "matching_web_files": 12
+  }
+}
