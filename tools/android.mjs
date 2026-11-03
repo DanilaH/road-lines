@@ -88,6 +88,8 @@ writeFileSync(stringsPath, strings);
 if (!gradle.includes("apply from: 'road-analytics.gradle'")) { gradle += "\napply from: 'road-analytics.gradle'\n"; writeFileSync(gradlePath, gradle); }
 writeFileSync(gradlePath, gradle);
 
+mkdirSync(resolve(app, 'res/drawable-nodpi'), { recursive: true });
+copyFileSync(resolve(root, 'native/android/road_lines_icon_art.png'), resolve(app, 'res/drawable-nodpi/road_lines_icon_art.png'));
 copyFileSync(resolve(root, 'native/android/road_lines_icon.xml'), resolve(app, 'res/drawable/road_lines_icon.xml'));
 copyFileSync(resolve(root, 'native/android/styles.xml'), resolve(app, 'res/values/styles.xml'));
 const manifestPath = resolve(app, 'AndroidManifest.xml');

@@ -176,3 +176,6 @@ GiftReveal владеет только presentation уже выданных100 �
 
 ## 2026-11-03: production candidate из добавленных секретов
 Пользователь добавил три Yandex IDs, боевой APPMETRICA_API_KEY и четыре ANDROID_* signing secrets. Отдельный release workflow использует постоянный проверяемый сертификат b70932dd6ca71f50c458f8272324c7139b0b00bc3a72b66d2f5837f4fa554d55, applicationId com.danilah.roadlines, version1.0.0/code1. Debug .playtest/demo сохраняется отдельно. Наличие ключей определяется успешной сборкой/проверкой APK, значения не читаются через secrets API и не выводятся. Ничего в магазине автоматически не публикуется.
+
+## 2026-11-03: объёмная иконка Road Lines
+По просьбе пользователя создан собственный raster master: фиолетовая непрерывная лента с белым пунктиром и светлым endpoint на молочных плитках, глубокий фиолетовый фон, без букв/цифр/персонажей. Native bitmap resource заменяет прежний плоский vector; один и тот же drawable используется icon/roundIcon. Мастер1254×1254 —native/android/road_lines_icon_art.png. Генерация built-in image_gen; prompt описывал читаемый3×3 puzzle mark, purple/ivory/white, tactile resin/ceramic и чистую композицию без декора. Сгенерированное изображение не является скриншотом геймплея. Native sync копирует ресурс детерминированно; публикации в магазине этим изменением нет.
