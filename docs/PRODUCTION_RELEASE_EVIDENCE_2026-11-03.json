@@ -124,5 +124,11 @@
     "sha256": "967ed05aa63900d07131adf2a16fb06da26470bc62d598221515ee31472e0e89"
   },
   "delivered_zip_sha256": "a0d1aa0a8dadad1679da1457997abb028baf684112e774216596e19ace3efaa9",
-  "store_publish": "not performed"
+  "store_publish": "not performed",
+  "delivery": {
+    "chat_copy": "upload timed out; finalization outcome unknown; no duplicate write attempted",
+    "github_artifact_url": "https://github.com/DanilaH/road-lines/actions/runs/41627264848/artifacts/13226507071",
+    "local_apk": "RoadLines-1.0.0-release.apk",
+    "local_zip": "RoadLines-1.0.0-release.zip"
+  }
 }
