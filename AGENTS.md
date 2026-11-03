@@ -157,3 +157,7 @@ When adding the application, add and run actual app build and relevant model/flo
 ## Sound harmony correction — user playtest 3 November 2026
 - User rejected off-key, uneven pitched variations. Cell variants must share one tuned C5 root; variation changes timbre/attack, never arbitrary base frequency. Use discrete C-major pentatonic movement with <=3-semitone adjacent steps; no random detuning or level key changes. All rewards/UI/coins stay in the same key. No continuous coin pitch sweep.
 - Keep short, loudness-matched, harmonic samples; crossfade route tails over20ms and limit shared forward/reverse audio density independently of haptics. Never queue sounds behind a fast gesture. Preserve existing haptic strength/lifecycle. Run audio-smoke plus celebrations; subjective phone listening remains separate from tuning/cleanup checks.
+
+## UI button feedback — 3 November 2026
+- Accepted interface activations use short, soft rounded pops after the action establishes its final modal state. Pause/hint-shop/theme-confirm/reward-modal may allow button feedback only; gameplay cues stay blocked. Background/visibility, ads, startup and save conflicts silence every channel. Disabled/cancelled/compatibility duplicate activations stay silent.
+- Honor sound mute, one AudioContext and token cancellation. A current UI gesture may wait at most100ms for decode/resume; retain one pending preparation, never a callback queue. Test real touch/keyboard buttons under pause/shop and background in audio-smoke.

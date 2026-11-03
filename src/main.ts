@@ -90,10 +90,12 @@ async function boot(): Promise<void> {
   const activity = new GameplayActivityCoordinator(() => {}, () => {}), hints = new HintService();
   const feedbackBlockers = new Set<string>();
   const audioBlocked = () => [...feedbackBlockers].some(reason => reason !== 'reward-modal' || bonus !== 'gift');
+  const uiFeedbackAllowed = () => root.dataset.ready === 'true' && [...feedbackBlockers].every(reason =>
+    ['pause', 'hint-shop', 'theme-confirm', 'reward-modal'].includes(reason));
   function block(reason: string, value: boolean): void {
     const wasBlocked = activity.isBlocked();
     if (value) feedbackBlockers.add(reason); else feedbackBlockers.delete(reason);
-    const blocked = audioBlocked(); feedback.setBlocked(blocked);
+    const blocked = audioBlocked(); feedback.setBlocked(blocked); feedback.setUIAllowed(uiFeedbackAllowed());
     if (blocked) giftView.stop();
     activity.setBlocked(reason, value);
     // Banner and cadence also depend on individual reasons (e.g. background while paused).
@@ -557,7 +559,6 @@ async function boot(): Promise<void> {
     const target = (event.target as Element).closest<HTMLButtonElement>('button[data-action]');
     if (monetization?.busy || topupBusy) return;
     if (!target || target.disabled || (activity.isBlocked() && target.dataset.action !== 'resume' && target.dataset.action !== 'notice' && target.dataset.action !== 'sound' && target.dataset.action !== 'vibration' && !(bonus && target.dataset.action === 'close-bonus') && !(pendingTheme && (target.dataset.action === 'buy-theme' || target.dataset.action === 'cancel-theme' || target.dataset.action === 'theme-topup')) && !(hintShop && ['buy-hints','hint-topup','close-hint-shop'].includes(target.dataset.action!)) && !(paused && (target.dataset.action === 'sets' || target.dataset.action === 'home' || target.dataset.action === 'themes' || target.dataset.action === 'language')))) return;
-    feedback.play('button');
     switch (target.dataset.action) {
       case 'buy-hints': buyHints(Number(target.dataset.count)); break;
       case 'close-hint-shop': closeHintShop(); break;
@@ -612,6 +613,7 @@ async function boot(): Promise<void> {
       case 'vibration': feedback.setSetting('vibration', !feedback.settings.vibration); redraw(); break;
       case 'next': void goNext(); break;
     }
+    feedback.setUIAllowed(uiFeedbackAllowed()); feedback.playButton();
   }
   async function goNext(): Promise<void> {
     if (!result || collecting || screen !== 'game' || activity.isBlocked() || conflict || store.recoveryRequired) return;

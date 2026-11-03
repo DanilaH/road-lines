@@ -39,7 +39,11 @@ export class Feedback {
   private buffer?: AudioBuffer;
   private bytes?: ArrayBuffer;
   private load?: Promise<void>;
-  private decoding = false;
+  private decoding?: Promise<void>;
+  private uiAllowed = false;
+  private buttonToken = 0;
+  private preparingButton = false;
+  private pendingButton?: { token: number; at: number };
   private abort = new AbortController();
   private sequence = new SoundSequence();
   private lastHaptic = -Infinity;
@@ -60,15 +64,37 @@ export class Feedback {
       .then(response => { if (!response.ok) throw Error('Sound unavailable'); return response.arrayBuffer(); })
       .then(bytes => { if (!this.disposed) { this.bytes = bytes; this.decodeSamples(); } }).catch(() => {});
   }
-  private decodeSamples(): void {
+  private decodeSamples(): Promise<void> {
+    if (this.decoding) return this.decoding;
     const context = this.context;
-    if (!context || !this.bytes || this.buffer || this.decoding || this.disposed) return;
-    this.decoding = true;
-    void context.decodeAudioData(this.bytes.slice(0)).then(buffer => { if (!this.disposed) { this.buffer = buffer; this.bytes = undefined; } })
-      .catch(() => {}).finally(() => { this.decoding = false; });
+    if (!context || !this.bytes || this.buffer || this.disposed) return Promise.resolve();
+    this.decoding = context.decodeAudioData(this.bytes.slice(0)).then(buffer => { if (!this.disposed) { this.buffer = buffer; this.bytes = undefined; } })
+      .catch(() => {}).finally(() => { this.decoding = undefined; });
+    return this.decoding;
   }
-  prime(): void {
-    if (this.disposed || this.blocked || !this.settings.sound) return;
+  setUIAllowed(value: boolean): void {
+    this.uiAllowed = value;
+    if (!value) { this.buttonToken++; this.pendingButton = undefined; }
+  }
+  playButton(): void {
+    if (this.disposed || !this.uiAllowed) return;
+    const token = ++this.buttonToken, at = performance.now();
+    this.prime(true);
+    if (!this.settings.sound || this.buffer && this.context?.state === 'running') { this.play('button', 0, true); return; }
+    this.pendingButton = { token, at };
+    if (this.preparingButton) return;
+    this.preparingButton = true;
+    // Keep one preparation even if loading stalls; newer taps replace the pending gesture.
+    void (this.load ?? Promise.resolve()).then(() => this.decodeSamples()).then(async () => {
+      const pending = this.pendingButton;
+      if (!pending || this.disposed || !this.uiAllowed || pending.token !== this.buttonToken || performance.now()-pending.at > 100) return;
+      if (this.context?.state === 'suspended') await this.context.resume();
+      if (!this.disposed && this.uiAllowed && pending.token === this.buttonToken && performance.now()-pending.at <= 100) this.play('button', 0, true);
+    }).catch(() => {}).finally(() => { this.preparingButton = false; this.pendingButton = undefined; });
+  }
+
+  prime(ui = false): void {
+    if (this.disposed || this.blocked && !(ui && this.uiAllowed) || !this.settings.sound) return;
     try {
       if (!this.context) {
         this.context = new AudioContext(); this.master = this.context.createGain();
@@ -87,8 +113,8 @@ export class Feedback {
     if (!this.settings.sound) this.stopVoices(); else this.prime();
     if (!this.settings.vibration && Capacitor.isNativePlatform()) void native.cancel().catch(() => {});
   }
-  play(cue: Cue, progress = 0): void {
-    if (this.disposed || this.blocked || !this.gate.accept(cue, performance.now())) return;
+  play(cue: Cue, progress = 0, ui = false): void {
+    if (this.disposed || this.blocked && !(ui && cue === 'button' && this.uiAllowed) || !this.gate.accept(cue, performance.now())) return;
     const now = performance.now(), celebration = cue === 'win' || cue === 'gift';
     if (this.settings.vibration && (celebration || now >= this.hapticUntil) && now - this.lastHaptic >= (cue === 'coin' ? 90 : celebration ? 20 : 70)) {
       this.lastHaptic = now;
@@ -98,7 +124,7 @@ export class Feedback {
       else if (navigator.vibrate) navigator.vibrate(cue === 'gift' ? [32,45,42,50,70,70,100] : cue === 'win' ? [34,45,42,55,62] : cue === 'undo' ? [14,22,20] : cue === 'reject' ? [24,28,24] : cue === 'star' ? [26,28,30] : cue === 'cell' ? 24 : 14);
     }
     if (!this.settings.sound || !this.soundGate.accept(cue, now)) return;
-    this.prime();
+    this.prime(ui);
     const context = this.context;
     if (!context || !this.master || context.state !== 'running') return;
     if (!this.buffer || this.voices.size >= 20) return;
@@ -107,7 +133,7 @@ export class Feedback {
     const source = context.createBufferSource(), gain = context.createGain();
     source.buffer = this.buffer;
     source.playbackRate.value = choice.rate;
-    gain.gain.value = (cue === 'button' ? .25 : cue === 'cell' ? .44 : cue === 'undo' ? .28 : cue === 'coin' ? .34 : .52) * choice.gain;
+    gain.gain.value = (cue === 'button' ? .42 : cue === 'cell' ? .44 : cue === 'undo' ? .28 : cue === 'coin' ? .34 : .52) * choice.gain;
     source.connect(gain); gain.connect(this.master); this.voices.add(source);
     if (cue === 'cell' || cue === 'undo') this.routeVoice = { source, gain };
     source.onended = () => { if (this.routeVoice?.source === source) this.routeVoice = undefined; this.voices.delete(source); source.disconnect(); gain.disconnect(); };
@@ -134,6 +160,6 @@ export class Feedback {
     this.stopVoices(); this.hapticUntil = 0;
     if (Capacitor.isNativePlatform()) void native.cancel().catch(() => {}); else navigator.vibrate?.(0);
   }
-  private stopVoices(): void { this.routeVoice = undefined; for (const voice of this.voices) { try { voice.stop(); } catch {} voice.disconnect(); } this.voices.clear(); }
+  private stopVoices(): void { this.buttonToken++; this.pendingButton = undefined; this.routeVoice = undefined; for (const voice of this.voices) { try { voice.stop(); } catch {} voice.disconnect(); } this.voices.clear(); }
   dispose(): void { this.abort.abort(); this.buffer = undefined; this.bytes = undefined; this.setBlocked(true); this.disposed = true; void this.context?.close().catch(() => {}); }
 }

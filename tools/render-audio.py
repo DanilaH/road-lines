@@ -50,7 +50,13 @@ for family in range(3):
         clips[f'cell{family*4+strike}'] = mallet(C, .115, family, strike)
 for i in range(4): clips[f'undo{i}'] = mallet(note(-12), .095, 0, i)
 for i, semitones in enumerate([12,16,19,16]): clips[f'coin{i}'] = mallet(note(semitones), .105, 1, i)
-for i in range(3): clips[f'button{i}'] = mallet(note(-12), .075, 0, i)
+# A rounded contact pop with a tiny resonant body, no pitch sweep or metallic tail.
+for i in range(3):
+    t = np.arange(int(rate * .065)) / rate
+    body = np.sin(2*np.pi*note(-12)*t) * np.exp(-t*(72+i*2))
+    contact = noise(len(t)) * np.exp(-t*330) * (.055+i*.004)
+    clips[f'button{i}'] = (body + contact) * (1-np.exp(-t*1250))
+    clips[f'button{i}'][-int(rate*.012):] *= np.linspace(1,0,int(rate*.012))
 for i in range(2): clips[f'reject{i}'] = mallet(note(-24), .105, 0, i)
 for i, semitones in enumerate([4,7,12]): clips[f'star{i}'] = mallet(note(semitones), .32, 1, i)
 clips['win0'] = chord([-12,-8,-5,0], .72)
