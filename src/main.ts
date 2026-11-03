@@ -285,7 +285,7 @@ async function boot(): Promise<void> {
       action.disabled = false;
       if (!owned && tried && !affordable) action.textContent = copy.getCoins;
     }
-    const bannerEligible = innerHeight >= 680 && (screen === 'levels' || screen === 'game' && !result) && !bonus && !pendingTheme && !hintShop && !topupBusy && root.dataset.background !== 'true' && !conflict && !monetization?.recoveryFailed && (!activity.isBlocked() || paused && feedbackBlockers.size === 1);
+    const bannerEligible = innerHeight >= 680 && (screen === 'levels' || screen === 'game' && !result) && !bonus && !pendingTheme && !hintShop && !topupBusy && root.dataset.background !== 'true' && !conflict && (!activity.isBlocked() || paused && feedbackBlockers.size === 1);
     $('#banner-slot').hidden = !bannerEligible || !monetization?.enabled.banner;
     const extraBanner = $('#banner-slot').hidden ? 0 : Math.max(0, $('#banner-slot').getBoundingClientRect().height - 60);
     root.style.setProperty('--banner-extra', `${extraBanner}px`);
@@ -356,7 +356,7 @@ async function boot(): Promise<void> {
     (value ? $('[data-action=resume]') : screen === 'game' ? $('[data-action=pause]') : $('[data-action=menu-settings]')).focus();
   }
   function onBack(): void {
-    if (monetization?.busy || monetization?.recoveryFailed) return;
+    if (monetization?.busy) return;
     if (hintShop) { closeHintShop(); return; }
     if (bonus) { closeBonus(false); return; }
     if (pendingTheme) { closeThemePurchase(); return; }
@@ -555,7 +555,7 @@ async function boot(): Promise<void> {
   }
   function click(event: MouseEvent): void {
     const target = (event.target as Element).closest<HTMLButtonElement>('button[data-action]');
-    if (monetization?.busy || topupBusy || monetization?.recoveryFailed && target?.dataset.action !== 'notice') return;
+    if (monetization?.busy || topupBusy) return;
     if (!target || target.disabled || (activity.isBlocked() && target.dataset.action !== 'resume' && target.dataset.action !== 'notice' && target.dataset.action !== 'sound' && target.dataset.action !== 'vibration' && !(bonus && target.dataset.action === 'close-bonus') && !(pendingTheme && (target.dataset.action === 'buy-theme' || target.dataset.action === 'cancel-theme' || target.dataset.action === 'theme-topup')) && !(hintShop && ['buy-hints','hint-topup','close-hint-shop'].includes(target.dataset.action!)) && !(paused && (target.dataset.action === 'sets' || target.dataset.action === 'home' || target.dataset.action === 'themes' || target.dataset.action === 'language')))) return;
     feedback.play('button');
     switch (target.dataset.action) {
@@ -594,7 +594,6 @@ async function boot(): Promise<void> {
       case 'hint': void requestHint(); break;
       case 'notice':
         if (conflict) location.reload();
-        else if (monetization?.recoveryFailed) { void monetization.recover().catch(() => {}); }
         else if (store.recoveryRequired) location.reload();
         else if (saveFailed && screen === 'wheel') {
           try { store.reload(); saveFailed = false; notice(''); redraw(); if (store.state.daily.pending) void settleWheel(); } catch { saveError(); }
@@ -627,7 +626,7 @@ async function boot(): Promise<void> {
     if (!next) { collecting = false; navigate('levels'); return; }
     analytics.event('result_continue', { level_id: level.id, first_clear: reward > 0 });
     await monetization?.interstitial(level.id, reward > 0);
-    if (disposed || !(await foreground()) || monetization?.recoveryFailed) { collecting = false; return; }
+    if (disposed || !(await foreground())) { collecting = false; return; }
     collecting = false;
     const draft = store.state.drafts[next.id]?.path ?? [next.start];
     const nextPath = complete(next, draft) ? [next.start] : [...draft];
@@ -689,9 +688,9 @@ async function boot(): Promise<void> {
   }
   game.events.once('postrender', () => { if (!result && !activity.isBlocked()) scene.open(); rendererReady = true; timeline.mark('renderer'); presentable(); if (activity.isBlocked()) game.loop.sleep(); });
   monetization = new Monetization(store, localStorage, analytics, block,
-    () => { clearTimeout(saveTimer); input.cancel(); invalidate(true); if (conflict) return false; try { store.reload(); saveFailed = false; } catch { return false; } return flush(); },
+    () => { clearTimeout(saveTimer); if (conflict) return false; try { store.reload(); } catch { return false; } return flush(); },
     () => { if (!disposed) { showBalance(store.state.coins); redraw(); } },
-    () => { hintShop = false; pendingTheme = null; block('hint-shop', false); block('theme-confirm', false); saveError('ad-receipt'); notice(() => copy.rewardRecoveryFailed, () => copy.retry); redraw(); }, $('#banner-slot'));
+    $('#banner-slot'));
   // Native ad status/listener/receipt timing must never gate the first visible frame.
   void monetization.init().catch(() => {});
   redraw();

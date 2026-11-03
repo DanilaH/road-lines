@@ -10,16 +10,21 @@ let browser;const report={checks:[],errors:[]};
 try{
  for(let i=0;;i++){try{if((await fetch('http://127.0.0.1:4248')).ok)break;}catch{}if(i>80)throw Error('preview');await new Promise(r=>setTimeout(r,100));}
  browser=await chromium.launch({headless:true,args:['--no-sandbox']});
- for(const mode of before?['startup-status-hang']:['startup-status-hang','startup-pending-delay','startup-pending-hang']){
+ for(const mode of before?['startup-status-hang']:['startup-status-hang','startup-pending-delay','startup-pending-hang','startup-pending-error']){
   const c=await browser.newContext({viewport:{width:390,height:844},reducedMotion:'reduce'});const p=await c.newPage();p.on('pageerror',e=>report.errors.push(e.message));await p.goto('http://127.0.0.1:4248/?ad='+mode);
   if(before){await p.waitForTimeout(16000);assert.equal(await p.locator('#app').getAttribute('data-ready'),null);assert((await p.locator('#startup').textContent()).includes('слишком много времени'));console.log('REPRODUCED: unresolved native status prevents app readiness and reaches15s startup warning');await c.close();break;}
   await p.locator('#app[data-ready=true]').waitFor({timeout:4500});assert.equal(await p.locator('#startup').count(),0);
-  if(mode==='startup-pending-hang'){
-   await p.locator('.notice:visible').waitFor({timeout:7000});assert.equal(await p.locator('#app').getAttribute('data-blocked'),'true');
-   assert.equal(await p.locator('.fatal').count(),0);
-  }else{
-   await p.locator('#app[data-blocked=false]').waitFor({timeout:4500});await p.locator('[data-action=continue]').click();await p.locator('.play').waitFor();await p.locator('[data-action=pause]').click();await p.locator('.pause-overlay:visible').waitFor();await p.keyboard.press('Escape');
+  if(mode==='startup-pending-error') await c.setOffline(true);
+  await p.locator('#app[data-blocked=false]').waitFor({timeout:1000});
+  await p.locator('[data-action=continue]').click();await p.locator('.play').waitFor();
+  await p.locator('#board').focus();await p.keyboard.press('ArrowRight');
+  if(mode==='startup-pending-hang' || mode==='startup-pending-error') {
+   await p.waitForTimeout(11000); // deadline plus first automatic retry, still playable
+   assert.equal(await p.locator('.notice:visible').count(),0);
+   assert.equal(await p.locator('#app').getAttribute('data-blocked'),'false');
   }
+  await p.locator('[data-action=pause]').click();await p.locator('.pause-overlay:visible').waitFor();await p.keyboard.press('Escape');
+  assert.equal(await p.locator('#app').getAttribute('data-blocked'),'false');
   report.checks.push(mode);await c.close();
  }
  assert.deepEqual(report.errors,[]);writeFileSync(out+'/results.json',JSON.stringify(report,null,2));console.log('Startup checks passed',report.checks);

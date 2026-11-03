@@ -24,8 +24,8 @@ export function testAds(): AdsBridge {
       await new Promise(r => setTimeout(r, 250)); if (live) emit(kind, 'dismiss');
       return { shown: true, outcome: 'dismissed' };
     },
-    pending: async () => { if (mode === 'startup-pending-hang') return new Promise(() => {}); if (mode === 'startup-pending-delay') await new Promise(r=>setTimeout(r,650)); return ({ receipts: localStorage.getItem('test-ad-pending') ? [JSON.parse(localStorage.getItem('test-ad-pending')!)] : [] }); },
-    acknowledge: async ({ id }) => { const raw = localStorage.getItem('test-ad-pending'); if (raw && JSON.parse(raw).id !== id) throw Error('Ack mismatch'); localStorage.removeItem('test-ad-pending'); },
+    pending: async () => { if (mode === 'startup-pending-error') throw Error('Offline'); if (mode === 'startup-pending-hang') return new Promise(() => {}); if (mode === 'startup-pending-delay') await new Promise(r=>setTimeout(r,650)); return ({ receipts: localStorage.getItem('test-ad-pending') ? [JSON.parse(localStorage.getItem('test-ad-pending')!)] : [] }); },
+    acknowledge: async ({ id }) => { if (mode === 'ack-hang') return new Promise(() => {}); const raw = localStorage.getItem('test-ad-pending'); if (raw && JSON.parse(raw).id !== id) throw Error('Ack mismatch'); localStorage.removeItem('test-ad-pending'); },
     measureBanner: async ({ slotWidth }) => ({ webView: { x: 0, y: 0, width: innerWidth, height: innerHeight }, root: { width: innerWidth, height: innerHeight }, adHeight: mode === 'large-banner' ? 90 : 50 }),
     placeBanner: async () => { localStorage.setItem('test-banner-state','visible'); }, hideBanner: async () => { localStorage.setItem('test-banner-state','hidden'); }, dispose: async () => { live = false; listeners.clear(); },
     addListener: async (_name, cb) => { listeners.add(cb); return { remove: async () => { listeners.delete(cb); } }; },

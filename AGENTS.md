@@ -148,5 +148,8 @@ When adding the application, add and run actual app build and relevant model/flo
 
 
 ## Startup and optional native ads
-- Native ad init/listener/status cannot gate core lifecycle installation or the first visible frame. Pending earned receipts still protect valuable mutations; an unavailable recovery must show bounded retry rather than an endless startup cover. Do not clear pending receipts or guess rewards on timeout.
+- Native ad init/listener/status cannot gate core lifecycle installation or the first visible frame. Receipt queries, network errors and ack failures must never block Play, route input, Back, menus or Continue. Recover in the background with bounded backoff and one outstanding native RPC per operation; preserve pending receipts. Settle the latest prefix and atomically grant+ledger synchronously only when a validated receipt arrives, then ack without holding a gameplay gate. Genuine ambiguous save I/O retains its separate recovery protection. Do not clear pending receipts or guess rewards on timeout.
 - Do not sleep the renderer before its first postrender when readiness depends on that event. Run `node tools/startup-ads-smoke.mjs` for startup/native timing changes, including never-resolving status and delayed/pending receipt calls.
+
+## Ad failure policy — user correction 3 November 2026
+- No ad-receipt/ad-recovery-error activity blockers or mandatory retry dialogs. No receipt query may cancel a gesture or hint search. Ad unavailability does not require internet to play. Late rewards rebase on the latest synchronous GameStore state; only actual save conflicts/ambiguous storage failures may protect valuable mutations. Missing callbacks must not accumulate native RPCs.

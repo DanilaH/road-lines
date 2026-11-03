@@ -15,7 +15,6 @@ interface View { playing: boolean; banner: boolean; completed: number; levelId: 
 export class Monetization {
   enabled = { rewarded: false, interstitial: false, banner: false };
   busy = false;
-  recoveryFailed = false;
   readonly cadence: AdCadence;
   private ads?: AdsBridge;
   private nativeBanner?: NativeBanner;
@@ -23,29 +22,47 @@ export class Monetization {
   private recovery?: Promise<void>;
   private queue?: DurableReceiptQueue<AdReceipt>;
   private disposed = false;
+  private initializing?: Promise<void>;
+  private retryAt = 0;
+  private failures = 0;
   private refreshing = false;
   private statusSettled = false;
-  private statusAttempts = 0;
+  private statusRetryAt = 0;
+  private prepareRetryAt = 0;
+  private pendingCall = false;
+  private latePending?: { receipts: AdReceipt[] };
+  private ackCalls = new Set<string>();
+  private preparing = false;
   private preparedLevel = '';
   private view: View = { playing: false, banner: false, completed: 0, levelId: '' };
   constructor(private store: GameStore, storage: SyncStorage, private analytics: GameAnalytics,
     private block: (reason: string, value: boolean) => void, private quiesce: () => boolean,
-    private refresh: () => void, private error: () => void, private slot: HTMLElement) {
+    private refresh: () => void, private slot: HTMLElement) {
     this.cadence = new AdCadence(storage);
   }
   async init(): Promise<void> {
-    this.block('ad-receipt', true);
-    try {
+    if (this.initializing) return this.initializing;
+    if (this.disposed || this.ads) return;
+    this.initializing = (async () => { try {
       const ads = await adDeadline(createAdsBridge());
       if (this.disposed) { await ads.dispose(); return; }
       this.ads = ads;
       this.queue = new DurableReceiptQueue({
         commit: async r => {
           if (this.disposed || !validAdReceipt(r)) throw Error('Invalid or disposed reward');
-          const result = this.store.commitAdReceipt(r);
+          // No await between settling the latest route and the atomic wallet/ledger write.
+          if (!this.quiesce()) throw Error('Cannot settle save');
+          let result: 'applied' | 'already-applied';
+          try { result = this.store.commitAdReceipt(r); }
+          catch (e) { try { this.store.reload(); } catch { /* Preserve genuine save recovery gate. */ } throw e; }
+          this.refresh();
           if (result === 'applied') this.analytics.event('ad_reward_granted', { placement: r.placement, amount: r.amount, recovered: !this.busy });
           return result;
-        }, acknowledge: id => adDeadline(ads.acknowledge({ id })),
+        }, acknowledge: async id => {
+          if (this.ackCalls.has(id)) throw Error('Ack still pending');
+          this.ackCalls.add(id);
+          await adDeadline(ads.acknowledge({ id }).finally(() => this.ackCalls.delete(id)));
+        },
       });
       void ads.addListener('adEvent', (e: AdEvent) => {
         if (this.disposed) return;
@@ -53,46 +70,66 @@ export class Monetization {
         if (e.phase === 'earned') void this.recover().catch(() => {});
       }).then(handle => { if (this.disposed) void handle.remove(); else this.listener = handle; }).catch(() => {});
       this.nativeBanner = new NativeBanner(ads, this.slot, this.refresh);
-      await this.recover(); void this.refreshStatus();
-    } catch {
-      if (!this.disposed) {
-        if (!this.recoveryFailed) { this.recoveryFailed = true; this.block('ad-recovery-error', true); this.error(); }
-        this.block('ad-receipt', false);
-      }
-    }
+      void this.recover().catch(() => {}); void this.refreshStatus();
+    } catch { this.retryLater(); }
+    })().finally(() => { this.initializing = undefined; });
+    return this.initializing;
+  }
+  private retryLater(): void {
+    this.retryAt = Date.now() + Math.min(30000, 5000 * 2 ** Math.min(this.failures++, 3));
   }
   async refreshStatus(): Promise<void> {
-    if (!this.ads || this.disposed || this.refreshing || this.statusSettled) return;
+    if (!this.ads || this.disposed || this.refreshing || this.statusSettled || Date.now() < this.statusRetryAt) return;
     this.refreshing = true;
-    if (++this.statusAttempts >= 30) this.statusSettled = true;
-    try { const s = await adDeadline(this.ads.status()); if (!this.disposed) { this.statusSettled = this.statusSettled || s.mode === 'disabled' || s.mode === 'test' || Boolean(s.ready); if (JSON.stringify(s) !== JSON.stringify(this.enabled)) { this.enabled = s; this.refresh(); } } }
-    catch { /* Native unavailable never prevents boot. */ }
-    finally { this.refreshing = false; }
+    this.statusRetryAt = Date.now() + 10000;
+    try {
+      await adDeadline(this.ads.status().then(s => {
+        if (this.disposed) return;
+        this.statusSettled = s.mode === 'disabled' || s.mode === 'test' || Boolean(s.ready);
+        if (JSON.stringify(s) !== JSON.stringify(this.enabled)) { this.enabled = s; this.refresh(); }
+      }).finally(() => { this.refreshing = false; }));
+    } catch { /* Native unavailable never prevents boot; at most one outstanding status RPC. */ }
+  }
+  private async pending(): Promise<{ receipts: AdReceipt[] }> {
+    if (this.latePending) { const value = this.latePending; this.latePending = undefined; return value; }
+    if (this.pendingCall) throw Error('Receipt query still pending');
+    this.pendingCall = true;
+    let expired = false;
+    const operation = this.ads!.pending().then(value => {
+      if (expired && !this.disposed) { this.latePending = value; this.retryAt = 0; }
+      return value;
+    }).finally(() => { this.pendingCall = false; });
+    try { return await adDeadline(operation); }
+    catch (e) { expired = true; throw e; }
   }
   update(view: View): void {
     this.view = view;
-    this.cadence.setActive(view.playing && !this.busy && !this.recoveryFailed);
-    this.nativeBanner?.setVisible(this.enabled.banner && view.banner && !this.busy && !this.recoveryFailed);
-    if (view.playing && this.enabled.interstitial && this.preparedLevel !== view.levelId && !this.busy) {
-      this.preparedLevel = view.levelId; void this.ads?.prepareInterstitial().catch(() => {});
+    this.cadence.setActive(view.playing && !this.busy);
+    this.nativeBanner?.setVisible(this.enabled.banner && view.banner && !this.busy);
+    if (view.playing && this.enabled.interstitial && (this.preparedLevel !== view.levelId || Date.now() >= this.prepareRetryAt) && !this.busy && !this.preparing) {
+      this.preparing = true; this.preparedLevel = view.levelId; this.prepareRetryAt = Date.now() + 30000;
+      void this.ads?.prepareInterstitial().catch(() => {}).finally(() => { this.preparing = false; });
     }
   }
-  tick(): void { this.cadence.tick(); }
+  tick(): void {
+    this.cadence.tick();
+    this.update(this.view);
+    if (!this.disposed && Date.now() >= this.retryAt && !this.recovery && !this.initializing)
+      void this.recover().catch(() => {});
+  }
   protect(levelId: string): void { this.cadence.protect(levelId); }
   async recover(): Promise<void> {
     if (this.recovery) return this.recovery;
     if (this.disposed) return;
     if (!this.ads || !this.queue) return this.init();
     this.recovery = (async () => {
-      this.block('ad-receipt', true);
       try {
-        if (!this.quiesce()) throw Error('Cannot quiesce save');
-        const { receipts } = await adDeadline(this.ads!.pending());
+        // Query and ack are optional network/native work, never gameplay blockers.
+        const { receipts } = await this.pending();
         if (this.disposed) return;
         for (const r of receipts) { if (!validAdReceipt(r)) throw Error('Invalid native receipt'); await this.queue!.deliver(r); }
-        this.recoveryFailed = false; this.block('ad-recovery-error', false);
-      } catch (e) { if (this.disposed) return; this.recoveryFailed = true; this.block('ad-recovery-error', true); this.error(); throw e; }
-      finally { if (!this.disposed) { this.block('ad-receipt', false); this.refresh(); } }
+        this.failures = 0; this.retryAt = Date.now() + 30000;
+      } catch (e) { this.retryLater(); throw e; }
     })().finally(() => { this.recovery = undefined; });
     return this.recovery;
   }
@@ -108,14 +145,14 @@ export class Monetization {
     if (this.enabled.interstitial && this.cadence.eligible(this.view.completed, levelId, first)) await this.fullscreen('interstitial', 'continue');
   }
   private async fullscreen(kind: AdKind, placement: string): Promise<void> {
-    if (!this.ads || this.busy || this.disposed || this.recoveryFailed || !this.quiesce()) return;
+    if (!this.ads || this.busy || this.disposed || !this.quiesce()) return;
     this.busy = true; this.cadence.begin(this.view.completed); this.block('ad-fullscreen', true); this.refresh();
     let shown = false;
     try {
       const answer = await this.ads.show({ kind, placement, session: crypto.randomUUID() }); shown = answer.shown;
       if (this.disposed) return;
-      await this.recover();
-    } catch { if (!this.disposed && !this.recoveryFailed) this.analytics.event('ad_event', { format: kind, phase: 'show_error' }); }
+      void this.recover().catch(() => {});
+    } catch { if (!this.disposed) this.analytics.event('ad_event', { format: kind, phase: 'show_error' }); }
     finally {
       this.cadence.end(this.view.completed, shown);
       this.preparedLevel = '';

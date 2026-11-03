@@ -49,7 +49,23 @@ try{
  await check('failed durable grant retains native pending; retry restores exactly150',async()=>{
   const {p,c}=await open(seed());await shop(p);
   await p.evaluate(k=>{const set=Storage.prototype.setItem;Storage.prototype.setItem=function(a,b){if(a===k&&JSON.parse(b).adLedger?.sequence===1)throw Error('disk');return set.call(this,a,b);};window.__restoreGrant=()=>Storage.prototype.setItem=set;},key);
-  await p.locator('[data-action=hint-topup]').tap();await p.waitForFunction(()=>localStorage.getItem('test-ad-pending'));await p.locator('[data-action=notice]:visible').waitFor();await p.waitForTimeout(600);assert.equal((await save(p)).coins,0);assert.equal(await p.locator('#app').getAttribute('data-blocked'),'true');await p.evaluate(()=>__restoreGrant());await p.locator('[data-action=notice]').tap();await p.waitForFunction(k=>JSON.parse(localStorage.getItem(k)).coins===150,key);await p.waitForFunction(()=>!localStorage.getItem('test-ad-pending'));assert.equal((await save(p)).adLedger.sequence,1);await c.close();
+  await p.locator('[data-action=hint-topup]').tap();await p.waitForFunction(()=>localStorage.getItem('test-ad-pending'));
+  await p.waitForTimeout(700);assert.equal((await save(p)).coins,0);
+  await p.keyboard.press('Escape');assert.equal(await p.locator('#app').getAttribute('data-blocked'),'false');
+  await p.locator('[data-action=pause]').tap();await p.keyboard.press('Escape');
+  await p.evaluate(()=>__restoreGrant());await p.waitForFunction(k=>JSON.parse(localStorage.getItem(k)).coins===150,key,{timeout:15000});
+  await p.waitForFunction(()=>!localStorage.getItem('test-ad-pending'));assert.equal((await save(p)).adLedger.sequence,1);await c.close();
+ });
+ await check('missing native ack leaves earned money usable and Back returns to play',async()=>{
+  const {p,c}=await open(seed(),{mode:'ack-hang'});await shop(p);await p.locator('[data-action=hint-topup]').tap();
+  await p.waitForFunction(k=>JSON.parse(localStorage.getItem(k)).coins===150,key);
+  await p.locator('[data-action=buy-hints][data-count="1"]').tap();assert.equal((await save(p)).coins,90);
+  assert.equal(await p.locator('#app').getAttribute('data-blocked'),'false');
+  await p.locator('[data-action=pause]').tap();await p.keyboard.press('Escape');
+  await p.waitForTimeout(6500);assert.equal((await save(p)).coins,90);assert.equal((await save(p)).hints,1);
+  assert(await p.evaluate(()=>Boolean(localStorage.getItem('test-ad-pending'))));
+  await p.goto(url+'/?ad=earned');await p.locator('#app[data-ready=true]').waitFor();await p.waitForFunction(()=>!localStorage.getItem('test-ad-pending'));
+  assert.equal((await save(p)).coins,90);assert.equal((await save(p)).adLedger.sequence,1);await c.close();
  });
  await check('theme shortage uses same150 topup, free preview is not ownership',async()=>{
   const l=levels[0],{p,c}=await open(seed(l,{path:l.witness,completed:[l.id],coins:400}));await enter(p);await p.locator('[data-action=try-result-theme]').tap();const id=await p.locator('.result-theme-card').getAttribute('data-theme-id');await p.locator('[data-action=try-result-theme]').tap();assert.equal((await save(p)).ownedThemes.includes(id),false);await p.locator('[data-action=theme-topup]').tap();await p.waitForFunction(k=>JSON.parse(localStorage.getItem(k)).coins===550,key);await p.waitForFunction(()=>!document.querySelector('[data-action=buy-theme]').disabled);await p.locator('[data-action=buy-theme]').tap();assert.equal((await save(p)).coins,50);assert((await save(p)).ownedThemes.includes(id));await c.close();
