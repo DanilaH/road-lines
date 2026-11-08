@@ -28,9 +28,18 @@ describe('actual TypeScript/native analytics contract', () => {
   it('detects the historical silently rejected monetization events and parameters', () => {
     expect(values(native.replace('"ad_reward_granted",', ''), 'EVENTS')).not.toEqual(expectedEvents);
     expect(values(native.replace('"placement",', ''), 'KEYS')).not.toEqual(expectedKeys);
-    // Every payload fits the native envelope; types and values still need device acceptance.
+    // Every payload fits the actual native envelope; values still need device acceptance.
+    const envelope = Number(native.match(/params\.length\(\)\s*>\s*(\d+)/)?.[1]);
+    expect(Number.isSafeInteger(envelope) && envelope > 0).toBe(true);
     for (const event of eventType.getProperties()) {
-      expect(checker.getTypeOfSymbolAtLocation(event, events).getProperties().length + 1).toBeLessThanOrEqual(24);
+      const fields = checker.getTypeOfSymbolAtLocation(event, events).getProperties();
+      expect(fields.length + 1).toBeLessThanOrEqual(envelope);
+      for (const field of fields) {
+        const type = checker.getTypeOfSymbolAtLocation(field, events);
+        const parts = type.isUnion() ? type.types : [type];
+        const scalar = ts.TypeFlags.StringLike | ts.TypeFlags.NumberLike | ts.TypeFlags.BooleanLike | ts.TypeFlags.Undefined;
+        expect(parts.every(t => Boolean(t.flags & scalar)), `${event.name}.${field.name} must fit native scalar parameters`).toBe(true);
+      }
     }
   });
 });
