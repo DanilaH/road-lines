@@ -16,11 +16,13 @@ public class RoadAnalyticsPlugin extends Plugin {
     private static final Set<String> EVENTS = new HashSet<>(Arrays.asList(
         "app_ready", "startup_error", "level_start", "first_move", "level_complete", "level_exit", "level_pause", "level_reset",
         "hint_request", "hint_result", "hint_spent", "hint_repeat", "theme_purchase", "theme_selected", "wheel_reward",
-        "save_error", "save_conflict", "language_change"));
+        "save_error", "save_conflict", "language_change", "ad_offer", "ad_event", "ad_reward_granted",
+        "hint_purchase", "result_continue", "ad_next_level"));
     private static final Set<String> KEYS = new HashSet<>(Arrays.asList(
         "schema", "language", "reason", "level_id", "level_version", "set_id", "cells", "finish", "walls", "checkpoints",
         "attempt", "resumed", "replay", "active_ms", "first_clear", "reward", "resets", "undo_cells", "filled", "outcome",
-        "remaining", "theme", "price", "sector", "amount", "recovered", "operation", "saved"));
+        "remaining", "theme", "price", "sector", "amount", "recovered", "operation", "saved",
+        "placement", "format", "phase", "count"));
     @PluginMethod public void status(PluginCall call) {
         JSObject result = new JSObject(); result.put("enabled", RoadApplication.analyticsEnabled()); call.resolve(result);
     }
