@@ -62,3 +62,11 @@ Native plugin `status()` сообщает, активирован ли SDK. Ко
 - [Event reporting / configuration](https://appmetrica.yandex.com/docs/en/sdk/android/analytics/android-operations.html).
 - [Config API pinned v8.5.1](https://github.com/appmetrica/appmetrica-sdk-android/blob/v8.5.1/analytics/src/main/java/io/appmetrica/analytics/AppMetricaConfig.java).
 - [Official optional modules](https://github.com/appmetrica/appmetrica-sdk-android).
+
+## Native contract parity — 8 November 2026
+
+The Java event/key whitelist now accepts all24 Events members, including ad_offer/ad_event/ad_reward_granted/hint_purchase/result_continue/ad_next_level and placement/format/phase/count. Previously these six custom event names were rejected before AppMetrica transport. This does not imply failure of unrelated custom or automatic SDK events.
+
+`tests/native-analytics-contract.test.ts` resolves the actual TS Events interface (including LevelInfo aliases/intersections) and compares every name/key plus schema against Java. It also verifies the native24-parameter envelope and demonstrates detection of the historical missing-event/key regressions. It is a build contract check, not a Java entrypoint/device/dashboard delivery test.
+
+Local acceptance: npm run check (241 app tests in32 files plus5 release config checks), analytics browser smoke10 groups. Native compilation is left to Android CI; live dashboard delivery remains physical-device acceptance. No version/signing/SDK change or store publication is included.
