@@ -166,3 +166,11 @@ When adding the application, add and run actual app build and relevant model/flo
 - User supplied the eight named repository secrets. Release is a separate main-branch/manual workflow, using assembleRelease, live ad config and production AppMetrica. Debug/playtest automatic builds retain official demo ads. No store publishing step is authorized by merely producing a candidate.
 - Public identity/version/certificate is native/android/release-identity.json. Never generate a replacement production key automatically; require the pinned certificate. Keystore is ephemeral ignored storage, mode0600, removed on exit and workflow cleanup; Gradle references environment names only. Never log values or upload signing files.
 - Verify the finished APK via apksigner,16KB zipalign, package/version/debuggable/portrait, all live IDs and analytics against inputs, exact web payload and exclusion of test adapters. Embedded config is not proof of native fill/events/dashboard delivery. Production and .playtest have separate storage.
+
+## mini-games-kit: task-routed research and kit feedback
+
+Keep ALL existing game-specific rules above authoritative. For a substantial task read docs/kit-guidance/TASK_ROUTER.md and select only the 1–2 applicable studies. If given an original game, video, GIF, screenshot or a reference-feel complaint, follow docs/kit-guidance/REFERENCE_PROTOCOL.md, clearly separating observed behavior from assumptions.
+
+Research guidance snapshot: e2382670fbd5c2aa76462fea688c60de2b067392. Actual runtime mini-games-kit source/vendor/dependency may be pinned to an OLDER commit; never silently upgrade runtime or assume the guidance SHA's exports are installed. Inspect the actual consumer API pin before reusable code.
+
+After a material fix report KIT IMPACT: NONE / REUSE / IMPROVE / CANDIDATE / EXTRACTED (docs/kit-guidance/KIT_FEEDBACK_LOOP.md), with exact reproducible evidence for upstream proposals. No automatic gameplay, product economics, saved-state or store changes.
